@@ -1,8 +1,10 @@
 import matplotlib.pyplot as plt
 from matplotlib.patches import Polygon
 import numpy as np
+from astLib.astCoords import decimal2hms
+import h5py as hdf
 
-def rectangle(m,lon1,lat1,lon2,lat2,c='0.3',shading=None, step=100):
+def rectangle(m,lon1,lat1,lon2,lat2,ec='0.3',shading=None, step=100, ax=None):
     """Draw a projection correct rectangle on the map. RAmax, DECmax, RAmin,
     DECmin is the order of coordinates. Draws the rectangle counterclockwise
     from the RAmax/DECmax. So, across the zero boundary the lower RA value is the
@@ -16,7 +18,6 @@ def rectangle(m,lon1,lat1,lon2,lat2,c='0.3',shading=None, step=100):
 
     def line(lons, lats):
         x,y = (lons, lats)
-        #plt.plot(x,y,c=c)
         pos.x = np.hstack((pos.x,x))
         pos.y = np.hstack((pos.y,y))
 
@@ -42,37 +43,81 @@ def rectangle(m,lon1,lat1,lon2,lat2,c='0.3',shading=None, step=100):
 
     if shading:
         d = m(pos.x, pos.y)
-        #m.plot(d[0], d[1], lw=2)
-        p = Polygon(zip(d[0], d[1]),facecolor=shading, edgecolor='k',
-                        alpha=0.5,linewidth=2)
-        plt.gca().add_patch(p)
+        p = Polygon(zip(d[0], d[1]), facecolor=shading, edgecolor=ec,
+                        alpha=0.6, linewidth=2)
+        if not ax:
+            plt.gca().add_patch(p)
+        else:
+            ax.add_patch(p)
+
+def format(degree):
+    hour = decimal2hms(degree, ':').split(':')[0]
+    return hour+'$^h$'
+
+def plot_points(m, data, ax=None):
+    for i in range(len(data)):
+        number = data['name'][i].split('halos')[-1]
+        f2 =\
+        hdf.File('../../../data/halos/Aardvark_v1.0_halos_r1_rotated.' + number
+                + '.hdf5', 'r')
+        dset2 = f2[f2.keys()[0]]
+        d2 = dset2['RA','DEC','M200', 'Z']
+        x= np.where(d2['M200'] >=1e14)
+        d2=d2[x[0]]
+        x=np.where(np.round(d2['Z']*10)==3)
+        d2=d2[x[0]]
+        print number, len(d2)
+        x,y = m(d2['RA'], d2['DEC'])
+        if not ax:
+            plt.gca().scatter(x,y, zorder=5)
+        else:
+            ax.scatter(x,y,zorder=5, s=3)
+
+        del d2, x, y, dset2
 
 def main():
     from mpl_toolkits.basemap import Basemap
-    #m = Basemap(projection='moll', lon_0=0, celestial=True)
-    #m = Basemap(projection='lcc', llcrnrlon=340, llcrnrlat=0, urcrnrlon=40,
-    #        urcrnrlat=60, lat_0=50, lon_0=0, celestial=True)
     #m = Basemap(projection='lcc', llcrnrlon=115, llcrnrlat=-90, urcrnrlon=-70,
     #        urcrnrlat=5,lat_0=-50, lon_0=0)
-    #m = Basemap(llcrnrlon-180,llcrnrlat=5,urcrnrlon=90,urcrnrlat=10,
-    #projection='lcc',lat_0=-50,lon_0=0)
-    m = Basemap(projection='spstere',boundinglat=5,lon_0=0, celestial=True)
+    #m = Basemap(projection='spstere',boundinglat=5,lon_0=0, celestial=True)
+    m = Basemap(projection='spaeqd',boundinglat=5,lon_0=0, celestial=False)
 
-    data = np.genfromtxt('tiles.txt', dtype=None, names=True)
+    f, ax = plt.subplots(1,2)
+
+    data = np.genfromtxt('halos.txt', dtype=None, names=True)
     for ramax, ramin, decmax, decmin in zip(data['RAmax'], data['RAmin'],
             data['DECmax'], data['DECmin']):
             print ramax, decmax, ramin, decmin
             #really is ramin, decmax, ramax, decmin
-            rectangle(m, ramax, decmax, ramin, decmin, shading='r')
+            rectangle(m, ramax, decmax, ramin, decmin, shading='#188487',
+                ec='none', ax=ax[0])
 
     #rectangle(m, 110, 80, 90, 10, shading='r')
     #rectangle(m, 20, 50, 350, 10, shading='r')
-    #rectangle(m, 353, -50, 339, -58, shading='r')
+    rectangle(m, 430, -10, 292, -20, shading='#a60628', ec='none', ax=ax[0])
+    rectangle(m, 430, -10, 292, -20, shading='#a60628', ec='none', ax=ax[1])
 
-    m.drawparallels(np.arange(-81.,0., 10.), labels=[0,1,1,0])
-    m.drawmeridians(np.arange(-180.,181.,20.), labels=[1,0,0,1])
-    #m.drawparallels(np.arange(-90.,91.,10.), labels=[0,1,1,0])
-    #m.drawmeridians(np.arange(-71.,115.,10.), labels=[1,0,0,1])
+    #plot_points(m, data, ax=ax[1])
+
+    for z,i in enumerate(ax):
+        m.drawparallels(np.arange(-80.,10., 10.), labels=[], ax=i)
+
+        if not z:
+            m.drawmeridians(np.arange(3,10)* 15, labels=[1,0,0,0],
+            labelstyle='+/-', fmt=format, ax=i)
+            m.drawmeridians(np.arange(15,23)* 15, labels=[],
+            labelstyle='+/-', fmt=format, ax=i)
+        if z:
+            m.drawmeridians(np.arange(3,10)* 15, labels=[],
+            labelstyle='+/-', fmt=format, ax=i)
+            m.drawmeridians(np.arange(15,23)* 15, labels=[0,1,0,0],
+            labelstyle='+/-', fmt=format, ax=i)
+
+        m.drawmeridians(np.arange(10,15)* 15, labels=[0,0,1,0],
+        labelstyle='+/-', fmt=format, ax=i)
+        m.drawmeridians(np.arange(-2,3)* 15, labels=[0,0,0,1],
+        labelstyle='+/-', fmt=format, ax=i)
+
     plt.draw()
     plt.show()
 if __name__ == "__main__":
