@@ -1,0 +1,74 @@
+/software/lmod/lmod/init/lmod_bash_completions: line 18: syntax error near unexpected token `('
+/software/lmod/lmod/init/lmod_bash_completions: line 18: `	comm -23  <(_module_avail|sort)  <(_module_loaded_modules|sort)'
+/software/lmod/lmod/init/lmod_bash_completions: line 18: warning: syntax errors in . or eval will cause future versions of the shell to abort as Posix requires
+/software/easybuild/software/Python/2.7.6-ictce-6.3.5/lib/python2.7/site-packages/setuptools-3.6-py2.7.egg/pkg_resources.py:1045: UserWarning: /home/boada/.python-eggs is writable by group/others and vulnerable to attack when used with get_resource_filename. Consider a more secure location (set with .set_extraction_path or the PYTHON_EGG_CACHE environment variable).
+do work
+ID number is 213642
+Traceback (most recent call last):
+  File "teststats.py", line 73, in <module>
+    f['dset'] = result
+  File "build/bdist.linux-x86_64/egg/h5py/_hl/group.py", line 270, in __setitem__
+  File "build/bdist.linux-x86_64/egg/h5py/_hl/group.py", line 94, in create_dataset
+  File "build/bdist.linux-x86_64/egg/h5py/_hl/dataset.py", line 79, in make_new_dset
+  File "h5t.pyx", line 1389, in h5py.h5t.py_create (h5py/h5t.c:13981)
+  File "h5t.pyx", line 1463, in h5py.h5t.py_create (h5py/h5t.c:13831)
+TypeError: Object dtype dtype('O') has no native HDF5 equivalent
+
+real	23m4.297s
+user	23m50.980s
+sys	0m2.869s
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@nxt1157>
+Subject: Job 213642: <desCluster1> in cluster <Main_Compute> Exited
+
+Job <desCluster1> was submitted from host <login7> by user <boada> in cluster <Main_Compute>.
+Job was executed on host(s) <20*nxt1157>, in queue <devel>, as user <boada> in cluster <Main_Compute>.
+</home/boada> was used as the home directory.
+</home/boada/desCluster/analysis> was used as the working directory.
+Started at Thu Oct 30 13:57:43 2014
+Results reported on Thu Oct 30 14:20:52 2014
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+## job name
+#BSUB -J desCluster1
+
+## send stderr and stdout to the same file
+#BSUB -o output.%J
+
+## login shell to avoid copying env from login session
+## also helps the module function work in batch jobs
+#BSUB -L /bin/bash
+
+## 30 minutes of walltime ([HH:]MM)
+#BSUB -W 00:30
+
+## numprocs
+#BSUB -n 20
+
+## 20 cores/node
+#BSUB -R 'span[ptile=20]'
+
+source /home/boada/.bashrc
+time py teststats.py
+
+
+------------------------------------------------------------
+
+Exited with exit code 1.
+
+Resource usage summary:
+
+    CPU time :                                   1443.72 sec.
+    Max Memory :                                 513 MB
+    Average Memory :                             358.68 MB
+    Total Requested Memory :                     -
+    Delta Memory :                               -
+    Max Processes :                              24
+    Max Threads :                                28
+
+The output (if any) is above this job summary.
+

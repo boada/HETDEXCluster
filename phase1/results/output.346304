@@ -1,0 +1,124 @@
+/software/lmod/lmod/init/lmod_bash_completions: line 18: syntax error near unexpected token `('
+/software/lmod/lmod/init/lmod_bash_completions: line 18: `	comm -23  <(_module_avail|sort)  <(_module_loaded_modules|sort)'
+/software/lmod/lmod/init/lmod_bash_completions: line 18: warning: syntax errors in . or eval will cause future versions of the shell to abort as Posix requires
+/software/easybuild/software/Python/2.7.6-ictce-6.3.5/lib/python2.7/site-packages/setuptools-3.6-py2.7.egg/pkg_resources.py:1045: UserWarning: /home/boada/.python-eggs is writable by group/others and vulnerable to attack when used with get_resource_filename. Consider a more secure location (set with .set_extraction_path or the PYTHON_EGG_CACHE environment variable).
+halos15
+['truth123' 'truth124' 'truth125' 'truth155' 'truth156' 'truth157'
+ 'truth158' 'truth186' 'truth187' 'truth188' 'truth189' 'truth218'
+ 'truth219' 'truth220' 'truth221' 'truth222' 'truth249' 'truth250'
+ 'truth251' 'truth252' 'truth253' 'truth282' 'truth283' 'truth284'
+ 'truth285' 'truth286' 'truth314' 'truth315' 'truth316' 'truth317'
+ 'truth318' 'truth347' 'truth348' 'truth349' 'truth350' 'truth378'
+ 'truth379' 'truth380' 'truth381' 'truth382' 'truth95']
+<HDF5 file "Aardvark_v1.0c_truth_des_rotated.123.hdf5" (mode r)>
+<HDF5 file "Aardvark_v1.0c_truth_des_rotated.124.hdf5" (mode r)>
+<HDF5 file "Aardvark_v1.0c_truth_des_rotated.125.hdf5" (mode r)>
+<HDF5 file "Aardvark_v1.0c_truth_des_rotated.155.hdf5" (mode r)>
+<HDF5 file "Aardvark_v1.0c_truth_des_rotated.156.hdf5" (mode r)>
+<HDF5 file "Aardvark_v1.0c_truth_des_rotated.157.hdf5" (mode r)>
+<HDF5 file "Aardvark_v1.0c_truth_des_rotated.158.hdf5" (mode r)>
+<HDF5 file "Aardvark_v1.0c_truth_des_rotated.186.hdf5" (mode r)>
+<HDF5 file "Aardvark_v1.0c_truth_des_rotated.187.hdf5" (mode r)>
+<HDF5 file "Aardvark_v1.0c_truth_des_rotated.188.hdf5" (mode r)>
+<HDF5 file "Aardvark_v1.0c_truth_des_rotated.189.hdf5" (mode r)>
+<HDF5 file "Aardvark_v1.0c_truth_des_rotated.218.hdf5" (mode r)>
+<HDF5 file "Aardvark_v1.0c_truth_des_rotated.219.hdf5" (mode r)>
+<HDF5 file "Aardvark_v1.0c_truth_des_rotated.220.hdf5" (mode r)>
+<HDF5 file "Aardvark_v1.0c_truth_des_rotated.221.hdf5" (mode r)>
+<HDF5 file "Aardvark_v1.0c_truth_des_rotated.222.hdf5" (mode r)>
+<HDF5 file "Aardvark_v1.0c_truth_des_rotated.249.hdf5" (mode r)>
+<HDF5 file "Aardvark_v1.0c_truth_des_rotated.250.hdf5" (mode r)>
+<HDF5 file "Aardvark_v1.0c_truth_des_rotated.251.hdf5" (mode r)>
+<HDF5 file "Aardvark_v1.0c_truth_des_rotated.252.hdf5" (mode r)>
+<HDF5 file "Aardvark_v1.0c_truth_des_rotated.253.hdf5" (mode r)>
+<HDF5 file "Aardvark_v1.0c_truth_des_rotated.282.hdf5" (mode r)>
+<HDF5 file "Aardvark_v1.0c_truth_des_rotated.283.hdf5" (mode r)>
+<HDF5 file "Aardvark_v1.0c_truth_des_rotated.284.hdf5" (mode r)>
+<HDF5 file "Aardvark_v1.0c_truth_des_rotated.285.hdf5" (mode r)>
+<HDF5 file "Aardvark_v1.0c_truth_des_rotated.286.hdf5" (mode r)>
+<HDF5 file "Aardvark_v1.0c_truth_des_rotated.314.hdf5" (mode r)>
+<HDF5 file "Aardvark_v1.0c_truth_des_rotated.315.hdf5" (mode r)>
+<HDF5 file "Aardvark_v1.0c_truth_des_rotated.316.hdf5" (mode r)>
+<HDF5 file "Aardvark_v1.0c_truth_des_rotated.317.hdf5" (mode r)>
+<HDF5 file "Aardvark_v1.0c_truth_des_rotated.318.hdf5" (mode r)>
+<HDF5 file "Aardvark_v1.0c_truth_des_rotated.347.hdf5" (mode r)>
+<HDF5 file "Aardvark_v1.0c_truth_des_rotated.348.hdf5" (mode r)>
+<HDF5 file "Aardvark_v1.0c_truth_des_rotated.349.hdf5" (mode r)>
+<HDF5 file "Aardvark_v1.0c_truth_des_rotated.350.hdf5" (mode r)>
+<HDF5 file "Aardvark_v1.0c_truth_des_rotated.378.hdf5" (mode r)>
+<HDF5 file "Aardvark_v1.0c_truth_des_rotated.379.hdf5" (mode r)>
+<HDF5 file "Aardvark_v1.0c_truth_des_rotated.380.hdf5" (mode r)>
+<HDF5 file "Aardvark_v1.0c_truth_des_rotated.381.hdf5" (mode r)>
+<HDF5 file "Aardvark_v1.0c_truth_des_rotated.382.hdf5" (mode r)>
+<HDF5 file "Aardvark_v1.0c_truth_des_rotated.95.hdf5" (mode r)>
+done loading
+368478 1e13 - 1e14 Clusters
+6127 1e14 - 1e15 Clusters
+2 1e15 or greater Clusters
+47494 Clusters selcted
+do work
+0
+14422
+29978
+45833
+ID number is 346304
+done
+
+real	5m20.013s
+user	33m0.577s
+sys	0m40.223s
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@nxt1637>
+Subject: Job 346304: <desCluster1> in cluster <Main_Compute> Done
+
+Job <desCluster1> was submitted from host <login3> by user <boada> in cluster <Main_Compute>.
+Job was executed on host(s) <20*nxt1637>, in queue <short>, as user <boada> in cluster <Main_Compute>.
+</home/boada> was used as the home directory.
+</home/boada/desCluster/phase1> was used as the working directory.
+Started at Tue Dec  9 14:14:54 2014
+Results reported on Tue Dec  9 14:20:20 2014
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+## job name
+#BSUB -J desCluster1
+
+## send stderr and stdout to the same file
+#BSUB -o output.%J
+
+## login shell to avoid copying env from login session
+## also helps the module function work in batch jobs
+#BSUB -L /bin/bash
+
+## 30 minutes of walltime ([HH:]MM)
+#BSUB -W 03:00
+
+## numprocs
+#BSUB -n 20
+
+## 20 cores/node
+#BSUB -R 'span[ptile=20]'
+
+source /home/boada/.bashrc
+time py teststats.py
+
+
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   2066.77 sec.
+    Max Memory :                                 16132 MB
+    Average Memory :                             3806.19 MB
+    Total Requested Memory :                     -
+    Delta Memory :                               -
+    Max Processes :                              25
+    Max Threads :                                50
+
+The output (if any) is above this job summary.
+
