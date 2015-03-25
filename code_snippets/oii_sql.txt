@@ -1,0 +1,25 @@
+SELECT TOP 10000
+GAL.objID,
+GAL.u,
+GAL.Err_u,
+GAL.g,
+GAl.Err_g,
+GAL.r,
+GAL.Err_r,
+GAL.i,
+GAl.Err_i,
+GAL.z,
+GAL.Err_z,
+g.oii_3726_flux,
+g.oii_3726_flux_err, 
+s.z
+FROM Galaxy as GAL
+JOIN SpecObj AS s 
+ON s.bestObjID = GAL.objID
+JOIN GalSpecLine AS g
+ON g.specObjID = s.specObjID
+WHERE 
+oii_3726_flux > oii_3726_flux_err*5 
+AND  oii_3726_flux_err > 0 
+AND s.class = 'GALAXY' 
+AND s.zwarning = 0 
