@@ -82,7 +82,8 @@ def main():
     #m = Basemap(projection='spstere',boundinglat=5,lon_0=0, celestial=True)
     m = Basemap(projection='spaeqd',boundinglat=5,lon_0=0, celestial=False)
 
-    f, ax = plt.subplots(1,2)
+    f, ax = plt.subplots(1,1)
+    ax = [ax]
 
     data = np.genfromtxt('halos.txt', dtype=None, names=True)
     for ramax, ramin, decmax, decmin in zip(data['RAmax'], data['RAmin'],
@@ -94,8 +95,8 @@ def main():
 
     #rectangle(m, 110, 80, 90, 10, shading='r')
     #rectangle(m, 20, 50, 350, 10, shading='r')
-    rectangle(m, 430, -10, 292, -20, shading='#a60628', ec='none', ax=ax[0])
-    rectangle(m, 430, -10, 292, -20, shading='#a60628', ec='none', ax=ax[1])
+    #rectangle(m, 430, -10, 292, -20, shading='#a60628', ec='none', ax=ax[0])
+    #rectangle(m, 430, -10, 292, -20, shading='#a60628', ec='none', ax=ax[1])
 
     #plot_points(m, data, ax=ax[1])
 
@@ -107,7 +108,7 @@ def main():
             labelstyle='+/-', fmt=format, ax=i)
             m.drawmeridians(np.arange(15,23)* 15, labels=[],
             labelstyle='+/-', fmt=format, ax=i)
-        if z:
+        if not z:
             m.drawmeridians(np.arange(3,10)* 15, labels=[],
             labelstyle='+/-', fmt=format, ax=i)
             m.drawmeridians(np.arange(15,23)* 15, labels=[0,1,0,0],
