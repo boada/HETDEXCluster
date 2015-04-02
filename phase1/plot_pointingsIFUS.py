@@ -9,6 +9,8 @@ DECmax = 0
 DECmin = -5
 ra = pyl.rand()* ( RAmax - RAmin) + RAmin
 dec = pyl.rand()*(DECmax-DECmin)+DECmin
+ra = 0
+dec = 0
 
 if ra > 360:
     ra -= 360.
