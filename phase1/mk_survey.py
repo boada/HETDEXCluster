@@ -9,16 +9,28 @@ def mk_ifus(RA, DEC):
 
     # Called by gen_ifus
     # Generate the 10 x 10 array
-    coords = np.asarray([(x, y) for x in xrange(10) for y in xrange(10)])
+    #coords = np.asarray([(x, y) for x in xrange(10) for y in xrange(10)])
+
+    # Generate the 10 x 11 array
+    xgrid, ygrid = np.mgrid[:10, :11]
+
+    # calculate the distance from the center to each point
+    cir = (xgrid - 4.5)**2 + (ygrid - 4)**2
+
+    # draw the hexagon with the center 6 points removed. 72 total points
+    c = (cir <= 5**2) & (cir >=2)
+
 
     # Remove the center 4 boxes
-    coords2 =  np.append(coords[:44], coords[46:54], axis=0)
-    coords2 = np.append(coords2, coords[56:], axis=0)
+    #coords2 =  np.append(coords[:44], coords[46:54], axis=0)
+    #coords2 = np.append(coords2, coords[56:], axis=0)
 
     # Makes the RA/DEC grid, ***lower left corner***
-    x = [shiftRADec(RA, DEC, i*98.4, 0)[0] for i in coords2[:,0]]
-    y = [shiftRADec(RA, DEC, 0, i*98.4)[1] for i in coords2[:,1]]
+    #x = [shiftRADec(RA, DEC, i*98.4, 0)[0] for i in coords2[:,0]]
+    #y = [shiftRADec(RA, DEC, 0, i*98.4)[1] for i in coords2[:,1]]
 
+    x = [shiftRADec(RA, DEC, i*98.4, 0)[0] for i in xgrid[c]]
+    y = [shiftRADec(RA, DEC, 0, i*98.4)[1] for i in ygrid[c]]
     return x, y
 
 def gen_ifus(RA, DEC):
@@ -91,18 +103,14 @@ def find_tile(RA, DEC, data=False):
     else:
         raise ValueError('Out of RA/DEC bounds!')
 
-def fix_tiles(tiles=None):
+def fix_tiles():
     ''' fixes the tile catalog for the tiles that overlap zero. Now the tiles
     will go from RAmin -> 360 and 0 -> RAmax. Still should only return one tile
     if only one tile is covering the data point.
 
     '''
 
-    if tiles == None:
-        data = np.genfromtxt('tiles.txt', names=True, dtype=None)
-    else:
-        data = np.genfromtxt(tiles, names=True, dtype=None)
-
+    data = np.genfromtxt('tiles.txt', names=True, dtype=None)
     # Find the tiles that overlap zero.
     x = np.where(data['RAmax'] < data['RAmin'])
     d2 = data[x]
