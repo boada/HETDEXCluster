@@ -55,9 +55,3 @@ s = astStats.slice_sampler(px, N=1, x=x)
 
 print 'log oii lum', s
 
-
-
-
-
-
-
