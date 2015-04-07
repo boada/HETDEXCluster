@@ -25,10 +25,11 @@ hhsub = hh[posx[ind] - 1, posy[ind] - 1]
 
 xdat1 = xdat[ind][hhsub < thresh] # low density points
 ydat1 = ydat[ind][hhsub < thresh]
-hh[hh < thresh] = pyl.nan # fill the areas with low density by NaNs
+hh[hh < thresh] = 0 # fill the areas with low density by NaNs
 
 pyl.scatter(xdat1, ydat1, s=20, c='0.8')
 pyl.imshow(pyl.log10(hh.T), cmap='gray_r',
-        extent=pyl.array([[-1,4],[-26,-10]]).flatten(), interpolation='none')
+        extent=pyl.array([[-1,4],[-26,-10]]).flatten(),
+        interpolation='nearest')
 
 pyl.show()
