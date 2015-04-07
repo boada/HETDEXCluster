@@ -8,7 +8,8 @@ def load_tiles(tiles):
     data = []
     for t in tiles:
 	t = t.replace('truth','')
-        f = hdf.File(data_dir+'Aardvark_v1.0c_truth_des_rotated.'+ t +'.hdf5', 'r')
+        f = hdf.File(data_dir+'Aardvark_v1.0c_truth_des_rotated.'+ t +'.hdf5',
+                'r')
         dset = f[f.keys()[0]]
         data.append(dset)
     return data
@@ -17,8 +18,7 @@ def mk_catalog(tiles):
     catalog = load_tiles(tiles)
     for dset in catalog:
         print dset.file # The file it is loading
-        result_part = dset['ID', 'RA', 'DEC', 'Z', 'HALOID', 'RHALO', 'R200',
-        'M200']
+        result_part = dset['ID', 'RA', 'DEC', 'Z', 'HALOID']
         result_part = recfunctions.append_fields(result_part, ['g','r'],
                 [dset['OMAG'][:,0], dset['OMAG'][:,1]], usemask=False)
         try:
@@ -39,8 +39,7 @@ def apply_mask(ramin, decmin, ramax, decmax, catalog):
     y = (decmax > catalog['DEC']) & (catalog['DEC'] > decmin)
 
     selected = x & y
-    result = catalog[['ID', 'RA', 'DEC', 'Z', 'HALOID', 'RHALO', 'R200',
-        'M200', 'OMAG']][selected]
+    result = catalog[['ID', 'RA', 'DEC', 'Z', 'HALOID', 'g', 'r']][selected]
 
     return result
 
