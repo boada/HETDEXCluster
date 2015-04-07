@@ -9,28 +9,28 @@ def mk_ifus(RA, DEC):
 
     # Called by gen_ifus
     # Generate the 10 x 10 array
-    #coords = np.asarray([(x, y) for x in xrange(10) for y in xrange(10)])
+    coords = np.asarray([(x, y) for x in xrange(10) for y in xrange(10)])
 
     # Generate the 10 x 11 array
-    xgrid, ygrid = np.mgrid[:10, :11]
+    #xgrid, ygrid = np.mgrid[:10, :11]
 
     # calculate the distance from the center to each point
-    cir = (xgrid - 4.5)**2 + (ygrid - 4)**2
+    #cir = (xgrid - 4.5)**2 + (ygrid - 4)**2
 
     # draw the hexagon with the center 6 points removed. 72 total points
-    c = (cir <= 5**2) & (cir >=2)
+    #c = (cir <= 5**2) & (cir >=2)
 
 
     # Remove the center 4 boxes
-    #coords2 =  np.append(coords[:44], coords[46:54], axis=0)
-    #coords2 = np.append(coords2, coords[56:], axis=0)
+    coords2 =  np.append(coords[:44], coords[46:54], axis=0)
+    coords2 = np.append(coords2, coords[56:], axis=0)
 
     # Makes the RA/DEC grid, ***lower left corner***
-    #x = [shiftRADec(RA, DEC, i*98.4, 0)[0] for i in coords2[:,0]]
-    #y = [shiftRADec(RA, DEC, 0, i*98.4)[1] for i in coords2[:,1]]
+    x = [shiftRADec(RA, DEC, i*98.4, 0)[0] for i in coords2[:,0]]
+    y = [shiftRADec(RA, DEC, 0, i*98.4)[1] for i in coords2[:,1]]
 
-    x = [shiftRADec(RA, DEC, i*98.4, 0)[0] for i in xgrid[c]]
-    y = [shiftRADec(RA, DEC, 0, i*98.4)[1] for i in ygrid[c]]
+    #x = [shiftRADec(RA, DEC, i*98.4, 0)[0] for i in xgrid[c]]
+    #y = [shiftRADec(RA, DEC, 0, i*98.4)[1] for i in ygrid[c]]
     return x, y
 
 def gen_ifus(RA, DEC):
@@ -62,8 +62,11 @@ def mk_pointings(startRA, startDEC):
     #numDEC = 2
     coords = np.asarray([(x, y) for x in xrange(numRA) for y in xrange(numDEC)])
     # 1320'' = 22', the width of the pointings.
-    x = [shiftRADec(startRA, startDEC, i*1320, 0)[0] for i in coords[:,0]]
-    y = [shiftRADec(startRA, startDEC, 0, i*1320)[1] for i in coords[:,1]]
+    # 984.4'', the width of the IFU grid plus one gap.
+    #x = [shiftRADec(startRA, startDEC, i*1320, 0)[0] for i in coords[:,0]]
+    #y = [shiftRADec(startRA, startDEC, 0, i*1320)[1] for i in coords[:,1]]
+    x = [shiftRADec(startRA, startDEC, i*984.4, 0)[0] for i in coords[:,0]]
+    y = [shiftRADec(startRA, startDEC, 0, i*984.4)[1] for i in coords[:,1]]
 
     return x, y
 
@@ -77,8 +80,10 @@ def gen_pointings(startRA, startDEC):
     coords = mk_pointings(startRA, startDEC)
     for x, y in zip(coords[0], coords[1]):
         # Take the RA / DEC and add the 22' widths.
+        # 984.4'', the width of the IFU grid plus one gap.
         # yields RAmin/DECmin -- RAmax/DECmax
-        yield x, y, shiftRADec(x, y, 1320, 0)[0], shiftRADec(x, y, 0, 1320)[1]
+        #yield x, y, shiftRADec(x, y, 1320, 0)[0], shiftRADec(x, y, 0, 1320)[1]
+        yield x, y, shiftRADec(x, y, 984.4, 0)[0], shiftRADec(x, y, 0, 984.4)[1]
 
 def find_tile(RA, DEC, data=False):
     ''' Returns the name of the tile that the current pointing is located
