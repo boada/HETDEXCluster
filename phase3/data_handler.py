@@ -19,8 +19,8 @@ def mk_catalog(tiles):
         print dset.file # The file it is loading
         result_part = dset['ID', 'RA', 'DEC', 'Z', 'HALOID', 'RHALO', 'R200',
         'M200']
-        result_part = recfunctions.append_fields(result_part, 'OMAG',
-                dset['OMAG'][:,1], usemask=False)
+        result_part = recfunctions.append_fields(result_part, ['g','r'],
+                [dset['OMAG'][:,0], dset['OMAG'][:,1]], usemask=False)
         try:
             result = np.append(result, result_part)
         except NameError:
