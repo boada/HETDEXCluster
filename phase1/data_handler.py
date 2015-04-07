@@ -20,7 +20,8 @@ def mk_haloCatalog(tiles):
         data = []
         for t in tiles:
             t = t.replace('halos','')
-            f = hdf.File(data_dir+'Aardvark_v1.0_halos_r1_rotated.'+t+'.hdf5', 'r')
+            f = hdf.File(data_dir+'Aardvark_v1.0_halos_r1_rotated.'+t+'.hdf5',
+                    'r')
             dset = f[f.keys()[0]]
             data.append(dset)
         return data
@@ -41,7 +42,8 @@ def mk_catalog(tiles):
         data = []
         for t in tiles:
             t = t.replace('truth','')
-            f = hdf.File(data_dir+'Aardvark_v1.0c_truth_des_rotated.'+ t +'.hdf5', 'r')
+            f = hdf.File(data_dir+'Aardvark_v1.0c_truth_des_rotated.'+ t\
+                    +'.hdf5', 'r')
             dset = f[f.keys()[0]]
             data.append(dset)
         return data
