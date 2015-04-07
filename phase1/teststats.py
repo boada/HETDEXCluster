@@ -1,13 +1,11 @@
 #from halo_handler import *
 from calc_cluster_props import *
 #from data_handler import *
-#from mk_survey import fix_tiles
 from functions import *
 import h5py as hdf
 import numpy as np
 import multiprocessing
 from os import environ
-#from astLib.astStats import bootstrap
 import time
 import myglobals
 
