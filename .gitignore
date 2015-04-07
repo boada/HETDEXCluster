@@ -2,3 +2,4 @@
 *.fit
 *.hdf5
 *.swp
+.DS_Store
