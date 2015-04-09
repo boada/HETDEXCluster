@@ -97,6 +97,8 @@ def main():
     #rectangle(m, 20, 50, 350, 10, shading='r')
     #rectangle(m, 430, -10, 292, -20, shading='#a60628', ec='none', ax=ax[0])
     #rectangle(m, 430, -10, 292, -20, shading='#a60628', ec='none', ax=ax[1])
+    rectangle(m, 91.439438, -2.336169, 59.538841, -9.7056122,
+            shading='#a60628', ec='none', ax=ax[0])
 
     #plot_points(m, data, ax=ax[1])
 
