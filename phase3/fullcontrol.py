@@ -14,7 +14,7 @@ def mp_worker(ra, dec, ramax, decmax):
     catalog = mk_catalog(tile)
     # These are the individual IFUs, 96 of them
     for ifu in gen_ifus(ra, dec):
-        print ifu
+        #print ifu
         try:
             result = np.append(result, apply_mask(ifu[0], ifu[1], ifu[2],
                 ifu[3], catalog))
@@ -97,6 +97,7 @@ if __name__ == "__main__":
     print 'do work'
     result = mp_handler(ra, dec)
     print len(result)
+    print result.dtype
 
     # write it all to a file
     print 'ID number is', environ['LSB_JOBID']
