@@ -25,6 +25,27 @@ def find_indices(bigArr, smallArr):
 
     return inds
 
+def find_indices_bool(bigArr, smallArr):
+    from bisect import bisect_left, bisect_right
+    ''' Takes the full halo catalog and picks out the HALOIDs that we are
+    interested in. Only returns their indexes. It will need to be combined
+    with the result catalog in some other way.
+
+    '''
+
+    inds = np.zeros(len(bigArr), dtype=bool)
+    sortedind = np.argsort(bigArr)
+    sortedbigArr = bigArr[sortedind]
+    for i, v in enumerate(smallArr):
+        i1 = bisect_left(sortedbigArr, smallArr[i])
+        i2 = bisect_right(sortedbigArr, smallArr[i])
+        try:
+            inds[sortedind[i1:i2][0]] = True
+        except IndexError:
+            pass
+
+    return inds
+
 def load_halos(tiles):
     ''' Loads all of the data sets. Doesn't actually load anything into
     memory just loads the top levels.
@@ -69,16 +90,13 @@ def findRADECmaxmin(ra, dec):
     else:
         return ra.max(), dec.max(), ra.min(), dec.min()
 
-def findHaloTile(RAmax, DECmax, RAmin, DECmin, data=False):
+def findHaloTile(RAmax, DECmax, RAmin, DECmin):
     ''' Figure out what halo tiles we are going to need to load. Works with the
     max and min RA/DEC positions to figure that out.
 
     '''
 
-    if not len(data):
-        data = fix_haloTiles()
-    else:
-        pass
+    data = fix_haloTiles()
     tileDEC = (data['DECmax'] > DECmin) & (DECmin > data['DECmin'])
     tileRA = (data['RAmax'] > RAmin) & (RAmin > data['RAmin'])
     tile = np.intersect1d(data['name'][tileRA], data['name'][tileDEC])
