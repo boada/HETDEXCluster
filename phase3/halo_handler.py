@@ -1,8 +1,8 @@
 import h5py as hdf
 import numpy as np
 
-#data_dir = '/home/boada/scratch/'
-data_dir= '/Users/steven/Projects/desCluster/data/halos/'
+data_dir = '/home/boada/scratch/halos/'
+#data_dir= '/Users/steven/Projects/desCluster/data/halos/'
 
 def find_indices(bigArr, smallArr):
     from bisect import bisect_left, bisect_right
@@ -36,7 +36,7 @@ def find_indices_bool(bigArr, smallArr):
     inds = np.zeros(len(bigArr), dtype=bool)
     sortedind = np.argsort(bigArr)
     sortedbigArr = bigArr[sortedind]
-    for i, v in enumerate(smallArr):
+    for i, _ in enumerate(smallArr):
         i1 = bisect_left(sortedbigArr, smallArr[i])
         i2 = bisect_right(sortedbigArr, smallArr[i])
         try:
@@ -68,6 +68,7 @@ def mk_haloCatalog(tiles):
 
     catalog = load_halos(tiles)
     for dset in catalog:
+        print dset.file
         result_part = dset['HALOID', 'RA', 'DEC', 'Z', 'VRMS', 'NGALS', 'M200',
                 'R200']
         try:
