@@ -3,7 +3,6 @@ import h5py as hdf
 from glob import glob
 from calc_cluster_props import updateArray2
 from halo_handler import find_indices_bool
-import multiprocessing
 
 def update_result_file():
     # load the result file
@@ -50,51 +49,6 @@ def mk_haloCatalog():
             result = result_part
     return result
 
-def mp_worker(idx, hid):
-    ii = np.where(haloids == hid)[0]
-    data['CRA'][ii] = haloCat['RA'][idx]
-    data['CDEC'][ii] = haloCat['DEC'][idx]
-    data['CZ'][ii] = haloCat['Z'][idx]
-    data['VRMS'][ii] = haloCat['VRMS'][idx]
-    data['NGALS'][ii] = haloCat['NGALS'][idx]
-    data['M200'][ii] = haloCat['M200'][idx]
-    data['R200'][ii] = haloCat['R200'][idx]
-    if idx % 1000 == 0:
-        print idx
-
-    return 0
-
-def mp_worker_wrapper(args):
-    return mp_worker(*args)
-
-
-def fillOutInfo_multi():
-    # load the result file
-    f = hdf.File('out1204878.hdf5', 'r+')
-    dset = f[f.keys()[1]]
-    myglobals.data = dset.value
-
-    # Get the unique haloids
-    haloids = np.unique(myglobals.data['HALOID'])
-
-    # loads the halo files
-    myglobals.haloCat = mk_haloCatalog()
-
-    # find the indexes for the halo information
-    inds = find_indices_bool(myglobals.haloCat['HALOID'], haloids)
-
-    myglobals.haloCat = myglobals.haloCat[inds]
-
-    #haloids = data['HALOID']
-
-    p = multiprocessing.Pool(2)
-    result = p.map(mp_worker_wrapper, enumerate(haloCata['HALOID']))
-    p.join()
-    p.close()
-
-    f['dset_complete'] = myglobals.data
-    f.close()
-
 def fill_out_halo_info():
     # load the result file
     f = hdf.File('out1204878.hdf5', 'r+')
@@ -112,24 +66,42 @@ def fill_out_halo_info():
 
     haloCat = haloCat[inds]
 
-    haloids = data['HALOID']
+    haloids_inds = np.argsort(data['HALOID'])
+    haloCat_inds = np.argsort(haloCat['HALOID'])
 
-    for idx, hid in enumerate(haloCat['HALOID']):
-        ii = np.where(haloids == hid)[0]
-        data['CRA'][ii] = haloCat['RA'][idx]
-        data['CDEC'][ii] = haloCat['DEC'][idx]
-        data['CZ'][ii] = haloCat['Z'][idx]
-        data['VRMS'][ii] = haloCat['VRMS'][idx]
-        data['NGALS'][ii] = haloCat['NGALS'][idx]
-        data['M200'][ii] = haloCat['M200'][idx]
-        data['R200'][ii] = haloCat['R200'][idx]
-        if idx % 1000 == 0:
-            print idx
-        haloids = np.delete(haloids, ii)
+    b = []
+    i = 0
+    for hci in haloCat_inds:
+        look = haloCat['HALOID'][hci]
+        while look != data['HALOID'][haloids_inds[i]]:
+            if look < data['HALOID'][haloids_inds[i]]:
+                print 'overshot!'
+                raise ValueError
+            i+=1
+        while 1:
+            try:
+                if look == data['HALOID'][haloids_inds[i]]:
+                    data['CRA'][haloids_inds[i]] = haloCat['HALOID'][hci]
+                    data['CDEC'][haloids_inds[i]] = haloCat['DEC'][hci]
+                    data['CZ'][haloids_inds[i]] = haloCat['Z'][hci]
+                    data['VRMS'][haloids_inds[i]] = haloCat['VRMS'][hci]
+                    data['NGALS'][haloids_inds[i]] = haloCat['NGALS'][hci]
+                    data['M200'][haloids_inds[i]] = haloCat['M200'][hci]
+                    data['R200'][haloids_inds[i]] = haloCat['R200'][hci]
+                    i+=1
+                else:
+                    #print i, look, data['HALOID'][haloids_inds[i]], 'between'
+                    b.append(i)
+                    break
+            except IndexError:
+                break
+        #if i % 5000 == 0:
 
-    f['dset_complete'] = data
-    f.close()
+#    f['dset_complete'] = data
+#    f.close()
+    print len(b)
+
+    return data
 
 if __name__ == '__main__':
-    #fill_out_halo_info()
-    fillOutInfo_multi()
+    fill_out_halo_info()
