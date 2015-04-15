@@ -15,13 +15,15 @@ def find_indices(bigArr, smallArr):
     inds = []
     sortedind = np.argsort(bigArr)
     sortedbigArr = bigArr[sortedind]
-    for i in range(len(smallArr)):
+    for i, _ in enumerate(smallArr):
         i1 = bisect_left(sortedbigArr, smallArr[i])
         i2 = bisect_right(sortedbigArr, smallArr[i])
         try:
-            inds.append(sortedind[i1:i2][0])
+            inds.append(sortedind[i1:i2])
         except IndexError:
             pass
+        if i % 10000 ==0:
+            print i
 
     return inds
 
