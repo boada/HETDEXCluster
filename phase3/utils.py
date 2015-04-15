@@ -2,7 +2,7 @@ import numpy as np
 import h5py as hdf
 from glob import glob
 from calc_cluster_props import updateArray2
-from halo_handler import find_indices_bool
+from halo_handler import find_indices, find_indices_bool
 
 def update_result_file():
     # load the result file
@@ -49,59 +49,41 @@ def mk_haloCatalog():
             result = result_part
     return result
 
-def fill_out_halo_info():
+def fill_out_halo_info2():
     # load the result file
     f = hdf.File('out1204878.hdf5', 'r+')
     dset = f[f.keys()[1]]
     data = dset.value
 
-    # Get the unique haloids
-    haloids = np.unique(data['HALOID'])
-
     # loads the halo files
     haloCat = mk_haloCatalog()
-
+    # Get the unique haloids
+    haloids = np.unique(data['HALOID'])
     # find the indexes for the halo information
     inds = find_indices_bool(haloCat['HALOID'], haloids)
-
     haloCat = haloCat[inds]
 
-    haloids_inds = np.argsort(data['HALOID'])
-    haloCat_inds = np.argsort(haloCat['HALOID'])
+    # find the overlap. Will take a while.
+    print 'find overlap'
+    inds = find_indices(data['HALOID'], haloCat['HALOID'])
 
-    b = []
-    i = 0
-    for hci in haloCat_inds:
-        look = haloCat['HALOID'][hci]
-        while look != data['HALOID'][haloids_inds[i]]:
-            if look < data['HALOID'][haloids_inds[i]]:
-                print 'overshot!'
-                raise ValueError
-            i+=1
-        while 1:
-            try:
-                if look == data['HALOID'][haloids_inds[i]]:
-                    data['CRA'][haloids_inds[i]] = haloCat['HALOID'][hci]
-                    data['CDEC'][haloids_inds[i]] = haloCat['DEC'][hci]
-                    data['CZ'][haloids_inds[i]] = haloCat['Z'][hci]
-                    data['VRMS'][haloids_inds[i]] = haloCat['VRMS'][hci]
-                    data['NGALS'][haloids_inds[i]] = haloCat['NGALS'][hci]
-                    data['M200'][haloids_inds[i]] = haloCat['M200'][hci]
-                    data['R200'][haloids_inds[i]] = haloCat['R200'][hci]
-                    i+=1
-                else:
-                    #print i, look, data['HALOID'][haloids_inds[i]], 'between'
-                    b.append(i)
-                    break
-            except IndexError:
-                break
-        #if i % 5000 == 0:
+    print 'start loop'
+    for idx, ind in enumerate(inds):
+        data['CRA'][ind] = haloCat['RA'][idx]
+        data['CDEC'][ind] = haloCat['DEC'][idx]
+        data['CZ'][ind] = haloCat['Z'][idx]
+        data['VRMS'][ind] = haloCat['VRMS'][idx]
+        data['NGALS'][ind] = haloCat['NGALS'][idx]
+        data['M200'][ind] = haloCat['M200'][idx]
+        data['R200'][ind] = haloCat['R200'][idx]
 
-#    f['dset_complete'] = data
-#    f.close()
-    print len(b)
+        if idx % 10000 == 0:
+            print idx
+
+    f['dset_complete'] = data
+    f.close()
 
     return data
 
 if __name__ == '__main__':
-    fill_out_halo_info()
+    fill_out_halo_info2()
