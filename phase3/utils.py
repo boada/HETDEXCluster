@@ -4,19 +4,19 @@ from glob import glob
 from calc_cluster_props import updateArray2
 from halo_handler import find_indices, find_indices_bool
 
-def update_result_file():
+def update_result_file(hdfFile):
     # load the result file
-    f = hdf.File('out1204878.hdf5', 'r+')
-    dset = f[f.keys()[0]]
+    #f = hdf.File('out1204878.hdf5', 'r+')
+    dset = hdfFile[hdfFile.keys()[0]]
     data = dset.value
 
     # update!
     data = updateArray2(data)
 
     # write out
-    f['dset_appended'] = data
+    hdfFile['dset_appended'] = data
 
-    f.close()
+    hdfFile.flush()
 
 def load_halos():
     ''' Loads all of the data sets. Doesn't actually load anything into
@@ -30,6 +30,7 @@ def load_halos():
         f = hdf.File(f, 'r')
         dset = f[f.keys()[0]]
         data.append(dset)
+        f.close()
     return data
 
 def mk_haloCatalog():
@@ -49,10 +50,10 @@ def mk_haloCatalog():
             result = result_part
     return result
 
-def fill_out_halo_info2():
+def fill_out_halo_info2(hdfFile):
     # load the result file
-    f = hdf.File('out1204878.hdf5', 'r+')
-    dset = f[f.keys()[1]]
+    #f = hdf.File('out1204878.hdf5', 'r+')
+    dset = hdfFile[hdfFile.keys()[1]]
     data = dset.value
 
     # loads the halo files
@@ -80,8 +81,9 @@ def fill_out_halo_info2():
         if idx % 10000 == 0:
             print idx
 
-    f['dset_complete'] = data
-    f.close()
+    hdfFile['dset_complete'] = data
+    #f.close()
+    hdfFile.flush()
 
     return data
 
