@@ -5,6 +5,8 @@ import numpy as np
 from numpy.lib import recfunctions as rfns
 import h5py as hdf
 from os import environ
+from utils import update_result_file, fill_out_halo_info2
+
 
 # shared data... This is where the big catalog goes
 import myglobals
@@ -103,5 +105,13 @@ if __name__ == "__main__":
     print 'ID number is', environ['LSB_JOBID']
     f = hdf.File('out'+str(environ['LSB_JOBID'])+'.hdf5', 'w')
     f['dset'] = result
+    #f.close()
+    print 'done selecting galaxies'
+
+    print 'update file fields'
+    _ = update_result_file(f)
+
+    print 'get the halo info'
+    _ = fill_out_halo_info2(f)
+
     f.close()
-    print 'done'
