@@ -18,15 +18,21 @@ hids = np.unique(dataMasked['HALOID'])
 halos = find_indices(dataMasked['HALOID'], hids)
 
 for h in halos:
-    # find the cluster redshifts
-    dataMasked[h] = findClusterCenterRedshift(dataMasked[h])
-    #data['CLUSZ'][h] = mean(data['Z'][h])
+    if len(h) < 2:
+        dataMasked['CLUSZ'][h] = np.mean(dataMasked['Z'][h])
+    else:
+        # find the cluster redshifts
+        #dataMasked[h] = findClusterCenterRedshift(dataMasked['Z'][h])
 
-    # find the LOSV
-    dataMasked[h] = findLOSV(dataMasked[h])
+        # find the LOSV
+        #dataMasked[h] = findLOSV(dataMasked[h])
+
+        # find the LOSVD
+        dataMasked['LOSVD'][h] =\
+        astStats.biweightScale_test(dataMasked['LOSV'][h], tuningConstant=9.0)
 
 # update the data and file
-data[mask] = dataMasked
-dset[...] = data
-f.close()
+#data[mask] = dataMasked
+#dset[...] = data
+#f.close()
 
