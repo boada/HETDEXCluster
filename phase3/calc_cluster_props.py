@@ -26,18 +26,14 @@ def calcVD_test(data):
 def calc_mass_Saro(data):
     ''' Calculates the mass using the scaling relation from Saro2013. '''
 
-    if len(data) > 10:
-        vd = calcVD_big(data['LOSV'])
-    else:
-        vd = calcVD_small(data['LOSV'])
-
     avgz = data['CLUSZ'][0]
+    vd = data['LOSVD'][0]
 
     a = 939
     b = 2.91
     c = 0.33
 
-    m200 = (vd**b/(a * ((aca.H0 * aca.Ez(avgz))/70)**c)**b)
+    m200 = (vd**b/(a * ((aca.H0 * aca.Ez(avgz))/72)**c)**b)
     return m200 * 1e15
 
 def calc_mass(data):
