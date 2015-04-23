@@ -30,7 +30,7 @@ def load_halos():
         f = hdf.File(f, 'r')
         dset = f[f.keys()[0]]
         data.append(dset)
-        f.close()
+        #f.close()
     return data
 
 def mk_haloCatalog():
