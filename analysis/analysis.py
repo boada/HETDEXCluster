@@ -1,10 +1,10 @@
 import h5py as hdf
-from halo_handler import find_indices
+from updateResults import find_indices
 from astLib import astStats
 import numpy as np
 from calc_cluster_props import findLOSV, findClusterCenterRedshift, calc_mass_Saro
 
-f = hdf.File('out1204878.hdf5', 'r+')
+f = hdf.File('out1204878.hdf5', 'r')
 dset = f[f.keys()[2]]
 data = dset.value
 
