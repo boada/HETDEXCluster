@@ -1,0 +1,66 @@
+/software/lmod/lmod/init/lmod_bash_completions: line 18: syntax error near unexpected token `('
+/software/lmod/lmod/init/lmod_bash_completions: line 18: `	comm -23  <(_module_avail|sort)  <(_module_loaded_modules|sort)'
+/software/lmod/lmod/init/lmod_bash_completions: line 18: warning: syntax errors in . or eval will cause future versions of the shell to abort as Posix requires
+/software/easybuild/software/Python/2.7.6-ictce-6.3.5/lib/python2.7/site-packages/setuptools-3.6-py2.7.egg/pkg_resources.py:1045: UserWarning: /home/boada/.python-eggs is writable by group/others and vulnerable to attack when used with get_resource_filename. Consider a more secure location (set with .set_extraction_path or the PYTHON_EGG_CACHE environment variable).
+do work
+ID number is 261989
+done
+
+real	21m0.649s
+user	21m58.350s
+sys	0m2.810s
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@nxt1162>
+Subject: Job 261989: <desCluster1> in cluster <Main_Compute> Done
+
+Job <desCluster1> was submitted from host <login2> by user <boada> in cluster <Main_Compute>.
+Job was executed on host(s) <20*nxt1162>, in queue <devel>, as user <boada> in cluster <Main_Compute>.
+</home/boada> was used as the home directory.
+</home/boada/desCluster/analysis> was used as the working directory.
+Started at Fri Nov 14 15:39:46 2014
+Results reported on Fri Nov 14 16:00:53 2014
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+## job name
+#BSUB -J desCluster1
+
+## send stderr and stdout to the same file
+#BSUB -o output.%J
+
+## login shell to avoid copying env from login session
+## also helps the module function work in batch jobs
+#BSUB -L /bin/bash
+
+## 30 minutes of walltime ([HH:]MM)
+#BSUB -W 00:30
+
+## numprocs
+#BSUB -n 20
+
+## 20 cores/node
+#BSUB -R 'span[ptile=20]'
+
+source /home/boada/.bashrc
+time py teststats.py
+
+
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   1326.65 sec.
+    Max Memory :                                 549 MB
+    Average Memory :                             397.48 MB
+    Total Requested Memory :                     -
+    Delta Memory :                               -
+    Max Processes :                              24
+    Max Threads :                                28
+
+The output (if any) is above this job summary.
+

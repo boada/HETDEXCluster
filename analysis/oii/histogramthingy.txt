@@ -1,0 +1,119 @@
+run plot_oii.py
+digitize(0.85,locx)
+digitize([0.85],locx)
+digitize([16.5],locy)
+xdat[posx ==19]
+len(xdat[posx ==19])
+colorbar()
+axhline(16.5)
+axvline(0.85)
+log10(sum(xdat[posx==19]))
+log10(len(xdat[posx==19]))
+len(ydat[posy == 23])
+ydat[posy=23].max()
+ydat[posy==23].max()
+ydat[posy==23].min()
+xdat[pos==19].min()
+xdat[posx==19].min()
+xdat[posx==19].max()
+len(xdat[posx==19])
+locx[19]
+i = (locx[18] < xdat) & (xdat < locx[19])
+len(i)
+i = (locx[18] < xdat) & (xdat < locx[19]) & (locy[22] < ydat) & (ydat < locy[23])
+xdat[i]
+len(xdat[i])
+log10(_)
+retangle?
+pyl.rectangle?
+from matplotlib.patches import Rectangle
+Rectangle((locx[18], locy[22]), locx[19]-locx[18], locy[23]-locy[22])
+draw()
+Rectangle((locx[18], locy[22]), locx[19]-locx[18], locy[23]-locy[22], lw=2)
+draw()
+Rectangle((locx[18], locy[22]), locx[19]-locx[18], locy[23]-locy[22], lw=2, zorder=10)
+draw()
+Rectangle((locx[18], locy[22]), locx[19]-locx[18], locy[23]-locy[22], lw=2, zorder=10, fc='r')
+draw()
+show()
+figure(2)
+Rectangle((locx[18], locy[22]), locx[19]-locx[18], locy[23]-locy[22], lw=2, zorder=10, fc='r')
+draw()
+xlim(0,1)
+locx[18]
+close()
+gca()
+ax = gca()
+rec=Rectangle((locx[18], locy[22]), locx[19]-locx[18], locy[23]-locy[22], lw=2, zorder=10, fc='r')
+ax.add_patch(rec)
+draw()
+run plot_oii.py
+rec=Rectangle((locx[18], locy[22]), locx[19]-locx[18], locy[23]-locy[22], lw=2, zorder=10, ec='r')
+ax = gca()
+ax.add_patch(rec)
+draw()
+rec=Rectangle((locx[18], locy[22]), locx[19]-locx[18], locy[23]-locy[22], lw=2, zorder=10, ec='r')
+run plot_oii.py
+rec=Rectangle((locx[18], locy[22]), locx[19]-locx[18], locy[23]-locy[22], lw=2, zorder=10, ec='r', fc='none')
+ax = gca()
+ax.add_patch(rec)
+draw()
+i = (locx[18] < xdat) & (xdat < locx[19]) & (locy[22] < ydat) & (ydat < locy[23])
+hist(xdat[i])
+figure(2)
+hist(xdat[i])
+dl = [astCalc.dl(i) for i in data['redshift']]
+from astLib import astCalc
+dl = [astCalc.dl(i) for i in data['redshift']]
+data
+dl = array(dl)
+flux = data['oii_3726_flux']*4*pi*dl**2
+figure(3)
+hist(flux[i])
+i = (locx[18] < xdat) & (xdat < locx[19]) & (locy[22] < ydat) & (ydat < locy[23])
+hist(flux[i])
+close()
+figure(2)
+hist(log10(flux[i]))
+figure(2)
+hist(log10(flux[i]),bins=20)
+run plot_oii.py
+Rectangle((locx[18], locy[22]), locx[19]-locx[18], locy[23]-locy[22], lw=2, fc='r')
+ax = gca()
+ax.add_patch(rec)
+draw()
+figure(2)
+hist(log10(flux[i]),bins=20)
+history
+digitize([17.2],locy)
+digitize([1.88],locx)
+Rectangle((locx[28], locy[25]), locx[29]-locx[28], locy[26]-locy[25], lw=2, fc='r')
+ax.add_patch(rec)
+draw()
+rec =Rectangle((locx[28], locy[25]), locx[29]-locx[28], locy[26]-locy[25], lw=2, fc='r')
+ax.add_patch(rec)
+draw()
+i = (locx[28] < xdat) & (xdat < locx[29]) & (locy[25] < ydat) & (ydat < locy[26])
+i
+flux[i]
+figure(1)
+xlabe('g-r')
+xlabel('g-r')
+ylabel('r mag')
+i = (locx[18] < xdat) & (xdat < locx[19]) & (locy[22] < ydat) & (ydat < locy[23])
+len(flux[i])
+figure(2)
+xlabel('log10 oii lum')
+figure(3)
+hist(log10(flux[i]),bins=20, norm=True)
+hist(log10(flux[i]),bins=20, normed=True)
+hist?
+figure(3)
+hist(log10(flux[i]),bins=20, normed=True)
+hist?
+np.histogram?
+figure(2)
+np.histogram(log10(flux[i]),bins=20, density=True)
+draw()
+close()
+history

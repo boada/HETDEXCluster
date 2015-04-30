@@ -1,4 +1,4 @@
-SELECT TOP 10000
+SELECT
 GAL.objID,
 GAL.u,
 GAL.Err_u,

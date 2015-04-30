@@ -1,0 +1,69 @@
+[ 54.46424543] [-8.59643451]
+['truth126' 'truth127' 'truth159' 'truth160' 'truth190' 'truth191'
+ 'truth223' 'truth224' 'truth49' 'truth70' 'truth71' 'truth96' 'truth97']
+do work
+<HDF5 file "Aardvark_v1.0c_truth_des_rotated.96.hdf5" (mode r)>
+done loading
+7527049
+ID number is 1202495
+done
+
+real	717m40.500s
+user	12956m42.779s
+sys	599m16.497s
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@nxt1202>
+Subject: Job 1202495: <desCluster1> in cluster <Main_Compute> Done
+
+Job <desCluster1> was submitted from host <login5> by user <boada> in cluster <Main_Compute>.
+Job was executed on host(s) <20*nxt1202>, in queue <medium>, as user <boada> in cluster <Main_Compute>.
+</home/boada> was used as the home directory.
+</home/boada/desCluster/phase3/v3> was used as the working directory.
+Started at Tue Apr  7 14:35:00 2015
+Results reported on Wed Apr  8 02:32:46 2015
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+## job name
+#BSUB -J desCluster1
+
+## send stderr and stdout to the same file
+#BSUB -o output.%J
+
+## login shell to avoid copying env from login session
+## also helps the module function work in batch jobs
+#BSUB -L /bin/bash
+
+## 30 minutes of walltime ([HH:]MM)
+#BSUB -W 20:00
+
+## numprocs
+#BSUB -n 20
+
+## 20 cores/node
+#BSUB -R 'span[ptile=20]'
+
+source /home/boada/.bashrc
+time py fullcontrol.py
+
+
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   849700.25 sec.
+    Max Memory :                                 49982 MB
+    Average Memory :                             43367.58 MB
+    Total Requested Memory :                     -
+    Delta Memory :                               -
+    Max Swap :                                   4 MB
+    Max Processes :                              24
+    Max Threads :                                28
+
+The output (if any) is above this job summary.
+
