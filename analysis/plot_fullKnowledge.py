@@ -1,6 +1,6 @@
 import pylab as pyl
 import h5py as hdf
-from updateResults import find_indices_single
+from addHaloInfo import find_indices_single
 from scipy import stats
 
 def scatterDensity(ax, xdat, ydat, extent, bins=[50,50], thresh=3):
@@ -26,8 +26,8 @@ def scatterDensity(ax, xdat, ydat, extent, bins=[50,50], thresh=3):
 
 fig, ax = pyl.subplots(1, 2, squeeze=True)
 
-f = hdf.File('out1204878.hdf5', 'r')
-dset = f[f.keys()[2]]
+f = hdf.File('out1204878_complete.hdf5', 'r')
+dset = f[f.keys()[0]]
 data = dset.value
 
 # now we need to make a mask for the data
