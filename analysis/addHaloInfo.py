@@ -1,6 +1,7 @@
 import numpy as np
 import h5py as hdf
 from glob import glob
+from numpy.lib import recfunctions as rfns
 
 def updateArray(data):
     ''' Makes the new fields that we are going to add things into in the
@@ -8,6 +9,7 @@ def updateArray(data):
 
     '''
 
+    print 'update array...'
     newData = -np.ones(len(data))
     data = rfns.append_fields(data, ['CRA', 'CDEC', 'CZ', 'VRMS',
         'NGALS', 'M200', 'R200', 'CLUSZ', 'LOSV', 'LOSVD', 'MASS', 'Oii'],
@@ -23,8 +25,9 @@ def load_halos():
 
     '''
 
+    print 'load halos...'
     data = []
-    haloFiles = glob('./haloFiles/*.hdf5')
+    haloFiles = glob('../data/halos/choppedHaloFiles/*.hdf5')
     for f in haloFiles:
         f = hdf.File(f, 'r')
         dset = f[f.keys()[0]]
@@ -38,6 +41,7 @@ def mk_haloCatalog():
 
     '''
 
+    print 'make halo catalog...'
     catalog = load_halos()
     for dset in catalog:
         print dset.file
@@ -135,44 +139,48 @@ def find_indices_bool(bigArr, smallArr):
 
     return inds
 
-def fill_out_halo_info2(hdfFile):
+def fill_out_halo_info():
     # load the result file
-    #f = hdf.File('out1204878.hdf5', 'r+')
-    dset = hdfFile[hdfFile.keys()[1]]
-    data = dset.value
+    with hdf.File('out1204878.hdf5', 'r') as f:
+        dset = f[f.keys()[0]]
+        data = dset.value
 
-    # loads the halo files
-    haloCat = mk_haloCatalog()
-    # Get the unique haloids
-    haloids = np.unique(data['HALOID'])
-    # find the indexes for the halo information
-    inds = find_indices_bool(haloCat['HALOID'], haloids)
-    haloCat = haloCat[inds]
+        # update the data array to make room for the halo info
+        data = updateArray(data)
 
-    # find the overlap. Will take a while.
-    print 'find overlap'
-    inds = find_indices(data['HALOID'], haloCat['HALOID'])
+        # loads the halo files
+        haloCat = mk_haloCatalog()
+        # Get the unique haloids
+        haloids = np.unique(data['HALOID'])
+        # find the indexes for the halo information
+        inds = find_indices_bool(haloCat['HALOID'], haloids)
+        haloCat = haloCat[inds]
 
-    print 'start loop'
-    for idx, ind in enumerate(inds):
-        data['CRA'][ind] = haloCat['RA'][idx]
-        data['CDEC'][ind] = haloCat['DEC'][idx]
-        data['CZ'][ind] = haloCat['Z'][idx]
-        data['VRMS'][ind] = haloCat['VRMS'][idx]
-        data['NGALS'][ind] = haloCat['NGALS'][idx]
-        data['M200'][ind] = haloCat['M200'][idx]
-        data['R200'][ind] = haloCat['R200'][idx]
+        # find the overlap. Will take a while.
+        print 'find overlap'
+        inds = find_indices(data['HALOID'], haloCat['HALOID'])
 
-        if idx % 10000 == 0:
-            print idx
+        print 'start loop'
+        for idx, ind in enumerate(inds):
+            data['CRA'][ind] = haloCat['RA'][idx]
+            data['CDEC'][ind] = haloCat['DEC'][idx]
+            data['CZ'][ind] = haloCat['Z'][idx]
+            data['VRMS'][ind] = haloCat['VRMS'][idx]
+            data['NGALS'][ind] = haloCat['NGALS'][idx]
+            data['M200'][ind] = haloCat['M200'][idx]
+            data['R200'][ind] = haloCat['R200'][idx]
 
-    hdfFile['dset_complete'] = data
-    #f.close()
-    hdfFile.flush()
+            if idx % 10000 == 0:
+                print idx
+
+    # now we write it out to a new file
+    with hdf.File('out1204878_halo.hdf5', 'w') as f:
+        f['dset_appended'] = data
+        f.flush()
 
     return data
 
 if __name__ == '__main__':
-    fill_out_halo_info2()
+    fill_out_halo_info()
 
 
