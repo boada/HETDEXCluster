@@ -31,7 +31,7 @@ dset = f[f.keys()[0]]
 data = dset.value
 
 # now we need to make a mask for the data
-mask = (data['M200']/0.72 >= 1e13) & (data['Z'] < 0.2)
+mask = (data['M200']/0.72 >= 1e13) & (data['Z'] < 0.5)
 
 # we'll use the mask to make all the changes and then consolidate back.
 dataMasked = data[mask]
