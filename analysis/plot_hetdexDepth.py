@@ -16,7 +16,7 @@ def scatterDensity(ax, xdat, ydat, extent, bins=[50,50], thresh=3):
 
     xdat1 = xdat[ind][hhsub < thresh] # low density points
     ydat1 = ydat[ind][hhsub < thresh]
-    hh[hh < thresh] = 0 # fill the areas with low density by NaNs
+    hh[hh < thresh] = pyl.nan # fill the areas with low density by NaNs
 
     ax.scatter(xdat1, ydat1, s=20, c='0.8')
     ax.imshow(pyl.log10(hh.T), cmap='gray_r',
@@ -26,16 +26,17 @@ def scatterDensity(ax, xdat, ydat, extent, bins=[50,50], thresh=3):
 
 fig, ax = pyl.subplots(1, 2, squeeze=True)
 
-f = hdf.File('out1204878_complete.hdf5', 'r')
+f = hdf.File('out1204878_hetdex.hdf5', 'r')
 dset = f[f.keys()[0]]
 data = dset.value
 
 # now we need to make a mask for the data
-mask1 = (data['M200']/0.72 >= 1e13) & (data['Z'] < 0.5)
-mask2 = (data['g'] < 22) | (data['Oii'] > 3.5)
-mask = mask1 & mask2
+#mask1 = (data['M200']/0.72 >= 1e13) & (data['Z'] < 0.5)
+#mask2 = (data['g'] < 22) | (data['Oii'] > 3.5)
+#mask = mask1 & mask2
 
-dataMasked = data[mask]
+#dataMasked = data[mask]
+dataMasked = data
 
 hids = pyl.unique(dataMasked['HALOID'])
 
@@ -67,12 +68,11 @@ ax[0].set_ylim(0,800)
 ax[0].set_xlabel('$LOSVD_{True}$ ($km s^{-1})$')
 ax[0].set_ylabel('$LOSVD_{Rec}$ ($km s^{-1})$')
 
-
 # now the mass
 xdat = dataMasked['M200'][halos]
 ydat = dataMasked['MASS'][halos]
-xdat = pyl.log10(xdat[~pyl.isnan(ydat)])
-ydat = pyl.log10(ydat[~pyl.isnan(ydat)])
+xdat = pyl.log10(xdat[~pyl.isnan(ydat) & (ydat != 0.0)])
+ydat = pyl.log10(ydat[~pyl.isnan(ydat) & (ydat != 0.0)])
 
 scatterDensity(ax[1], xdat, ydat, extent=[[xdat.min(), xdat.max()],
     [ydat.min(), ydat.max()]])
