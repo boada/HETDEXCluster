@@ -1,5 +1,5 @@
 import h5py as hdf
-from updateResults import find_indices
+from addHaloInfo import find_indices
 from astLib import astStats
 import numpy as np
 from calc_cluster_props import findLOSV, findClusterCenterRedshift, calc_mass_Saro
@@ -19,11 +19,13 @@ with hdf.File('out1204878_halo.hdf5', 'r') as f:
     data = dset.value
 
     # now we need to make a mask for the data
-    #mask = (data['M200']/0.72 >= 1e13) & (data['Z'] < 0.2)
+    mask1 = (data['M200']/0.72 >= 1e13) & (data['Z'] < 0.5)
+    mask2 = (data['g'] < 22.) | (data['Oii'] > 3.5)
+    mask = mask1 & mask2
 
     # we'll use the mask to make all the changes and then consolidate back.
-    #dataMasked = data[mask]
-    dataMasked = data
+    dataMasked = data[mask]
+    #dataMasked = data
     hids = np.unique(dataMasked['HALOID'])
 
     halos = find_indices(dataMasked['HALOID'], hids)
@@ -65,7 +67,8 @@ with hdf.File('out1204878_halo.hdf5', 'r') as f:
         sys.stdout.write('\b')
 
 # now we make another new file
-with hdf.File('out1204878_complete.hdf5', 'w') as f:
+#with hdf.File('out1204878_complete.hdf5', 'w') as f:
+with hdf.File('out1204878_hetdex.hdf5', 'w') as f:
     #data[mask] = dataMasked
     f['dset_complete'] = dataMasked
     f.flush()
