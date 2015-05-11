@@ -26,9 +26,9 @@ def scatterDensity(ax, xdat, ydat, extent, bins=[50,50], thresh=3):
 
 fig, ax = pyl.subplots(1, 2, squeeze=True)
 
-f = hdf.File('out1204878_hetdex.hdf5', 'r')
-dset = f[f.keys()[0]]
-data = dset.value
+with hdf.File('out1204878_hetdex.hdf5', 'r') as f:
+    dset = f[f.keys()[0]]
+    data = dset.value
 
 # now we need to make a mask for the data
 #mask1 = (data['M200']/0.72 >= 1e13) & (data['Z'] < 0.5)
