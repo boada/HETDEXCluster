@@ -48,6 +48,7 @@ def findLOSV(data, CLUSZ):
 
 
 N = 100
+N2 = 20
 
 # make some data
 ra1 = 0 + np.random.rand(N) * 0.5
@@ -55,9 +56,9 @@ dec1 = -1 - np.random.rand(N) * 0.5
 z1 = 0.2 + np.random.rand(N) * 0.01
 
 # add another little cluster
-ra2 = 0.2 + np.random.rand(20) * 0.1
-dec2 = -1.2 - np.random.rand(20) * 0.1
-z2 = 0.21 + np.random.rand(20) * 0.01
+ra2 = 0.4 + np.random.rand(N2) * 0.1
+dec2 = -1.1 - np.random.rand(N2) * 0.1
+z2 = 0.21 + np.random.rand(N2) * 0.01
 
 ra = np.append(ra1, ra2)
 dec = np.append(dec1, dec2)
@@ -84,4 +85,4 @@ ds2 = np.array([(ra[inds[0]], dec[inds[0]], DSmetric(LOSV[inds],
 ds = np.sqrt(ds2[:,-1])
 
 delta = np.sum(ds)
-print delta/N
+print delta/(N+N2)
