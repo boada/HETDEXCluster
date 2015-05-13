@@ -3,6 +3,7 @@ from sklearn.neighbors import NearestNeighbors
 from calc_cluster_props import *
 from astLib import astStats
 from addHaloInfo import find_indices
+from scipy import stats
 
 def DSmetric(localData, v, sigma):
     """ Calculates the delta squared values as given in equation 1 of Dressler
@@ -27,7 +28,10 @@ def DSmetric(localData, v, sigma):
 
     try:
         vLocal = astStats.biweightLocation(localData, tuningConstant=6.0)
+        if vLocal == None:
+            vLocal = localData.mean()
     except ZeroDivisionError:
+        print 'exception'
         vLocal = localData.mean()
 
     Nnn = int(np.sqrt(len(localData)))+1
@@ -52,16 +56,22 @@ for h in halos:
     if len(h) < 10:
         pass
     else:
-        cluster = np.column_stack([data['RA'][h], data['DEC'][h], data['LOSV'][h]])
-        nbrs = NearestNeighbors(n_neighbors=int(np.sqrt(len(cluster)))+1,
+        cluster = np.column_stack([data['RA'][h], data['DEC'][h],
+                data['Z'][h]])
+        nbrs = NearestNeighbors(n_neighbors=int(np.sqrt(len(cluster))),
             algorithm='ball_tree').fit(cluster)
         distances, indices = nbrs.kneighbors(cluster)
 
-        ds2 = np.array([DSmetric(cluster[:,2][inds], cluster[:,2].mean(),
+        ds2 = np.array([DSmetric(data['LOSV'][h][inds], data['LOSV'][h].mean(),
             data['LOSVD'][h][0]) for inds in indices])
 
         ds = np.sqrt(ds2)
 
         delta = np.sum(ds)
-        blah.append([len(h),delta/len(cluster)])
+
+        # do the other little test
+        mod = ( 1 + stats.skew(data['LOSV'][h])**2)/ \
+            (3+stats.kurtosis(data['LOSV'][h])**2)
+
+        blah.append([len(h),delta/len(cluster), mod])
 #    print delta/len(cluster)
