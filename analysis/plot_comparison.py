@@ -8,8 +8,8 @@ with hdf.File('out1204878_complete.hdf5', 'r') as f:
     dset = f[f.keys()[0]]
     data = dset.value
 
-    mask = (data['M200']/0.72 >= 1e13) & (data['Z'] < 0.5)
-    data = data[mask]
+mask = (data['M200']/0.72 >= 1e13) & (data['Z'] < 0.5)
+data = data[mask]
 
 hids = pyl.unique(data['HALOID'])
 halos = pyl.array(find_indices(data['HALOID'], hids))
