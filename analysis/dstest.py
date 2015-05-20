@@ -1,6 +1,5 @@
 import numpy as np
 from sklearn.neighbors import NearestNeighbors
-from calc_cluster_props import *
 from astLib import astStats
 
 def DSmetric(localData, v, sigma):
@@ -23,8 +22,10 @@ def DSmetric(localData, v, sigma):
 
     if 3 <= localData.shape[0] < 15:
         sigmaLocal = astStats.gapperEstimator(localData)
+        #sigmaLocal = np.std(localData['LOSV']
     elif 15 <= localData.shape[0]:
         sigmaLocal = astStats.biweightScale(localData, tuningConstant=9.0)
+        #sigmaLocal = np.std(localData['LOSV']
 
     try:
         vLocal = astStats.biweightLocation(localData, tuningConstant=6.0)
@@ -93,9 +94,6 @@ def DStest(data, LOSV, LOSVD, method='shuffle', shuffles=1e4):
             ds = np.sqrt(ds2)
             deltaShuffled[i] = np.sum(ds)
 
-            if i+1%1000 ==0:
-                print i
-
         mask = deltaShuffled > delta
 
         return deltaShuffled[mask].shape[0]/float(shuffles)
@@ -115,7 +113,6 @@ def findLOSV(data, CLUSZ):
 def main():
     N = 100
     N2 = 1
-
 
     # make some data
     ra1 = 0 + np.random.rand(N) * 0.5
@@ -138,7 +135,8 @@ def main():
 
     data = np.column_stack([ra,dec])
 
-    s = DStest(data, LOSV, LOSVD, shuffles=3000)
+    s = DStest(data, LOSV, LOSVD, shuffles=1000)
+
     return s
 if __name__ == "__main__":
     main()
