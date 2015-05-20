@@ -30,15 +30,17 @@ def start_process():
 def main():
 
     #with hdf.File('out1204878_hetdex.hdf5', 'r') as f:
-    with hdf.File('out1204878_complete.hdf5', 'r') as f:
+    #with hdf.File('out1204878_complete.hdf5', 'r') as f:
+    with hdf.File('out1204878_allGalaxies_props.hdf5', 'r') as f:
         dset = f[f.keys()[0]]
-        data = dset['RA', 'DEC', 'Z', 'LOSV', 'LOSVD', 'M200', 'HALOID']
+        #data = dset['RA', 'DEC', 'Z', 'LOSV', 'LOSVD', 'M200', 'HALOID']
+        data = dset['RA', 'DEC', 'Z', 'LOSV', 'LOSVD', 'HALOID']
 
-    mask = (data['M200']/0.72 >= 1e13) & (data['Z'] < 0.5)
-    data = data[mask]
+    #mask = (data['M200']/0.72 >= 1e13) & (data['Z'] < 0.5)
+    #data = data[mask]
 
     # try to reduce footprint
-    del mask
+    #del mask
 
     hids = np.unique(data['HALOID'])
     halos = np.array(find_indices(data['HALOID'], hids))
@@ -55,7 +57,7 @@ def main():
     finalResult['HALOID'] = hids
     finalResult['DS'] = [DS for DS in result]
 
-    with hdf.File('out1204878_DS.hdf5', 'w') as f:
+    with hdf.File('out1204878_allGalaxies_DSresult.hdf5', 'w') as f:
         f['DSresult'] = finalResult
         f.flush()
 
