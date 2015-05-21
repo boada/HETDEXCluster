@@ -4,6 +4,7 @@ from addHaloInfo import find_indices
 from dstest import DStest
 from multiprocessing import Pool, cpu_count, current_process
 from itertools import izip, repeat
+from os import environ
 
 def mp_worker((h, data)):
     if len(h) < 10:
@@ -47,7 +48,7 @@ def main():
 
     p = Pool(cpu_count(), maxtasksperchild=2, initializer=start_process)
 
-    result = p.imap(mp_worker_wrapper, izip(halos, repeat(data)),
+    result = p.imap(mp_worker_wrapper, izip(halos[:4000], repeat(data)),
             chunksize=3)
 
     p.close()
@@ -57,7 +58,9 @@ def main():
     finalResult['HALOID'] = hids
     finalResult['DS'] = [DS for DS in result]
 
-    with hdf.File('out1204878_allGalaxies_DSresult.hdf5', 'w') as f:
+    #with hdf.File('out1204878_allGalaxies_DSresult1.hdf5', 'w') as f:
+    with hdf.File('out'+str(environ['LSB_JOBID'])+'_allGalaxies_DSresult.hdf5',
+            'w') as f:
         f['DSresult'] = finalResult
         f.flush()
 
