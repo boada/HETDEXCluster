@@ -12,10 +12,9 @@ def updateArray(data):
     print 'update array...'
     newData = -np.ones(len(data))
     data = rfns.append_fields(data, ['CRA', 'CDEC', 'CZ', 'VRMS',
-        'NGALS', 'M200', 'R200', 'CLUSZ', 'LOSV', 'LOSVD', 'MASS', 'Oii'],
-        [newData, newData, newData, newData, newData, newData, newData,
-            newData, newData, newData, newData, newData], dtypes='>f4',
-        usemask=False)
+        'NGALS', 'M200', 'R200'],
+        [newData, newData, newData, newData, newData, newData, newData],
+        dtypes='>f4', usemask=False)
 
     return data
 
