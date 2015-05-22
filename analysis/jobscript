@@ -19,6 +19,6 @@
 
 -M 5000
 
-source /home/boada/.bashrc
 time py calc_DSinfo.py 4000 8000
+
 
