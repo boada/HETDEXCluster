@@ -1,5 +1,5 @@
 ## job name
-#BSUB -J desCluster1
+#BSUB -J desCluster_omgRUN!
 
 ## send stderr and stdout to the same file
 #BSUB -o output.%J
@@ -9,7 +9,7 @@
 #BSUB -L /bin/bash
 
 ## 30 minutes of walltime ([HH:]MM)
-#BSUB -W 5:00
+#BSUB -W 7:00
 
 ## numprocs
 #BSUB -n 20
@@ -20,5 +20,5 @@
 -M 5000
 
 source /home/boada/.bashrc
-time py dstest_real.py
+time py calc_DSinfo.py 4000 8000
 
