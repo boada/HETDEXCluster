@@ -1,0 +1,176 @@
+	NOTE: As of 4/1/2015, MKLROOT defined in this module has been changed
+	From: /software/easybuild/software/imkl/11.1.3.174
+	  To: /software/easybuild/software/imkl/11.1.3.174/mkl
+/home/boada/.lsbatch/1432331831.1350073.shell: line 20: -M: command not found
+/software/lmod/5.8.5/init/lmod_bash_completions: line 18: syntax error near unexpected token `('
+/software/lmod/5.8.5/init/lmod_bash_completions: line 18: `	comm -23  <(_module_avail|sort)  <(_module_loaded_modules|sort)'
+/software/lmod/5.8.5/init/lmod_bash_completions: line 18: warning: syntax errors in . or eval will cause future versions of the shell to abort as Posix requires
+/software/easybuild/software/Python/2.7.6-ictce-6.3.5/lib/python2.7/site-packages/setuptools-3.6-py2.7.egg/pkg_resources.py:1045: UserWarning: /home/boada/.python-eggs is writable by group/others and vulnerable to attack when used with get_resource_filename. Consider a more secure location (set with .set_extraction_path or the PYTHON_EGG_CACHE environment variable).
+0
+10000
+Starting PoolWorker-2
+Starting PoolWorker-19
+Starting PoolWorker-8
+Starting PoolWorker-6
+Starting PoolWorker-1
+Starting PoolWorker-15
+Starting PoolWorker-16
+Starting PoolWorker-7
+Starting PoolWorker-13
+Starting PoolWorker-5
+Starting PoolWorker-17
+Starting PoolWorker-9
+Starting PoolWorker-20
+Starting PoolWorker-12
+Starting PoolWorker-24
+Starting PoolWorker-4
+Starting PoolWorker-11
+Starting PoolWorker-10
+Starting PoolWorker-21
+Starting PoolWorker-26
+Starting PoolWorker-23
+Starting PoolWorker-18
+Starting PoolWorker-14
+Starting PoolWorker-22
+Starting PoolWorker-31
+Starting PoolWorker-34
+Starting PoolWorker-25
+Starting PoolWorker-29
+Starting PoolWorker-27
+Starting PoolWorker-30
+Starting PoolWorker-3
+Starting PoolWorker-33
+Starting PoolWorker-32
+Starting PoolWorker-35
+Starting PoolWorker-38
+Starting PoolWorker-28
+Starting PoolWorker-36
+Starting PoolWorker-42
+Starting PoolWorker-39
+Starting PoolWorker-47
+Starting PoolWorker-52
+Starting PoolWorker-44
+Starting PoolWorker-40
+Starting PoolWorker-54
+Starting PoolWorker-37
+Starting PoolWorker-50
+Starting PoolWorker-41
+Starting PoolWorker-46
+Starting PoolWorker-53
+Starting PoolWorker-57
+Starting PoolWorker-43
+Starting PoolWorker-45
+Starting PoolWorker-48
+Starting PoolWorker-51
+Starting PoolWorker-49
+Starting PoolWorker-55
+Starting PoolWorker-56
+Starting PoolWorker-61
+Starting PoolWorker-59
+Starting PoolWorker-58
+Starting PoolWorker-67
+Starting PoolWorker-65
+Starting PoolWorker-63
+Starting PoolWorker-72
+Starting PoolWorker-69
+Starting PoolWorker-66
+Starting PoolWorker-60
+Starting PoolWorker-62
+Starting PoolWorker-74
+Starting PoolWorker-71
+Starting PoolWorker-68
+Starting PoolWorker-78
+Starting PoolWorker-76
+Starting PoolWorker-73
+Starting PoolWorker-64
+Starting PoolWorker-79
+Starting PoolWorker-83
+Starting PoolWorker-81
+Starting PoolWorker-80
+Starting PoolWorker-75
+Starting PoolWorker-70
+Starting PoolWorker-84
+Starting PoolWorker-87
+Starting PoolWorker-85
+Starting PoolWorker-77
+Starting PoolWorker-92
+Starting PoolWorker-91
+Starting PoolWorker-86
+Starting PoolWorker-89
+Starting PoolWorker-82
+Starting PoolWorker-90
+Starting PoolWorker-93
+Starting PoolWorker-97
+Starting PoolWorker-94
+Starting PoolWorker-98
+Starting PoolWorker-88
+Starting PoolWorker-95
+Starting PoolWorker-99
+Starting PoolWorker-106
+Starting PoolWorker-104
+Starting PoolWorker-109
+Starting PoolWorker-107
+DS test problem for HALOID --  11398109
+Starting PoolWorker-110
+DS test problem for HALOID --  11402539
+Starting PoolWorker-108
+DS test problem for HALOID --  11401216
+Terminated
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@nxt1247>
+Subject: Job 1350073: <desCluster_omgRUN!> in cluster <Main_Compute> Exited
+
+Job <desCluster_omgRUN!> was submitted from host <login8> by user <boada> in cluster <Main_Compute>.
+Job was executed on host(s) <20*nxt1247>, in queue <medium>, as user <boada> in cluster <Main_Compute>.
+</home/boada> was used as the home directory.
+</home/boada/desCluster/analysis> was used as the working directory.
+Started at Fri May 22 16:57:11 2015
+Results reported on Fri May 22 19:09:15 2015
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+## job name
+#BSUB -J desCluster_omgRUN!
+
+## send stderr and stdout to the same file
+#BSUB -o output.%J
+
+## login shell to avoid copying env from login session
+## also helps the module function work in batch jobs
+#BSUB -L /bin/bash
+
+## 30 minutes of walltime ([HH:]MM)
+#BSUB -W 7:00
+
+## numprocs
+#BSUB -n 20
+
+## 20 cores/node
+#BSUB -R 'span[ptile=20]'
+
+-M 5000
+
+source /home/boada/.bashrc
+time py calc_DSinfo.py 4000 8000
+
+
+------------------------------------------------------------
+
+TERM_MEMLIMIT: job killed after reaching LSF memory usage limit.
+Exited with exit code 143.
+
+Resource usage summary:
+
+    CPU time :                                   133554.64 sec.
+    Max Memory :                                 51200 MB
+    Average Memory :                             29762.99 MB
+    Total Requested Memory :                     -
+    Delta Memory :                               -
+    Max Processes :                              24
+    Max Threads :                                28
+
+The output (if any) is above this job summary.
+
