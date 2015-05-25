@@ -55,9 +55,9 @@ for i,h in enumerate(halos[:6000]):
         resample = best_gmm.sample(1000)
         newnewLOSVD = astStats.biweightScale_test(resample, tuningConstant=9.)
         # now we resample and then see
-        #dx = np.linspace(LOSV.min()-100,LOSV.max()+100,1000)
-        #logprob, responsibilities = best_gmm.eval(dx)
-        #pdf = np.exp(logprob)
+        dx = np.linspace(LOSV.min()-100,LOSV.max()+100,1000)
+        logprob, responsibilities = best_gmm.eval(dx)
+        pdf = np.exp(logprob)
 
 #        print best_gmm.weights_.ravel()
 #        print data['VRMS'][h][0]/np.sqrt(3), data['LOSVD'][h][0], newLOSVD, newnewLOSVD
