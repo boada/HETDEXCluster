@@ -15,7 +15,7 @@ def mp_worker((h, data)):
             data['DEC'][h], data['Z'][h]])
         try:
             s = DStest(cluster, data['LOSV'][h],
-                    data['LOSVD'][h][0], shuffles=1000)
+                    data['LOSVD'][h][0], shuffles=500)
             del cluster
             return s
         except:
@@ -47,7 +47,7 @@ def main(start=None, end=None):
     hids = np.unique(data['HALOID'])
     halos = np.array(find_indices(data['HALOID'], hids))
 
-    p = Pool(cpu_count(), maxtasksperchild=2, initializer=start_process)
+    p = Pool(cpu_count(), maxtasksperchild=1, initializer=start_process)
 
     result = p.imap(mp_worker_wrapper, izip(halos[start:end], repeat(data)),
             chunksize=3)
