@@ -22,10 +22,10 @@ def DSmetric(localData, v, sigma):
 
     if 3 <= localData.shape[0] < 15:
         sigmaLocal = astStats.gapperEstimator(localData)
-        #sigmaLocal = np.std(localData['LOSV']
+        #sigmaLocal = np.std(localData['LOSV'])
     elif 15 <= localData.shape[0]:
         sigmaLocal = astStats.biweightScale(localData, tuningConstant=9.0)
-        #sigmaLocal = np.std(localData['LOSV']
+        #sigmaLocal = np.std(localData['LOSV'])
 
     try:
         vLocal = astStats.biweightLocation(localData, tuningConstant=6.0)
@@ -106,6 +106,7 @@ def findLOSV(data, CLUSZ):
     in the LOSV column of the data array.
 
     '''
+
     c = 2.99e5 # speed of light in km/s
     losv = c * (data - CLUSZ)/(1 + CLUSZ)
     return losv
