@@ -16,8 +16,7 @@ for f in files:
     except NameError:
         result = data
 
-
-#with hdf.File('out1204878_allGalaxies_DSresult.hdf5', 'w') as f:
-#    f['ds_complete'] = result
-#    f.flush()
+with hdf.File('out1204878_allGalaxies_DSresult.hdf5', 'w') as f:
+    f['ds_complete'] = result
+    f.flush()
 

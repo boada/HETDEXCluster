@@ -83,8 +83,8 @@ for i,h in enumerate(halos):
     sys.stdout.write('\b')
 
 # now we make another new file
-#with hdf.File('out1204878_props.hdf5', 'w') as f:
-#with hdf.File('out1204878_props_hetdex.hdf5', 'w') as f:
+#with hdf.File('out1204878_complete.hdf5', 'w') as f:
+#with hdf.File('out1204878_hetdex.hdf5', 'w') as f:
 with hdf.File('out1204878_allGalaxies_props.hdf5', 'w') as f:
 #    data[mask] = dataMasked
     f['dset_complete'] = dataMasked
