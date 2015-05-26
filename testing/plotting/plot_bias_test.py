@@ -31,7 +31,7 @@ def mass(vd, z, a):
 
 
 
-f = hdf.File('./stat_testing312170.hdf5','r')
+f = hdf.File('./../../oldResults/stat_testing312170.hdf5','r')
 dset = f[f.keys()[0]]
 result = dset.value
 
