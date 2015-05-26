@@ -75,12 +75,25 @@ def plot_points(m, data, ax=None):
 
         del d2, x, y, dset2
 
+def celestialRA(ra):
+    value = abs(360.-ra)
+    return value
+
 def main():
     from mpl_toolkits.basemap import Basemap
     #m = Basemap(projection='lcc', llcrnrlon=115, llcrnrlat=-90, urcrnrlon=-70,
     #        urcrnrlat=5,lat_0=-50, lon_0=0)
     #m = Basemap(projection='spstere',boundinglat=5,lon_0=0, celestial=True)
-    m = Basemap(projection='spaeqd',boundinglat=5,lon_0=0, celestial=False)
+    #m = Basemap(projection='spaeqd',boundinglat=5,lon_0=0, celestial=False)
+    golden_mean = (np.sqrt(5)-1.0)/2.0 #aesthetic ratio
+    fig_width = 10
+    fig_height = fig_width*golden_mean
+    fig_size = [fig_width,fig_height]
+
+    m = Basemap(projection='stere', width=350000.444*75,
+            height=300000.444*75*golden_mean, lat_ts=-30, lat_0=-30,
+            lon_0=celestialRA(-20))
+
 
     f, ax = plt.subplots(1,1)
     ax = [ax]
