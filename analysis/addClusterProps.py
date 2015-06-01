@@ -2,7 +2,8 @@ import h5py as hdf
 from addHaloInfo import find_indices
 from astLib import astStats
 import numpy as np
-from calc_cluster_props import findLOSV, findClusterCenterRedshift, calc_mass_Saro
+from calc_cluster_props import findLOSV, findClusterCenterRedshift,\
+    calc_mass_Evrard
 
 def updateArray(data):
     from numpy.lib import recfunctions as rfns
@@ -28,8 +29,8 @@ def spinning_cursor():
 
 spinner = spinning_cursor()
 
-#with hdf.File('out1204878_halo.hdf5', 'r') as f:
-with hdf.File('out1204878_allGalaxies.hdf5', 'r') as f:
+with hdf.File('out1204878_halo.hdf5', 'r') as f:
+#with hdf.File('out1204878_allGalaxies.hdf5', 'r') as f:
     dset = f[f.keys()[0]]
     data = dset.value
 
@@ -74,7 +75,7 @@ for i,h in enumerate(halos):
 
     if not dataMasked['CLUSZ'][h][0] == -1.0:
         # finally the mass
-        dataMasked['MASS'][h] = calc_mass_Saro(dataMasked[h])
+        dataMasked['MASS'][h] = calc_mass_Evrard(dataMasked[h])
     else:
         pass
 
