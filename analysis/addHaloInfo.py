@@ -9,7 +9,7 @@ def updateArray(data):
 
     '''
 
-    print 'update array...'
+    print('update array...')
     newData = -np.ones(len(data))
     data = rfns.append_fields(data, ['CRA', 'CDEC', 'CZ', 'VRMS',
         'NGALS', 'M200', 'R200', 'CLUSZ', 'LOSV', 'LOSVD', 'MASS', 'Oii'],
@@ -25,7 +25,7 @@ def load_halos():
 
     '''
 
-    print 'load halos...'
+    print('load halos...')
     data = []
     haloFiles = glob('../data/halos/choppedHaloFiles/*.hdf5')
     for f in haloFiles:
@@ -41,10 +41,10 @@ def mk_haloCatalog():
 
     '''
 
-    print 'make halo catalog...'
+    print('make halo catalog...')
     catalog = load_halos()
     for dset in catalog:
-        print dset.file
+        print (dset.file)
         result_part = dset['HALOID', 'RA', 'DEC', 'Z', 'VRMS', 'NGALS', 'M200',
                 'R200']
         try:
@@ -86,7 +86,7 @@ def find_indices(bigArr, smallArr):
         except IndexError:
             pass
         if i % 10000 ==0:
-            print i
+            print(i)
 
     return inds
 
@@ -109,7 +109,7 @@ def find_indices_single(bigArr, smallArr):
         except IndexError:
             pass
         if i % 10000 ==0:
-            print i
+            print(i)
 
     return inds
 
@@ -157,10 +157,10 @@ def fill_out_halo_info():
         haloCat = haloCat[inds]
 
         # find the overlap. Will take a while.
-        print 'find overlap'
+        print('find overlap')
         inds = find_indices(data['HALOID'], haloCat['HALOID'])
 
-        print 'start loop'
+        print('start loop')
         for idx, ind in enumerate(inds):
             data['CRA'][ind] = haloCat['RA'][idx]
             data['CDEC'][ind] = haloCat['DEC'][idx]
@@ -171,7 +171,7 @@ def fill_out_halo_info():
             data['R200'][ind] = haloCat['R200'][idx]
 
             if idx % 10000 == 0:
-                print idx
+                print(idx)
 
     # now we write it out to a new file
     with hdf.File('out1204878_halo.hdf5', 'w') as f:
