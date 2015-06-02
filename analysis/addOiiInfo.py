@@ -81,7 +81,7 @@ with hdf.File('./out1204878_complete.hdf5', 'r+') as f:
             catOii[binMask] = (10**s)/(4*np.pi*(3.0857e24*dl[binMask])**2 \
                 *1e-17)
 
-        elif len(lumes) > 1:
+        elif len(lumes) >= 1:
             s = np.mean(np.log10(lumes))
 
             catOii[binMask] = (10**s)/(4*np.pi*(3.0857e24*dl[binMask])**2 \
