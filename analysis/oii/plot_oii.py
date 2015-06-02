@@ -6,8 +6,8 @@ bins = [50,50]
 thresh = 3
 extent = [[-26,-10],[-1,4]]
 
-f = pyf.open('sdss12_oii_flux_v3.fits')
-data = f[1].data
+with pyf.open('sdss12_oii_flux_v2.fits') as f:
+    data = f[1].data
 
 #ydat = data['g'] - data['r']
 #xdat = data['r']
