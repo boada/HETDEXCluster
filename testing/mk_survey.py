@@ -11,26 +11,48 @@ def mk_ifus(RA, DEC):
     # Generate the 10 x 10 array
     #coords = np.asarray([(x, y) for x in xrange(10) for y in xrange(10)])
 
-    # Generate the 10 x 11 array
-    xgrid, ygrid = np.mgrid[:10, :11]
+    # Generate the 10 x 10 grid
+    ifus = np.arange(10)
+    xgrid, ygrid = np.meshgrid(ifus, ifus)
 
-    # calculate the distance from the center to each point
-    cir = (xgrid - 4.5)**2 + (ygrid - 4)**2
+    # make ifu mask
+    xmask = [6, 8, 8, 10, 10]
+    ymask = [6, 8, 8, 10, 10]
 
-    # draw the hexagon with the center 6 points removed. 72 total points
-    c = (cir <= 5**2) & (cir >=2)
+    for idx, i in enumerate(xmask+xmask[::-1]):
+        edge = (10-i)/2
+        if not edge:
+            pass
+        else:
+            xgrid[idx][:edge] = -1
+            xgrid[idx][-edge:] = -1
+
+    for idx, i in enumerate(ymask+ymask[::-1]):
+        edge = (10-i)/2
+        if not edge:
+            pass
+        else:
+            ygrid[idx][:edge] = -1
+            ygrid[idx][-edge:] = -1
 
 
-    # Remove the center 4 boxes
-    #coords2 =  np.append(coords[:44], coords[46:54], axis=0)
-    #coords2 = np.append(coords2, coords[56:], axis=0)
+    # mask out the center 6
+    ygridt = ygrid.T
+    ygridtr = ygridt.ravel()
+    ygridtr[43:46] = -1
+    ygridtr[53:56] = -1
 
-    # Makes the RA/DEC grid, ***lower left corner***
-    #x = [shiftRADec(RA, DEC, i*98.4, 0)[0] for i in coords2[:,0]]
-    #y = [shiftRADec(RA, DEC, 0, i*98.4)[1] for i in coords2[:,1]]
+    # now reshape it back
+    ygridt = ygridtr.reshape(10,10)
+    ygrid = ygridt.T
 
-    x = [shiftRADec(RA, DEC, i*98.4, 0)[0] for i in xgrid[c]]
-    y = [shiftRADec(RA, DEC, 0, i*98.4)[1] for i in ygrid[c]]
+
+    mask = ygrid != -1
+
+    x = [shiftRADec(RA, DEC, i*100, 0)[0] for i in xgrid[mask].ravel()]
+    y = [shiftRADec(RA, DEC, 0, i*100)[1] for i in ygrid[mask].ravel()]
+
+
     return x, y
 
 def gen_ifus(RA, DEC):
@@ -62,8 +84,8 @@ def mk_pointings(startRA, startDEC):
     numDEC = 2
     coords = np.asarray([(x, y) for x in xrange(numRA) for y in xrange(numDEC)])
     # 1320'' = 22', the width of the pointings.
-    x = [shiftRADec(startRA, startDEC, i*1320, 0)[0] for i in coords[:,0]]
-    y = [shiftRADec(startRA, startDEC, 0, i*1320)[1] for i in coords[:,1]]
+    x = [shiftRADec(startRA, startDEC, i*960, 0)[0] for i in coords[:,0]]
+    y = [shiftRADec(startRA, startDEC, 0, i*960)[1] for i in coords[:,1]]
 
     return x, y
 
