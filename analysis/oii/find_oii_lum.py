@@ -38,10 +38,10 @@ with pyf.open('sdss12_oii_flux_v2.fits') as f:
 ### THIS IS THE PART THAT GETS LOOPED OVER WHEN IT COMES TO THAT ###
 #####
 
-#x = -17.706039
-#y = 0.49785233
-x = -21.017
-y = 1.24
+x = -17.706039
+y = 0.49785233
+#x = -21.017
+#y = 1.24
 
 # find the bins of the color/mag point of interest
 xbin = pyl.digitize([x], locx)
