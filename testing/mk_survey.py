@@ -16,25 +16,17 @@ def mk_ifus(RA, DEC):
     xgrid, ygrid = np.meshgrid(ifus, ifus)
 
     # make ifu mask
-    xmask = [6, 8, 8, 10, 10]
-    ymask = [6, 8, 8, 10, 10]
+    mask = [6, 8, 8, 10, 10]
 
-    for idx, i in enumerate(xmask+xmask[::-1]):
+    for idx, i in enumerate(mask+mask[::-1]):
         edge = (10-i)/2
         if not edge:
             pass
         else:
             xgrid[idx][:edge] = -1
             xgrid[idx][-edge:] = -1
-
-    for idx, i in enumerate(ymask+ymask[::-1]):
-        edge = (10-i)/2
-        if not edge:
-            pass
-        else:
             ygrid[idx][:edge] = -1
             ygrid[idx][-edge:] = -1
-
 
     # mask out the center 6
     ygridt = ygrid.T

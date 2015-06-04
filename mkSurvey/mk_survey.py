@@ -3,34 +3,44 @@ import numpy as np
 
 def mk_ifus(RA, DEC):
     ''' Generates the IFU arrays, and puts them in RA/DEC space. Returns the
-    lower left corner for each of the IFUs.
+    lower left corner for each of the IFUs. The general shape is 78 ifus which
+    are in a sort of octagon pattern, with the center 6 removed for some
+    reason.
 
     '''
 
-    # Called by gen_ifus
-    # Generate the 10 x 10 array
-    coords = np.asarray([(x, y) for x in xrange(10) for y in xrange(10)])
+    # Generate the 10 x 10 grid
+    ifus = np.arange(10)
+    xgrid, ygrid = np.meshgrid(ifus, ifus)
 
-    # Generate the 10 x 11 array
-    #xgrid, ygrid = np.mgrid[:10, :11]
+    # make ifu mask
+    mask = [6, 8, 8, 10, 10]
 
-    # calculate the distance from the center to each point
-    #cir = (xgrid - 4.5)**2 + (ygrid - 4)**2
+    for idx, i in enumerate(mask+mask[::-1]):
+        edge = (10-i)/2
+        if not edge:
+            pass
+        else:
+            xgrid[idx][:edge] = -1
+            xgrid[idx][-edge:] = -1
+            ygrid[idx][:edge] = -1
+            ygrid[idx][-edge:] = -1
 
-    # draw the hexagon with the center 6 points removed. 72 total points
-    #c = (cir <= 5**2) & (cir >=2)
+    # mask out the center 6
+    ygridt = ygrid.T
+    ygridtr = ygridt.ravel()
+    ygridtr[43:46] = -1
+    ygridtr[53:56] = -1
+
+    # now reshape it back
+    ygridt = ygridtr.reshape(10,10)
+    ygrid = ygridt.T
 
 
-    # Remove the center 4 boxes
-    coords2 =  np.append(coords[:44], coords[46:54], axis=0)
-    coords2 = np.append(coords2, coords[56:], axis=0)
+    mask = ygrid != -1
 
-    # Makes the RA/DEC grid, ***lower left corner***
-    x = [shiftRADec(RA, DEC, i*98.4, 0)[0] for i in coords2[:,0]]
-    y = [shiftRADec(RA, DEC, 0, i*98.4)[1] for i in coords2[:,1]]
-
-    #x = [shiftRADec(RA, DEC, i*98.4, 0)[0] for i in xgrid[c]]
-    #y = [shiftRADec(RA, DEC, 0, i*98.4)[1] for i in ygrid[c]]
+    x = [shiftRADec(RA, DEC, i*100, 0)[0] for i in xgrid[mask].ravel()]
+    y = [shiftRADec(RA, DEC, 0, i*100)[1] for i in ygrid[mask].ravel()]
     return x, y
 
 def gen_ifus(RA, DEC):
