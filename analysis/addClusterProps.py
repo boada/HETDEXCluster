@@ -34,7 +34,7 @@ with hdf.File('out1204878_halo.hdf5', 'r') as f:
     dset = f[f.keys()[0]]
     data = dset.value
 
-data = updateArray(data)
+#data = updateArray(data)
 
 # now we need to make a mask for the data -- HETDEX DEPTH!!!
 #mask1 = (data['M200']/0.72 >= 1e13) & (data['Z'] < 0.5)
@@ -84,9 +84,9 @@ for i,h in enumerate(halos):
     sys.stdout.write('\b')
 
 # now we make another new file
-#with hdf.File('out1204878_complete.hdf5', 'w') as f:
+with hdf.File('out1204878_complete.hdf5', 'w') as f:
 #with hdf.File('out1204878_hetdex.hdf5', 'w') as f:
-with hdf.File('out1204878_allGalaxies_props.hdf5', 'w') as f:
+#with hdf.File('out1204878_allGalaxies_props.hdf5', 'w') as f:
 #    data[mask] = dataMasked
     f['dset_complete'] = dataMasked
     f.flush()

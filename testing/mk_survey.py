@@ -72,8 +72,8 @@ def mk_pointings(startRA, startDEC):
     # make the area 42 x 10 degrees or 115 x 27 pointings
     #numRA = 115
     #numDEC = 27
-    numRA = 2
-    numDEC = 2
+    numRA = 4
+    numDEC = 3
     coords = np.asarray([(x, y) for x in xrange(numRA) for y in xrange(numDEC)])
     # 1320'' = 22', the width of the pointings.
     x = [shiftRADec(startRA, startDEC, i*960, 0)[0] for i in coords[:,0]]

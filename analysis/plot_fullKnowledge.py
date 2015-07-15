@@ -69,8 +69,12 @@ ax[0].set_ylabel('$LOSVD_{Rec}$ ($km s^{-1})$')
 # now the mass
 xdat = dataMasked['M200'][halos]
 ydat = dataMasked['MASS'][halos]
-xdat = pyl.log10(xdat[~pyl.isnan(ydat)])
-ydat = pyl.log10(ydat[~pyl.isnan(ydat)])
+xdat = pyl.log10(xdat)
+ydat = pyl.log10(ydat)
+
+xdat = xdat[~pyl.isnan(ydat)]
+ydat = ydat[~pyl.isnan(ydat)]
+
 
 scatterDensity(ax[1], xdat, ydat, extent=[[xdat.min(), xdat.max()],
     [ydat.min(), ydat.max()]])

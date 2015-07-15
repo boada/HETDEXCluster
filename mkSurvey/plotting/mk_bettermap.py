@@ -90,28 +90,37 @@ def main():
     fig_height = fig_width*golden_mean
     fig_size = [fig_width,fig_height]
 
-    m = Basemap(projection='stere', width=350000.444*75,
-            height=300000.444*75*golden_mean, lat_ts=-30, lat_0=-30,
-            lon_0=celestialRA(-20))
+    m = Basemap(projection='stere', width=111319.444*25,
+        height=111319.444*40*golden_mean, lat_ts=-45, lat_0=-50,
+        lon_0=75)
+
+    #m = Basemap(projection='stere', width=350000.444*30,
+    #        height=300000.444*30*golden_mean, lat_ts=-30, lat_0=-45,
+    #        lon_0=75)
 
 
     f, ax = plt.subplots(1,1)
     ax = [ax]
 
-    data = np.genfromtxt('halos.txt', dtype=None, names=True)
-    for ramax, ramin, decmax, decmin in zip(data['RAmax'], data['RAmin'],
-            data['DECmax'], data['DECmin']):
-            print ramax, decmax, ramin, decmin
+    data = np.genfromtxt('buzzard_truth.txt', dtype=None, names=True)
+
+    rectangle(m, data['RAmax'].max(), data['DECmax'].max(), data['RAmin'].min(),
+            data['DECmin'].min(), shading='#188487', ec='none', ax=ax[0])
+
+#    for ramax, ramin, decmax, decmin in zip(data['RAmax'], data['RAmin'],
+#            data['DECmax'], data['DECmin']):
+#            print ramax, decmax, ramin, decmin
             #really is ramin, decmax, ramax, decmin
-            rectangle(m, ramax, decmax, ramin, decmin, shading='#188487',
-                ec='none', ax=ax[0])
+            #rectangle(m, ramax, decmax, ramin, decmin, shading='#188487',
+#            rectangle(m, ramax, decmax, ramin, decmin, shading='none',
+#                ec='k', ax=ax[0])
 
     #rectangle(m, 110, 80, 90, 10, shading='r')
     #rectangle(m, 20, 50, 350, 10, shading='r')
     #rectangle(m, 430, -10, 292, -20, shading='#a60628', ec='none', ax=ax[0])
     #rectangle(m, 430, -10, 292, -20, shading='#a60628', ec='none', ax=ax[1])
-    rectangle(m, 91.439438, -2.336169, 59.538841, -9.7056122,
-            shading='#a60628', ec='none', ax=ax[0])
+    #rectangle(m, 91.439438, -2.336169, 59.538841, -9.7056122,
+            #shading='#a60628', ec='none', ax=ax[0])
 
     #plot_points(m, data, ax=ax[1])
 
