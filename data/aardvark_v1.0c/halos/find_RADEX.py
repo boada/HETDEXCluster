@@ -8,8 +8,7 @@ outFile = open('tiles.txt', 'w')
 
 for f in files:
     print f
-    try:
-        f = hdf.File(f, 'r')
+    with hdf.File(f, 'r') as f:
         dset = f[f.keys()[0]]
         ra = dset['RA']
         dec = dset['DEC']
@@ -24,6 +23,4 @@ for f in files:
                 ra.min(), dec.max(), dec.min()))
 
         f.close()
-    except:
-        'Something is wrong!'
 outFile.close()
