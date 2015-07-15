@@ -42,7 +42,7 @@ def calc_mass_Evrard(data, A1D = 1082.9, alpha=0.3361):
     avgz = data['CLUSZ'][0]
     vd = data['LOSVD'][0]
 
-    return 1e15/(aca.H0 * aca.Ez(avgz)/100.) * (vd/A1D)**-alpha
+    return 1e15/(aca.H0 * aca.Ez(avgz)/100.) * (vd/A1D)**(1/alpha)
 
 def calc_mass(data):
     ''' Calculates the dynamical mass (m200) and radius (r200) of the galaxy
