@@ -5,10 +5,9 @@ from numpy.lib import recfunctions
 data_dir = '/home/boada/scratch/truth/'
 
 def find_tile(RAmin, DECmin, RAmax, DECmax, data=False):
-    ''' Returns the name of the tile that the current pointing is located
-    inside of. Should be called twice for each pointing. Once for the lower
-    left and once for the upper right, but only if the lower left passes.
-    Throws and error if the pointing sits outside the bounds of any tile.
+    ''' Returns the name of the tile(s) that the current pointing is located
+    inside of. The pointing is a box defined by the max/min of the RA/DEC.
+    Throws an error if the pointing is wholely outside of the tiled region.
 
     '''
 
