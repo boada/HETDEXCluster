@@ -50,32 +50,28 @@ def mp_handler(ra, dec):
 
 if __name__ == "__main__":
 # survey bounds
-    RAmax = 430
-    RAmin = 292
-    DECmax = 0
-    DECmin = -10
+    RAmax = 90
+    RAmin = 60
+    DECmax = -40
+    DECmin = -61
 
-    # here we are making 25 surveys
-    while 1:
-        ra = np.random.rand(1)*(RAmax-RAmin)+RAmin
-        dec = np.random.rand(1)*(DECmax-DECmin)+DECmin
-        if ra > 360:
-            ra -= 360.
-        print ra, dec
-        # make the tiles across the boundary friendly.
-        data = fix_tiles()
-        # now we make the individual pointings, 115x27 of them
-        try:
-            for p in gen_pointings(ra, dec):
-                try:
-                    tile = np.append(tile, find_tile(p[0], p[1], data=data))
-                    tile = np.append(tile, find_tile(p[2], p[3], data=data))
-                except NameError:
-                    tile = find_tile(p[0], p[1], data=data)
-                    tile = np.append(tile, find_tile(p[2], p[3], data=data))
-            break
-        except ValueError:
-            print 'OUT OF BOUNDS!'
+    ra = RAmin
+    dec = DECmin
+    # make the tiles across the boundary friendly. Dont have to do this in the
+    # new version but we'll leave it for the time being
+    data = fix_tiles()
+
+    # now we make the individual pointings, 115x27 of them
+    try:
+        for p in gen_pointings(ra, dec):
+            try:
+                tile = np.append(tile, find_tile(p[0], p[1], data=data))
+                tile = np.append(tile, find_tile(p[2], p[3], data=data))
+            except NameError:
+                tile = find_tile(p[0], p[1], data=data)
+                tile = np.append(tile, find_tile(p[2], p[3], data=data))
+    except ValueError:
+        print 'OUT OF BOUNDS!'
 
     tile = np.unique(tile)
 

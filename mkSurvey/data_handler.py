@@ -4,11 +4,54 @@ from numpy.lib import recfunctions
 #data_dir = '../data/truth/'
 data_dir = '/home/boada/scratch/truth/'
 
+def find_tile(RA, DEC, data=False):
+    ''' Returns the name of the tile that the current pointing is located
+    inside of. Should be called twice for each pointing. Once for the lower
+    left and once for the upper right, but only if the lower left passes.
+    Throws and error if the pointing sits outside the bounds of any tile.
+
+    '''
+
+    if not len(data):
+        data = fix_tiles()
+        #data = np.genfromtxt('tiles.txt', names=True, dtype=None)
+    else:
+        pass
+    # Find the RA/DEC of the tile
+    tileDEC = (data['DECmax'] > DEC) & (DEC > data['DECmin'])
+    tileRA = (data['RAmax'] > RA) & (RA > data['RAmin'])
+    tile = np.intersect1d(data['name'][tileRA], data['name'][tileDEC])
+
+    if len(tile):
+        return tile
+    else:
+        raise ValueError('Out of RA/DEC bounds!')
+
+def fix_tiles():
+    ''' fixes the tile catalog for the tiles that overlap zero. Now the tiles
+    will go from RAmin -> 360 and 0 -> RAmax. Still should only return one tile
+    if only one tile is covering the data point.
+
+    '''
+
+    data = np.genfromtxt('buzzard_truth.txt', names=True, dtype=None)
+    # Find the tiles that overlap zero.
+    x = np.where(data['RAmax'] < data['RAmin'])
+    d2 = data[x]
+    d2['RAmax'] = 360.
+    d3 = data[x]
+    d3['RAmin'] = 0.0
+    data = np.delete(data, x)
+    data = np.append(data, d2)
+    data = np.append(data, d3)
+
+    return data
+
 def load_tiles(tiles):
     data = []
     for t in tiles:
 	t = t.replace('truth','')
-        f = hdf.File(data_dir+'Aardvark_v1.0c_truth_des_rotated.'+ t +'.hdf5',
+        f = hdf.File(data_dir+'Buzzard-highres_galaxies_shmatch.'+ t +'.hdf5',
                 'r')
         dset = f[f.keys()[0]]
         data.append(dset)
