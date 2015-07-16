@@ -7,7 +7,6 @@ import h5py as hdf
 from os import environ
 from utils import update_result_file, fill_out_halo_info2
 
-
 # shared data... This is where the big catalog goes
 import myglobals
 
@@ -76,10 +75,6 @@ if __name__ == "__main__":
     tile = np.unique(tile)
 
     print tile
-    # load the data -- only the tiles we are going to use
-    # global catalog
-    # catalog = load_tiles(tile)
-
     # trim down the the data list to make the finding faster
     # only returns the tiles found in the previous step.
     myglobals.data = np.asarray([d1 for d1 in data if d1['name'] in tile],
