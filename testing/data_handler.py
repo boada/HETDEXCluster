@@ -11,7 +11,7 @@ def find_tile(RAmin, DECmin, RAmax, DECmax, data=False):
 
     '''
 
-    if not len(data):
+    if data is False:
         data = fix_tiles()
         #data = np.genfromtxt('tiles.txt', names=True, dtype=None)
     else:
