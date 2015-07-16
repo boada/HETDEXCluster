@@ -1,8 +1,8 @@
 import h5py as hdf
 import numpy as np
 
-#data_dir = '/home/boada/scratch/'
-data_dir= '/Users/steven/Projects/desCluster/data/halos/'
+data_dir = '/home/boada/scratch/halos/'
+#data_dir= '/Users/steven/Projects/desCluster/data/halos/'
 
 def find_indices(bigArr, smallArr):
     from bisect import bisect_left, bisect_right
@@ -15,11 +15,34 @@ def find_indices(bigArr, smallArr):
     inds = []
     sortedind = np.argsort(bigArr)
     sortedbigArr = bigArr[sortedind]
-    for i in range(len(smallArr)):
+    for i, _ in enumerate(smallArr):
         i1 = bisect_left(sortedbigArr, smallArr[i])
         i2 = bisect_right(sortedbigArr, smallArr[i])
         try:
-            inds.append(sortedind[i1:i2][0])
+            inds.append(sortedind[i1:i2])
+        except IndexError:
+            pass
+        if i % 10000 ==0:
+            print i
+
+    return inds
+
+def find_indices_bool(bigArr, smallArr):
+    from bisect import bisect_left, bisect_right
+    ''' Takes the full halo catalog and picks out the HALOIDs that we are
+    interested in. Only returns their indexes. It will need to be combined
+    with the result catalog in some other way.
+
+    '''
+
+    inds = np.zeros(len(bigArr), dtype=bool)
+    sortedind = np.argsort(bigArr)
+    sortedbigArr = bigArr[sortedind]
+    for i, _ in enumerate(smallArr):
+        i1 = bisect_left(sortedbigArr, smallArr[i])
+        i2 = bisect_right(sortedbigArr, smallArr[i])
+        try:
+            inds[sortedind[i1:i2][0]] = True
         except IndexError:
             pass
 
@@ -47,8 +70,9 @@ def mk_haloCatalog(tiles):
 
     catalog = load_halos(tiles)
     for dset in catalog:
-        result_part = dset['HALOID', 'M200B', 'R200B', 'VRMS', 'RA', 'DEC', 'Z',
-                'NGALS', 'MVIR', 'RVIR', 'M200', 'R200']
+        print dset.file
+        result_part = dset['HALOID', 'RA', 'DEC', 'Z', 'VRMS', 'NGALS', 'M200',
+                'R200']
         try:
             result = np.append(result, result_part)
         except NameError:
@@ -69,19 +93,26 @@ def findRADECmaxmin(ra, dec):
     else:
         return ra.max(), dec.max(), ra.min(), dec.min()
 
-def findHaloTile(RAmax, DECmax, RAmin, DECmin, data=False):
-    ''' Figure out what halo tiles we are going to need to load. Works with the
-    max and min RA/DEC positions to figure that out.
+def findHalotile(RAmin, DECmin, RAmax, DECmax, data=False):
+    ''' Returns the name of the tile(s) that the current pointing is located
+    inside of. The pointing is a box defined by the max/min of the RA/DEC.
+    Throws an error if the pointing is wholely outside of the tiled region.
 
     '''
 
     if not len(data):
         data = fix_haloTiles()
+        #data = np.genfromtxt('tiles.txt', names=True, dtype=None)
     else:
         pass
-    tileDEC = (data['DECmax'] > DECmax) & (DECmin > data['DECmin'])
-    tileRA = (data['RAmax'] > RAmax) & (RAmin > data['RAmin'])
-    tile = np.intersect1d(data['name'][tileRA], data['name'][tileDEC])
+    # Find all of the tiles that don't overlap with the box defined. We'll take
+    # the inverse of that below to find all of the tiles we want.
+    # left/right
+    leftRight = (RAmin > data['RAmax'] ) | (RAmax < data['RAmin'])
+    # top/bottom
+    topBottom = (DECmin > data['DECmax']) | (DECmax < data['DECmin'])
+
+    tile = np.intersect1d(data['name'][~leftRight],data['name'][~topBottom])
 
     if len(tile):
         return tile
