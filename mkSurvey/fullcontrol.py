@@ -63,7 +63,7 @@ if __name__ == "__main__":
 
     # now we make the individual pointings, 115x27 of them
     try:
-        for p in gen_pointings(ra, dec):
+        for p in gen_pointings(ra, dec, maxRA=RAmax, maxDEC=DECmax):
             try:
                 tile = np.append(tile, find_tile(p[0], p[1], data=data))
                 tile = np.append(tile, find_tile(p[2], p[3], data=data))
