@@ -4,7 +4,7 @@ from numpy.lib import recfunctions
 #data_dir = '../data/truth/'
 data_dir = '/home/boada/scratch/truth/'
 
-def find_tile(RA, DEC, data=False):
+def find_tile(RAmin, DECmin, RAmax, DECmax, data=False):
     ''' Returns the name of the tile that the current pointing is located
     inside of. Should be called twice for each pointing. Once for the lower
     left and once for the upper right, but only if the lower left passes.
@@ -17,10 +17,14 @@ def find_tile(RA, DEC, data=False):
         #data = np.genfromtxt('tiles.txt', names=True, dtype=None)
     else:
         pass
-    # Find the RA/DEC of the tile
-    tileDEC = (data['DECmax'] > DEC) & (DEC > data['DECmin'])
-    tileRA = (data['RAmax'] > RA) & (RA > data['RAmin'])
-    tile = np.intersect1d(data['name'][tileRA], data['name'][tileDEC])
+    # Find all of the tiles that don't overlap with the box defined. We'll take
+    # the inverse of that below to find all of the tiles we want.
+    # left/right
+    leftRight = (RAmin > data['RAmax'] ) | (RAmax < data['RAmin'])
+    # top/bottom
+    topBottom = (DECmin > data['DECmax']) | (DECmax < data['DECmin'])
+
+    tile = np.intersect1d(data['name'][~leftRight],data['name'][~topBottom])
 
     if len(tile):
         return tile

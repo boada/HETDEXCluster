@@ -93,16 +93,26 @@ def findRADECmaxmin(ra, dec):
     else:
         return ra.max(), dec.max(), ra.min(), dec.min()
 
-def findHaloTile(RAmax, DECmax, RAmin, DECmin):
-    ''' Figure out what halo tiles we are going to need to load. Works with the
-    max and min RA/DEC positions to figure that out.
+def findHalotile(RAmin, DECmin, RAmax, DECmax, data=False):
+    ''' Returns the name of the tile(s) that the current pointing is located
+    inside of. The pointing is a box defined by the max/min of the RA/DEC.
+    Throws an error if the pointing is wholely outside of the tiled region.
 
     '''
 
-    data = fix_haloTiles()
-    tileDEC = (data['DECmax'] > DECmin) & (DECmin > data['DECmin'])
-    tileRA = (data['RAmax'] > RAmin) & (RAmin > data['RAmin'])
-    tile = np.intersect1d(data['name'][tileRA], data['name'][tileDEC])
+    if not len(data):
+        data = fix_haloTiles()
+        #data = np.genfromtxt('tiles.txt', names=True, dtype=None)
+    else:
+        pass
+    # Find all of the tiles that don't overlap with the box defined. We'll take
+    # the inverse of that below to find all of the tiles we want.
+    # left/right
+    leftRight = (RAmin > data['RAmax'] ) | (RAmax < data['RAmin'])
+    # top/bottom
+    topBottom = (DECmin > data['DECmax']) | (DECmax < data['DECmin'])
+
+    tile = np.intersect1d(data['name'][~leftRight],data['name'][~topBottom])
 
     if len(tile):
         return tile
