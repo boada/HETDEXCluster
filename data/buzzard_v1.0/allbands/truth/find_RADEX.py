@@ -2,7 +2,7 @@ from glob import glob
 import h5py as hdf
 from numpy import where
 
-files = glob('*.hdf5')
+files = glob('*Oii.hdf5')
 
 outFile = open('buzzard_truth.txt', 'w')
 
