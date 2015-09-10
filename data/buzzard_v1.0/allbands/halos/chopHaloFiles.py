@@ -33,4 +33,4 @@ x = split_list(sorted, 20)
 for idx, p in enumerate(x):
     print idx
     with hdf.File('halo'+str(idx).zfill(2)+'.hdf5', 'w') as f:
-        f[str(idx)] = result[p]
+        f['halo'+str(idx).zfill(2)] = result[p]
