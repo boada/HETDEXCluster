@@ -88,6 +88,11 @@ def findLOSV(data, ClusZ=None):
         losv = c * (data['Z'] - ClusZ)/(1 + ClusZ)
         return losv
 
+def findR200(data):
+    LOSVD = data['LOSVD'][0]
+    avgz = data['CLUSZ'][0]
+    return np.sqrt(3) * (LOSVD)/(10*aca.H0 * aca.Ez(avgz))
+
 def splitList(alist, wanted_parts=1):
     ''' Breaks a list into a number of parts. If it does not divide evenly then
     the last list wil have an extra element.
@@ -130,7 +135,7 @@ def rejectInterlopers(data):
                             abs(LOSVsorted['LOSV'][i+1]) < 0):
                         indices[0][index] = i + 1
 
-                print indices[0]
+                #print indices[0]
                 LOSVsorted = np.delete(LOSVsorted, indices[0])
             else:
                 rejected = False
@@ -172,3 +177,14 @@ def updateArray(data):
             [newData, newData, newData, newData, newData], dtypes='>f4',
             usemask=False)
     return data
+def updateArray2(data):
+    ''' Makes the new fields that we are going to add things into in the
+    functions above. This should only be called once.
+
+    '''
+
+    newData = -np.ones(data.size)
+    data = rfns.append_fields(data, ['IDX', 'SEP', 'CLUSZ'],
+            [newData, newData, newData], dtypes='>f4',
+            usemask=False)
+    return data 
