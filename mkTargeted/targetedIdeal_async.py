@@ -1,10 +1,8 @@
 from multiprocessing import Pool
 import h5py as hdf
 import numpy as np
-import h5py as hdf
-from calc_cluster_props import updateArray, findClusterRedshift,\
-    findSeperationSpatial, findLOSV, findLOSVD, calc_mass_Evrard
-from os import environ
+from calc_cluster_props import *
+import os
 
 class AsyncFactory:
     def __init__(self, func, cb_func):
@@ -23,9 +21,10 @@ def worker(pos, data, center):
     #print "PID: %d \t Value: %d" % (os.getpid(), pos)
     data = updateArray(data)
     data = findClusterRedshift(data)
-    data = findSeperationSpatial(data, center)
+    #data = findSeperationSpatial(data, center)
     data = findLOSV(data)
     data = findLOSVD(data)
+    data = findLOSVDgmm(data)
     data = calc_mass_Evrard(data, A1D = 1177, alpha = 0.364)
     return pos, data
 
@@ -35,6 +34,8 @@ def cb_func((pos, data)):
     results['IDX'][pos] = pos
     results['CLUSZ'][pos] = data['CLUSZ'][0]
     results['LOSVD'][pos] = data['LOSVD'][0]
+    results['LOSVDgmm'][pos] = data['LOSVDgmm'][0]
+    results['R200'][pos] = data['R200'][0]
     results['MASS'][pos] = data['MASS'][0]
 
 def find_indices(bigArr, smallArr):
@@ -72,7 +73,7 @@ def find_indices_multi(bigArr, smallArr, multi):
     inds = []
     sortedind = np.argsort(bigArr)
     sortedbigArr = bigArr[sortedind]
-    for sub in multi:
+    for j, sub in enumerate(multi):
         smallArr2 = smallArr[sub]
         tmp = []
         for i, _ in enumerate(smallArr2):
@@ -82,8 +83,8 @@ def find_indices_multi(bigArr, smallArr, multi):
                 tmp.append(sortedind[i1:i2])
             except IndexError:
                 pass
-            if i % 10000 ==0:
-                print(i)
+        if j % 10000 == 0:
+            print(j)
 
         inds.append(np.array(list(chain(*tmp))))
     return inds
@@ -124,7 +125,10 @@ if __name__ == "__main__":
     halo = mkHalo()
     truth = mkTruth()
 
-    mask = (halo['m200c'] >= 1e13) & (halo['upid'] == -1)
+    mask = truth['g'] < 23
+    truth = truth[mask]
+
+    mask = (halo['m200c']/0.72 >= 1e13) & (halo['upid'] == -1)
     maskedHalo = halo[mask]
     hids, uniqueIdx = np.unique(maskedHalo['id'], return_index=True)
 
@@ -137,27 +141,33 @@ if __name__ == "__main__":
     # make the results container
     results = np.zeros((len(subHalos),), dtype=[('IDX', '>i4'), ('HALOID',
         '>i8'), ('ZSPEC', '>f4'), ('VRMS', '>f4'), ('M200c', '>f4'), ('CLUSZ',
-            '>f4'), ('LOSVD', '>f4'), ('MASS', '>f4')])
+            '>f4'), ('LOSVD', '>f4'), ('LOSVDgmm', '>f4'), ('MASS', '>f4'),
+            ('R200', '>f4'), ('NGAL', '>i4')])
     results['HALOID'] = hids
 
-    # do work
+    print('do work')
     for i, SH in enumerate(subHalos):
         center = (maskedHalo['ra'][uniqueIdx[i]],
                 maskedHalo['dec'][uniqueIdx[i]])
         if gals[i].size >= 5:
             async_worker.call(i, truth[gals[i]], center)
             # update results array
+            results['NGAL'][i] = gals[i].size
             results['ZSPEC'][i] = maskedHalo['zspec'][uniqueIdx[i]]
             results['VRMS'][i] = maskedHalo['vrms'][uniqueIdx[i]]/np.sqrt(3)
-            results['M200c'][i] = maskedHalo['m200c'][uniqueIdx[i]]
+            results['M200c'][i] = maskedHalo['m200c'][uniqueIdx[i]]/0.72
         else:
             results['IDX'][i] = i
+            results['NGAL'][i] = gals[i].size
             results['ZSPEC'][i] = maskedHalo['zspec'][uniqueIdx[i]]
             results['VRMS'][i] = maskedHalo['vrms'][uniqueIdx[i]]/np.sqrt(3)
-            results['M200c'][i] = maskedHalo['m200c'][uniqueIdx[i]]
-
+            results['M200c'][i] = maskedHalo['m200c'][uniqueIdx[i]]/0.72
 
     async_worker.wait()
 
+    try:
+        os.remove('result_targetedIdeal.hdf5')
+    except OSError:
+        pass
     with hdf.File('result_targetedIdeal.hdf5', 'w') as f:
         f['result_targetedIdeal'] = results
