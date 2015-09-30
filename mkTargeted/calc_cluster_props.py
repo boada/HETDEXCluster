@@ -3,6 +3,7 @@ from astLib import astCoords as aco
 from astLib import astStats as ast
 from astLib import astCalc as aca
 from numpy.lib import recfunctions as rfns
+from sklearn import mixture
 
 # aardvark simulation cosmology
 aca.H0 = 72
@@ -18,6 +19,49 @@ def findLOSVD(data):
     else:
         data['LOSVD'] = 0.0
 
+    return data
+
+def findLOSVDgmm(data):
+
+    LOSV = data['LOSV']
+    lowest_bic = np.infty
+    bic = []
+    n_components_range = range(1, 4)
+    cv_types = ['spherical', 'tied', 'diag', 'full']
+    #cv_types = ['diag']
+    for cv_type in cv_types:
+        for n_components in n_components_range:
+            # Fit a mixture of Gaussians with EM
+            gmm = mixture.GMM(n_components=n_components,
+                    covariance_type=cv_type)
+            gmm.fit(LOSV)
+            bic.append(gmm.bic(LOSV))
+            if bic[-1] < lowest_bic:
+                lowest_bic = bic[-1]
+                best_gmm = gmm
+
+    # figure things out -- this comes from the wikipedia article on mixture
+    # distributions. I have no idea if it is completely trustworthy.
+    #covars = best_gmm.covars_.ravel()
+    #weights = best_gmm.weights_.ravel()
+    #means = best_gmm.means_.ravel()
+    #wmeans = np.sum(weights*means)
+
+    #parts = weights * ((means - wmeans)**2 + covars)
+    #newLOSVD = np.sqrt(np.sum(parts))
+
+    #data['R200'] = best_gmm.n_components
+
+    ## now we resample and then see
+    dx = np.linspace(LOSV.min()-100,LOSV.max()+100,1000)
+    logprob, responsibilities = best_gmm.score_samples(dx)
+    pdf = np.exp(logprob)
+
+    normedPDF = pdf/np.sum(pdf)
+
+    u = np.sum(dx*normedPDF)
+    data['LOSVDgmm'] = np.sqrt(np.sum(normedPDF*(dx-u)**2))
+    #data['LOSVD'] = newLOSVD
     return data
 
 def calc_mass_Saro(data):
@@ -91,7 +135,8 @@ def findLOSV(data, ClusZ=None):
 def findR200(data):
     LOSVD = data['LOSVD'][0]
     avgz = data['CLUSZ'][0]
-    return np.sqrt(3) * (LOSVD)/(10*aca.H0 * aca.Ez(avgz))
+    data['R200'] = np.sqrt(3) * (LOSVD)/(10*aca.H0 * aca.Ez(avgz))
+    return data
 
 def splitList(alist, wanted_parts=1):
     ''' Breaks a list into a number of parts. If it does not divide evenly then
@@ -102,6 +147,69 @@ def splitList(alist, wanted_parts=1):
     length = len(alist)
     return [alist[i*length // wanted_parts: (i+1)*length // wanted_parts] for i
         in range(wanted_parts)]
+
+
+def z2v(z, zc):
+    """Convert the redshift to km/s relative to the cluster center"""
+    return 2.99792458e5*(z-zc)/(1+zc)
+
+
+def shifty_gapper(r, z, zc, vlimit=10000, ngap=30, glimit=1000):
+   """Determine cluster membersip according to the shifty
+      gapper technique
+      The shifty gapper technique includes the following steps:
+      1.  Remove outliers outside of +- vlimit
+      2.  Locate the Ngap targets with radius close to r_i
+      3.  Within this sample of N targets, identify sources with
+          |v_pec| < |v_pec_i|
+      4.  Meaure the largest gap within this subset of targets
+      5.  If v_gap is larger than glimit, reject the source
+      Parameters
+      -----------
+      vlimit: float
+         Initial limit in velocity offset from the cluster center
+      ngap: int
+         Number of sources to use in in estimating the gap
+      glimit:  float
+         Maximum gap size for rejecting objects
+
+      Parameters
+      -----------
+      incluster: ndarray
+          Returns a boolean array where objects in the cluster have
+          a value of True
+   """
+
+   #convert to the velocity scale
+   v = z2v(z,zc)
+
+   #limit the source to only sources within the vlimit
+   vmask = abs(v) < vlimit
+
+   nobj=len(r)
+   incluster=np.zeros(nobj, dtype=bool)
+
+   if nobj<ngap:
+      raise Exception('Number of sources is less thant number of gap sources')
+
+   for i in range(nobj):
+     if abs(v[i])<vlimit:
+       #find the ngap closest sources
+       r_j=abs(r[vmask]-r[i]).argsort()
+       vg=v[vmask][r_j[0:ngap]]
+
+       #find the sources with |v_pec| < |v_pec_i|
+       mask=abs(vg)<=abs(v[i])
+       if mask.sum()>1:
+          vg=vg[mask]
+          #now sort these sources and find the biggest gap
+          vg.sort()
+          if np.diff(vg).max()<glimit: incluster[i]=True
+       else:
+          incluster[i]=True
+
+   return incluster
+
 
 def rejectInterlopers(data):
     ''' Does all of the work to figure out which galaxies don't belong. Makes a
@@ -173,18 +281,8 @@ def updateArray(data):
     '''
 
     newData = -np.ones(data.size)
-    data = rfns.append_fields(data, ['SEP', 'CLUSZ', 'LOSV', 'LOSVD', 'MASS'],
-            [newData, newData, newData, newData, newData], dtypes='>f4',
-            usemask=False)
+    data = rfns.append_fields(data, ['SEP', 'CLUSZ', 'LOSV', 'LOSVD',
+        'LOSVDgmm', 'MASS', 'R200', 'NGAL'], [newData, newData, newData,
+            newData, newData, newData, newData, newData], dtypes='>f4',
+        usemask=False)
     return data
-def updateArray2(data):
-    ''' Makes the new fields that we are going to add things into in the
-    functions above. This should only be called once.
-
-    '''
-
-    newData = -np.ones(data.size)
-    data = rfns.append_fields(data, ['IDX', 'SEP', 'CLUSZ'],
-            [newData, newData, newData], dtypes='>f4',
-            usemask=False)
-    return data 
