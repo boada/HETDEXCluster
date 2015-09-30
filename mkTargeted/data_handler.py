@@ -1,5 +1,6 @@
 import h5py as hdf
 import numpy as np
+from numpy.lib import recfunctions as rfns
 
 def find_tile(RAmin, DECmin, RAmax, DECmax, data=False):
     ''' Returns the name of the tile(s) that the current pointing is located
@@ -60,6 +61,8 @@ def mkTruth(i=-1):
             dset = f[f.keys()[0]]
             print(dset.file) # print the loading file
             truth_part = dset['HALOID', 'RA', 'DEC', 'Z', 'Oii']
+            truth_part = rfns.append_fields(truth_part, ['g','r'],
+                    [dset['OMAG'][:,1], dset['OMAG'][:,2]], usemask=False)
             try:
                 truth = np.append(truth, truth_part)
             except NameError:
@@ -73,6 +76,9 @@ def mkTruth(i=-1):
                 dset = f[f.keys()[0]]
                 print(dset.file) # print the loading file
                 truth_part = dset['HALOID', 'RA', 'DEC', 'Z', 'Oii']
+                truth_part = rfns.append_fields(truth_part, ['g','r'],
+                        [dset['OMAG'][:,1], dset['OMAG'][:,2]],
+                        usemask=False)
                 try:
                     truth = np.append(truth, truth_part)
                 except NameError:
@@ -88,7 +94,8 @@ def mkHalo():
         with hdf.File(haloPath+'halo'+str(i).zfill(2)+'.hdf5', 'r') as f:
             dset = f[f.keys()[0]]
             print(dset.file)
-            halo_part = dset['id','upid', 'ra', 'dec', 'zspec', 'vrms', 'm200c']
+            halo_part = dset['id','upid', 'ra', 'dec', 'zspec', 'vrms',
+                    'm200c', 'rvir']
             try:
                 halo = np.append(halo, halo_part)
             except NameError:
