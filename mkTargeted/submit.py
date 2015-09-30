@@ -1,15 +1,15 @@
 import os
 import time
-from data_handler import mkHalo
-import numpy as np
+#from data_handler import mkHalo
+#import numpy as np
 
-halo = mkHalo()
+#halo = mkHalo()
+#mask = (halo['m200c']/0.72 >= 1e13) & (halo['upid'] == -1)
+#maskedHalo = halo[mask]
+#hids, uniqueIdx = np.unique(maskedHalo['id'], return_index=True)
 
-mask = (halo['m200c']/0.72 >= 1e13) & (halo['upid'] == -1)
-maskedHalo = halo[mask]
-hids, uniqueIdx = np.unique(maskedHalo['id'], return_index=True)
-
-interval = hids.size//10
+#interval = hids.size//10
+interval = 40528//10
 
 print interval
 
