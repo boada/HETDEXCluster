@@ -39,17 +39,24 @@ def worker(pos, data, center, tZ):
         size = data.size
         #print 'size', data.size
 
-        data = rejectInterlopers(data)
-        data = findLOSVD(data)
+        #data = rejectInterlopers(data)
+        try:
+            x = shifty_gapper(data['SEP'], data['Z'], tZ, ngap=15, glimit=500)
+            data = data[x]
+        except:
+            break
+        #data = findLOSVD(data)
+        data = findLOSVDgmm(data)
+        data['LOSVD'] = data['LOSVDgmm']
 
-        r200 = findR200(data)
-        mask = data['SEP'] < r200
+        data = findR200(data)
+        mask = data['SEP'] < data['R200'][0]
         data = data[mask]
 
         data = findClusterRedshift(data)
         data = findSeperationSpatial(data, center)
-        data = findLOSV(data)
 
+    #data = findLOSVDgmm(data)
     data = calc_mass_Evrard(data, A1D = 1177, alpha = 0.364)
     #print "OUT:PID: %d \t Value: %d" % (os.getpid(), pos)
     return pos, data
@@ -60,12 +67,18 @@ def cb_func((pos, data)):
     results['IDX'][pos] = pos
     results['CLUSZ'][pos] = data['CLUSZ'][0]
     results['LOSVD'][pos] = data['LOSVD'][0]
+    results['LOSVDgmm'][pos] = data['LOSVDgmm'][0]
     results['MASS'][pos] = data['MASS'][0]
+    results['R200'][pos] = data['R200'][0]
+    results['NGAL'][pos] = data.size
 
 if __name__ == "__main__":
     async_worker = AsyncFactory(worker, cb_func)
     halo = mkHalo()
     truth = mkTruth()
+
+    mask = truth['g'] < 23.
+    truth = truth[mask]
 
     mask = (halo['m200c']/0.72 >= 1e13) & (halo['upid'] == -1)
     maskedHalo = halo[mask]
@@ -85,8 +98,9 @@ if __name__ == "__main__":
 
     # make the results container
     results = np.zeros((hids.size,), dtype=[('IDX', '>i4'), ('HALOID',
-        '>i8'), ('ZSPEC', '>f4'), ('VRMS', '>f4'), ('M200c', '>f4'), ('CLUSZ',
-            '>f4'), ('LOSVD', '>f4'), ('MASS', '>f4')])
+        '>i8'), ('ZSPEC', '>f4'), ('VRMS', '>f4'), ('M200c', '>f4'), ('RVIR',
+        '>f4'), ('CLUSZ', '>f4'), ('LOSVD', '>f4'), ('LOSVDgmm', '>f4'),
+        ('MASS', '>f4'), ('R200', '>f4'), ('NGAL', '>i4')])
     results['HALOID'] = hids
     # now we have to make some initial cuts and then make final spatial cuts
     for i, SH in enumerate(hids):
@@ -95,12 +109,13 @@ if __name__ == "__main__":
         raMask = (center[0] - 0.5 < truth['RA']) & (truth['RA'] < center[0] + 0.5)
         decMask = (center[1] - 0.5 < truth['DEC']) & (truth['DEC'] < center[1] +
                 0.5)
-        async_worker.call(i, truth[['RA','DEC', 'Z']][raMask &\
-            decMask], center, maskedHalo['zspec'][uniqueIdx[i]])
+        async_worker.call(i, truth[raMask & decMask], center,
+                maskedHalo['zspec'][uniqueIdx[i]])
 
         results['ZSPEC'][i] = maskedHalo['zspec'][uniqueIdx[i]]
         results['VRMS'][i] = maskedHalo['vrms'][uniqueIdx[i]]/np.sqrt(3)
         results['M200c'][i] = maskedHalo['m200c'][uniqueIdx[i]]/0.72
+        results['RVIR'][i] = maskedHalo['rvir'][uniqueIdx[i]]/0.72
 
     async_worker.wait()
 
