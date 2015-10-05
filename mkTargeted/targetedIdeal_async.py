@@ -1,6 +1,7 @@
 from multiprocessing import Pool
 import h5py as hdf
 import numpy as np
+from data_handler import mkTruth, mkHalo
 from calc_cluster_props import *
 import os
 
@@ -88,36 +89,6 @@ def find_indices_multi(bigArr, smallArr, multi):
 
         inds.append(np.array(list(chain(*tmp))))
     return inds
-
-
-def mkTruth():
-    truthPath = './../data/buzzard_v1.0/allbands/truth/'
-    # build truth database
-    for i in range(20):
-        with hdf.File(truthPath+'truth'+str(i).zfill(2)+'_Oii.hdf5', 'r') as f:
-            dset = f[f.keys()[0]]
-            print(dset.file) # print the loading file
-            truth_part = dset['HALOID', 'RA', 'DEC', 'Z', 'Oii']
-            try:
-                truth = np.append(truth, truth_part)
-            except NameError:
-                truth = truth_part
-    return truth
-
-def mkHalo():
-    haloPath = './../data/buzzard_v1.0/allbands/halos/'
-    # build halo database
-    for i in range(20):
-        with hdf.File(haloPath+'halo'+str(i).zfill(2)+'.hdf5', 'r') as f:
-            dset = f[f.keys()[0]]
-            print(dset.file)
-            halo_part = dset['id','upid', 'ra', 'dec', 'zspec', 'vrms', 'm200c']
-            try:
-                halo = np.append(halo, halo_part)
-            except NameError:
-                halo = halo_part
-
-    return halo
 
 if __name__ == "__main__":
 
