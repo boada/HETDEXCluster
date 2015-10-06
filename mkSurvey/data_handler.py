@@ -1,8 +1,6 @@
 import h5py as hdf
 import numpy as np
-from numpy.lib import recfunctions
-#data_dir = '../data/truth/'
-data_dir = '/home/boada/scratch/truth/'
+from numpy.lib import recfunctions as rfns
 
 def find_tile(RAmin, DECmin, RAmax, DECmax, data=False):
     ''' Returns the name of the tile(s) that the current pointing is located
@@ -50,29 +48,60 @@ def fix_tiles():
 
     return data
 
-def load_tiles(tiles):
-    data = []
-    for t in tiles:
-	t = t.replace('truth','')
-        f = hdf.File(data_dir+'Buzzard-highres_galaxies_shmatch.'+ t +'.hdf5',
-                'r')
-        dset = f[f.keys()[0]]
-        data.append(dset)
-    return data
+def mkTruth(i=-1):
+    ''' Loads either all of the truth files and returns the data array or loads
+    the individual file desired. To specify which file, call with an integer
+    0-19 as an argument.
 
-def mk_catalog(tiles):
-    catalog = load_tiles(tiles)
-    for dset in catalog:
-        print dset.file # The file it is loading
-        result_part = dset['ID', 'RA', 'DEC', 'Z', 'HALOID']
-        result_part = recfunctions.append_fields(result_part, ['g','r'],
-                [dset['OMAG'][:,0], dset['OMAG'][:,1]], usemask=False)
-        try:
-            result = np.append(result, result_part)
-        except NameError:
-            result = result_part
-    print 'done loading'
-    return result
+    '''
+    truthPath = './../data/buzzard_v1.0/allbands/truth/'
+    # build truth database
+    if not i == -1:
+        with hdf.File(truthPath+'truth'+str(i).zfill(2)+'_Oii.hdf5', 'r') as f:
+            dset = f[f.keys()[0]]
+            print(dset.file) # print the loading file
+            truth_part = dset['HALOID', 'RA', 'DEC', 'Z', 'Oii']
+            truth_part = rfns.append_fields(truth_part, ['g','r'],
+                    [dset['OMAG'][:,1], dset['OMAG'][:,2]], usemask=False)
+            try:
+                truth = np.append(truth, truth_part)
+            except NameError:
+                truth = truth_part
+        return truth
+
+    else:
+        for i in range(20):
+            with hdf.File(truthPath+'truth'+str(i).zfill(2)+'_Oii.hdf5', 'r')\
+                as f:
+                dset = f[f.keys()[0]]
+                print(dset.file) # print the loading file
+                truth_part = dset['HALOID', 'RA', 'DEC', 'Z', 'Oii']
+                truth_part = rfns.append_fields(truth_part, ['g','r'],
+                        [dset['OMAG'][:,1], dset['OMAG'][:,2]],
+                        usemask=False)
+                try:
+                    truth = np.append(truth, truth_part)
+                except NameError:
+                    truth = truth_part
+        return truth
+
+def mkHalo():
+    ''' Loads *ALL* of the halo information and returns the data array. '''
+
+    haloPath = './../data/buzzard_v1.0/allbands/halos/'
+    # build halo database
+    for i in range(20):
+        with hdf.File(haloPath+'halo'+str(i).zfill(2)+'.hdf5', 'r') as f:
+            dset = f[f.keys()[0]]
+            print(dset.file)
+            halo_part = dset['id','upid', 'ra', 'dec', 'zspec', 'vrms',
+                    'm200c', 'rvir']
+            try:
+                halo = np.append(halo, halo_part)
+            except NameError:
+                halo = halo_part
+
+    return halo
 
 def apply_mask(ramin, decmin, ramax, decmax, catalog):
     if ramin < ramax:
@@ -85,7 +114,8 @@ def apply_mask(ramin, decmin, ramax, decmax, catalog):
     y = (decmax > catalog['DEC']) & (catalog['DEC'] > decmin)
 
     selected = x & y
-    result = catalog[['ID', 'RA', 'DEC', 'Z', 'HALOID', 'g', 'r']][selected]
+    result = catalog[['HID', 'RA', 'DEC', 'Z', 'HALOID', 'g', 'r']][selected]
+    result = catalog[selected]
 
     return result
 
