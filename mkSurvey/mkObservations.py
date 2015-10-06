@@ -9,7 +9,7 @@ class AsyncFactory:
     def __init__(self, func, cb_func):
         self.func = func
         self.cb_func = cb_func
-        self.pool = Pool()
+        self.pool = Pool(10, maxtasksperchild=2)
 
     def call(self,*args, **kwargs):
         return self.pool.apply_async(self.func, args, kwargs, self.cb_func)
@@ -18,7 +18,7 @@ class AsyncFactory:
         self.pool.close()
         self.pool.join()
 
-def worker(data, ifus):
+def worker(pos, data, ifus):
     for ifu1, ifu2 in zip(ifus[0], ifus[1]):
         ifu3 = shiftRADec(ifu1, ifu2, 50, 0)[0]
         ifu4 = shiftRADec(ifu1, ifu2, 0, 50)[1]
@@ -29,17 +29,27 @@ def worker(data, ifus):
         except NameError:
             result = result_part
 
-    return result
+    return pos, result
 
 def cb_func((pos, data)):
-    if pos % 1000 == 0:
+    #print "PID: %d \t Pos: %d" % (os.getpid(), pos)
+    if pos % 500 == 0:
         print pos
 
 if __name__ == "__main__":
-    async_worker = AsyncFactory(worker, None)
+    async_worker = AsyncFactory(worker, cb_func)
     truth = mkTruth()
 
-    mask = truth['g'] < 23.
+    # brightness limits
+    gmask = truth['g'] < 22.
+    Oiimask = truth['Oii'] > 3.5
+
+    # redshift limits
+    zmask = truth['Z'] > 0.4
+
+    # z > 0.4 & Oii limit | g < 22 & z < 0.4 | Oii limit & z < 0.4
+    mask = (zmask & Oiimask) | (gmask & ~zmask) | (Oiimask & ~zmask)
+
     truth = truth[mask]
 
     # survey bounds
@@ -55,10 +65,10 @@ if __name__ == "__main__":
 
         ifus = mk_ifus(pointing[0], pointing[1])
 
-        objs.append(async_worker.call(truth, ifus))
+        objs.append(async_worker.call(i, truth, ifus))
 
-        if i == 15:
-            break
+        #if i == 15:
+        #    break
 
     async_worker.wait()
 
@@ -66,9 +76,9 @@ if __name__ == "__main__":
     # now we have to build the results
     for obj in objs:
         try:
-            results = np.append(results, obj.get())
+            results = np.append(results, obj.get()[1])
         except NameError:
-            results = obj.get()
+            results = obj.get()[1]
 
     with hdf.File('result_targetedRealistic'+str(os.environ['LSB_JOBID'])+'.hdf5',
             'w') as f:

@@ -1,5 +1,5 @@
 ## job name
-#BSUB -J desCluster1
+#BSUB -J surveyObs
 
 ## send stderr and stdout to the same file
 #BSUB -o output.%J
@@ -9,7 +9,7 @@
 #BSUB -L /bin/bash
 
 ## 30 minutes of walltime ([HH:]MM)
-#BSUB -W 20:00
+#BSUB -W 4:00
 
 ## numprocs
 #BSUB -n 20
@@ -18,5 +18,5 @@
 #BSUB -R 'span[ptile=20]'
 
 source /home/boada/.bashrc
-time py fullcontrol.py
+time py mkObservations.py
 
