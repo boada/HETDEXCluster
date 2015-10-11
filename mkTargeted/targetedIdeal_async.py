@@ -96,7 +96,11 @@ if __name__ == "__main__":
     halo = mkHalo()
     truth = mkTruth()
 
-    mask = truth['g'] < 23
+    gmask = truth['g'] < 22
+    Oiimask = truth['Oii'] > 3.5
+    zmask = truth['Z'] > 0.4
+    mask = (zmask & Oiimask) | (gmask & ~zmask) | (Oiimask & ~zmask)
+
     truth = truth[mask]
 
     mask = (halo['m200c']/0.72 >= 1e13) & (halo['upid'] == -1)
