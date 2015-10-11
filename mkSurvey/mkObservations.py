@@ -43,10 +43,7 @@ if __name__ == "__main__":
     # brightness limits
     gmask = truth['g'] < 22.
     Oiimask = truth['Oii'] > 3.5
-
-    # redshift limits
     zmask = truth['Z'] > 0.4
-
     # z > 0.4 & Oii limit | g < 22 & z < 0.4 | Oii limit & z < 0.4
     mask = (zmask & Oiimask) | (gmask & ~zmask) | (Oiimask & ~zmask)
 
@@ -64,7 +61,6 @@ if __name__ == "__main__":
         maxDEC=DECmax)):
 
         ifus = mk_ifus(pointing[0], pointing[1])
-
         objs.append(async_worker.call(i, truth, ifus))
 
         #if i == 15:
@@ -80,6 +76,6 @@ if __name__ == "__main__":
         except NameError:
             results = obj.get()[1]
 
-    with hdf.File('result_targetedRealistic'+str(os.environ['LSB_JOBID'])+'.hdf5',
+    with hdf.File('observations'+str(os.environ['LSB_JOBID'])+'.hdf5',
             'w') as f:
-        f['result_targetedRealistic'] = results
+        f['observations'] = results
