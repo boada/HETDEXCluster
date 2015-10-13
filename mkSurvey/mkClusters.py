@@ -25,7 +25,10 @@ def worker(pos, data, center):
     #data = findSeperationSpatial(data, center)
     data = findLOSV(data)
     data = findLOSVD(data)
-    data = findLOSVDgmm(data)
+    try:
+        data = findLOSVDgmm(data)
+    except RuntimeError:
+        data['LOSVDgmm'] = 0.0
     data = calc_mass_Evrard(data, A1D = 1177, alpha = 0.364)
     return pos, data
 
