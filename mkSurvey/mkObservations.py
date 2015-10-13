@@ -9,7 +9,7 @@ class AsyncFactory:
     def __init__(self, func, cb_func):
         self.func = func
         self.cb_func = cb_func
-        self.pool = Pool(20, maxtasksperchild=4)
+        self.pool = Pool(maxtasksperchild=10)
 
     def call(self,*args, **kwargs):
         return self.pool.apply_async(self.func, args, kwargs, self.cb_func)
