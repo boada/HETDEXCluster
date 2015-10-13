@@ -14,10 +14,19 @@ def findLOSVD(data):
     if data.size >= 15:
         data['LOSVD'] = ast.biweightScale_test(data['LOSV'],
                 tuningConstant=9.0)
+        try:
+            data['LOSVD_err'] = ast.bootstrap(data['LOSV'],
+                    ast.biweightScale_test, resamples=10000, alpha=0.32,
+                    output='errorbar', tuningConstant=9.0)
+        except ZeroDivisionError:
+            data['LOSVD_err'] = [0.0, 0.0]
     elif data.size >=5:
         data['LOSVD'] = ast.gapperEstimator(data['LOSV'])
+        data['LOSVD_err'] = ast.bootstrap(data['LOSV'], ast.gapperEstimator,
+                resamples=10000, alpha=0.32, output='errorbar')
     else:
         data['LOSVD'] = 0.0
+        data['LOSVD_err'] = [0.0, 0.0]
 
     return data
 
@@ -285,4 +294,10 @@ def updateArray(data):
         'LOSVDgmm', 'MASS', 'R200', 'NGAL'], [newData, newData, newData,
             newData, newData, newData, newData, newData], dtypes='>f4',
         usemask=False)
+
+    newnewData = np.zeros(data.size, dtype=[('LOSVD_err', '>f4', (2,)),
+        ('LOSVDgmm_err', '>f4', (2,))])
+    data = rfns.merge_arrays((data, newnewData), usemask=False,
+            asrecarray=False, flatten=True)
+
     return data
