@@ -95,14 +95,9 @@ if __name__ == "__main__":
     async_worker = AsyncFactory(worker, cb_func)
     halo = mkHalo()
 
-    f = hdf.File('result_targetedRealistic1843835.hdf5', 'r')
+    f = hdf.File('./observations1873781.hdf5', 'r')
     dset = f[f.keys()[0]]
     truth = dset.value
-
-    #truth = mkTruth()
-
-    #mask = truth['g'] < 23
-    #truth = truth[mask]
 
     mask = (halo['m200c']/0.72 >= 1e13) & (halo['upid'] == -1)
     maskedHalo = halo[mask]
@@ -142,8 +137,8 @@ if __name__ == "__main__":
     async_worker.wait()
 
     try:
-        os.remove('result_targetedIdeal.hdf5')
+        os.remove('kasjdf.hdf5')
     except OSError:
         pass
-    with hdf.File('surveyComplete.hdf5', 'w') as f:
+    with hdf.File('surveyComplete2.hdf5', 'w') as f:
         f['surveyComplete'] = results

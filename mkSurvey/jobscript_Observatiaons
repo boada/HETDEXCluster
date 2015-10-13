@@ -9,7 +9,7 @@
 #BSUB -L /bin/bash
 
 ## 30 minutes of walltime ([HH:]MM)
-#BSUB -W 4:00
+#BSUB -W 5:00
 
 ## numprocs
 #BSUB -n 20

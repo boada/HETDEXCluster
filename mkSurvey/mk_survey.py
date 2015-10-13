@@ -100,10 +100,10 @@ def gen_pointings(startRA, startDEC, maxRA, maxDEC):
 
     '''
 
-    coords = mk_pointings(startRA, startDEC, maxRA, maxDEC)
-    for x, y in zip(coords[0], coords[1]):
-        # Take the RA / DEC and add the 22' widths.
-        # 984.4'', the width of the IFU grid plus one gap.
-        # yields RAmin/DECmin -- RAmax/DECmax
-        #yield x, y, shiftRADec(x, y, 1320, 0)[0], shiftRADec(x, y, 0, 1320)[1]
-        yield x, y, shiftRADec(x, y, 984.4, 0)[0], shiftRADec(x, y, 0, 984.4)[1]
+    dec = startDEC
+    while dec < maxDEC:
+        ra = startRA
+        while ra < maxRA:
+            yield ra, dec
+            ra = shiftRADec(ra, dec, 984.4, 0)[0]
+        dec = shiftRADec(ra, dec, 0, 984.4)[1]
