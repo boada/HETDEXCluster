@@ -3,6 +3,7 @@ import h5py as hdf
 import numpy as np
 from data_handler import mkHalo
 from calc_cluster_props import *
+from numpy.lib import recfunctions as rfns
 import os
 
 class AsyncFactory:
@@ -28,7 +29,8 @@ def worker(pos, data, center):
     try:
         data = findLOSVDgmm(data)
     except RuntimeError:
-        data['LOSVDgmm'] = 0.0
+        print(pos, 'RuntimeError')
+        data['LOSVDgmm'] = -1.0
     data = calc_mass_Evrard(data, A1D = 1177, alpha = 0.364)
     return pos, data
 
@@ -41,6 +43,8 @@ def cb_func((pos, data)):
     results['LOSVDgmm'][pos] = data['LOSVDgmm'][0]
     results['R200'][pos] = data['R200'][0]
     results['MASS'][pos] = data['MASS'][0]
+    results['LOSVD_err'][pos] = data['LOSVD_err'][0]
+    results['LOSVDgmm_err'][pos] = data['LOSVDgmm_err'][0]
 
 def find_indices(bigArr, smallArr):
     from bisect import bisect_left, bisect_right
@@ -117,6 +121,10 @@ if __name__ == "__main__":
         '>i8'), ('ZSPEC', '>f4'), ('VRMS', '>f4'), ('M200c', '>f4'), ('CLUSZ',
             '>f4'), ('LOSVD', '>f4'), ('LOSVDgmm', '>f4'), ('MASS', '>f4'),
             ('R200', '>f4'), ('NGAL', '>i4')])
+    newnewData = np.zeros(results.size, dtype=[('LOSVD_err', '>f4', (2,)),
+            ('LOSVDgmm_err', '>f4', (2,))])
+    results = rfns.merge_arrays((results, newnewData), usemask=False,
+            asrecarray=False, flatten=True)
     results['HALOID'] = hids
 
     print('do work')
@@ -139,9 +147,10 @@ if __name__ == "__main__":
 
     async_worker.wait()
 
+    print('results')
     try:
         os.remove('kasjdf.hdf5')
     except OSError:
         pass
-    with hdf.File('surveyComplete2.hdf5', 'w') as f:
+    with hdf.File('surveyComplete.hdf5', 'w') as f:
         f['surveyComplete'] = results
