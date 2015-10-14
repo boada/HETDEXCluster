@@ -32,7 +32,7 @@ def findLOSVD(data):
 
 def findLOSVDgmm(data):
 
-    LOSV = data['LOSV']
+    LOSV = data['LOSV'][:,np.newaxis]
     lowest_bic = np.infty
     bic = []
     n_components_range = range(1, 4)
@@ -42,7 +42,7 @@ def findLOSVDgmm(data):
         for n_components in n_components_range:
             # Fit a mixture of Gaussians with EM
             gmm = mixture.GMM(n_components=n_components,
-                    covariance_type=cv_type)
+                    covariance_type=cv_type, n_init=10)
             gmm.fit(LOSV)
             bic.append(gmm.bic(LOSV))
             if bic[-1] < lowest_bic:
@@ -63,7 +63,7 @@ def findLOSVDgmm(data):
 
     ## now we resample and then see
     dx = np.linspace(LOSV.min()-100,LOSV.max()+100,1000)
-    logprob, responsibilities = best_gmm.score_samples(dx)
+    logprob, responsibilities = best_gmm.score_samples(dx[:,np.newaxis])
     pdf = np.exp(logprob)
 
     normedPDF = pdf/np.sum(pdf)
@@ -289,7 +289,7 @@ def updateArray(data):
 
     '''
 
-    newData = -np.ones(data.size)
+    newData = np.zeros(data.size)
     data = rfns.append_fields(data, ['SEP', 'CLUSZ', 'LOSV', 'LOSVD',
         'LOSVDgmm', 'MASS', 'R200', 'NGAL'], [newData, newData, newData,
             newData, newData, newData, newData, newData], dtypes='>f4',
