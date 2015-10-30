@@ -1,6 +1,9 @@
 import numpy as np
 
-def scatterDensity(ax, xdat, ydat, extent, bins=[50,50], thresh=3):
+def scatterDensity(ax, xdat, ydat, extent=None, bins=[50,50], thresh=3):
+
+    if extent == None:
+        extent = [[xdat.min(), xdat.max()], [ydat.min(), ydat.max()]]
 
     hh, locx, locy = np.histogram2d(xdat, ydat, range=extent, bins=bins)
     posx = np.digitize(xdat, locx)
