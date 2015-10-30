@@ -1,1 +1,1 @@
-/Users/steven/Projects/desCluster/analysis/calc_cluster_props.py
+../mkTargeted/calc_cluster_props.py

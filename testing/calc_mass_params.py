@@ -17,12 +17,11 @@ def mass(s1d, clusz, a1d=1082, a=1/3.):
 
     '''
 
-
     # THIS IS NOT TO BE USED for THE ESTIMATION!
 
-    hz = aca.H0 * aca.Ez(clusz)/100
+    hz = aca.H0 * aca.Ez(clusz)/100.
 
-    return 1e15/hz * (s1d/a1d) ** -a
+    return 1e15/hz * (s1d/a1d) ** 1./a
 
 def vd(data, a1d=1082, a=1/3.):
     ''' This is the general form of the VD-mass relation that we are going to
@@ -31,8 +30,10 @@ def vd(data, a1d=1082, a=1/3.):
 
     '''
 
-    mass = data[:,0]
-    clusz = data[:,1]
+    #mass = data[:,0]
+    #clusz = data[:,1]
+    mass = data['M200c']
+    clusz = data['ZSPEC']
 
     hz = np.array([aca.H0 * aca.Ez(z)/100 for z in clusz])
 
