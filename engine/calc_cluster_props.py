@@ -4,6 +4,7 @@ from astLib import astStats as ast
 from astLib import astCalc as aca
 from numpy.lib import recfunctions as rfns
 from sklearn import mixture
+import emcee
 
 # aardvark simulation cosmology
 aca.H0 = 72
@@ -14,16 +15,24 @@ def findLOSVD(data):
     if data.size >= 15:
         data['LOSVD'] = ast.biweightScale_test(data['LOSV'],
                 tuningConstant=9.0)
+        try:
+            data['LOSVD_err'] = ast.bootstrap(data['LOSV'],
+                    ast.biweightScale_test, resamples=10000, alpha=0.32,
+                    output='errorbar', tuningConstant=9.0)
+        except ZeroDivisionError:
+            data['LOSVD_err'] = [0.0, 0.0]
     elif data.size >=5:
         data['LOSVD'] = ast.gapperEstimator(data['LOSV'])
+        data['LOSVD_err'] = ast.bootstrap(data['LOSV'], ast.gapperEstimator,
+                resamples=10000, alpha=0.32, output='errorbar')
     else:
         data['LOSVD'] = 0.0
+        data['LOSVD_err'] = [0.0, 0.0]
 
     return data
 
 def findLOSVDgmm(data):
-
-    LOSV = data['LOSV']
+    LOSV = data['LOSV'][:,np.newaxis]
     lowest_bic = np.infty
     bic = []
     n_components_range = range(1, 4)
@@ -33,7 +42,7 @@ def findLOSVDgmm(data):
         for n_components in n_components_range:
             # Fit a mixture of Gaussians with EM
             gmm = mixture.GMM(n_components=n_components,
-                    covariance_type=cv_type)
+                    covariance_type=cv_type, n_init=10)
             gmm.fit(LOSV)
             bic.append(gmm.bic(LOSV))
             if bic[-1] < lowest_bic:
@@ -50,18 +59,76 @@ def findLOSVDgmm(data):
     #parts = weights * ((means - wmeans)**2 + covars)
     #newLOSVD = np.sqrt(np.sum(parts))
 
-    #data['R200'] = best_gmm.n_components
-
     ## now we resample and then see
     dx = np.linspace(LOSV.min()-100,LOSV.max()+100,1000)
-    logprob, responsibilities = best_gmm.score_samples(dx)
+    logprob, responsibilities = best_gmm.score_samples(dx[:,np.newaxis])
     pdf = np.exp(logprob)
 
     normedPDF = pdf/np.sum(pdf)
 
     u = np.sum(dx*normedPDF)
     data['LOSVDgmm'] = np.sqrt(np.sum(normedPDF*(dx-u)**2))
-    #data['LOSVD'] = newLOSVD
+    return data
+
+def findLOSVDmcmc(data):
+    def log_prior(theta, LOSV):
+        sigma, mu = theta
+        if  sigma < 0:
+            return -np.inf
+    #    if mu < LOSV.min():
+    #        return -np.inf
+        #if not LOSV.min() < mu < LOSV.max():
+        #    return -np.inf
+
+        return 1
+
+    def log_likelihood(theta, LOSV, LOSV_err):
+        sigma, mu = theta
+        #print(theta)
+
+        # break long equation into three parts
+        a = -0.5 * np.sum(np.log(LOSV_err**2 + sigma**2))
+        b = -0.5 * np.sum((LOSV - mu)**2/(LOSV_err**2 + sigma**2))
+        c = -1. * LOSV.size/2. * np.log(2*np.pi)
+
+        return a +b +c
+
+    def log_posterior(theta, LOSV, LOSV_err):
+        lp = log_prior(theta, LOSV)
+        if not np.isfinite(lp):
+            return -np.inf
+        return lp + log_likelihood(theta, LOSV, LOSV_err)
+
+
+    # get data
+    LOSV = data['LOSV']
+    LOSV_err = np.zeros_like(LOSV)
+
+    ndim = 2  # number of parameters in the model
+    nwalkers = 40  # number of MCMC walkers
+    nburn = 100  # "burn-in" period to let chains stabilize
+    nsteps = 500  # number of MCMC steps to take
+
+    # set theta near the maximum likelihood, with
+    np.random.seed()
+    starting_guesses = np.random.random((nwalkers, ndim))
+
+    #m = np.random.normal(np.mean(LOSV), scale=1, size=(nwalkers))
+    #s = np.random.normal(np.std(LOSV), scale=1, size=(nwalkers))
+    #starting_guesses = np.vstack([m,s]).T
+
+    sampler = emcee.EnsembleSampler(nwalkers, ndim, log_posterior, args=[LOSV,
+        LOSV_err])
+    sampler.run_mcmc(starting_guesses, nsteps)
+
+    samples = sampler.chain[:, nburn:, :].reshape((-1, ndim))
+    sigma_rec, mean_rec = map(lambda v: (v[1], v[2]-v[1], v[1]-v[0]),
+                                 zip(*np.percentile(samples, [16, 50, 84],
+                                                    axis=0)))
+
+    data['LOSVDgmm'] = sigma_rec[0]
+    data['LOSVDgmm_err'] = sigma_rec[1], sigma_rec[2]
+
     return data
 
 def calc_mass_Saro(data):
@@ -280,9 +347,15 @@ def updateArray(data):
 
     '''
 
-    newData = -np.ones(data.size)
+    newData = np.zeros(data.size)
     data = rfns.append_fields(data, ['SEP', 'CLUSZ', 'LOSV', 'LOSVD',
         'LOSVDgmm', 'MASS', 'R200', 'NGAL'], [newData, newData, newData,
             newData, newData, newData, newData, newData], dtypes='>f4',
         usemask=False)
+
+    newnewData = np.zeros(data.size, dtype=[('LOSVD_err', '>f4', (2,)),
+        ('LOSVDgmm_err', '>f4', (2,))])
+    data = rfns.merge_arrays((data, newnewData), usemask=False,
+            asrecarray=False, flatten=True)
+
     return data
