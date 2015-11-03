@@ -73,12 +73,10 @@ def findLOSVDgmm(data):
 def findLOSVDmcmc(data):
     def log_prior(theta, LOSV):
         sigma, mu = theta
-        if  sigma < 0:
+        if  not 200 < sigma < 1400:
             return -np.inf
-    #    if mu < LOSV.min():
-    #        return -np.inf
-        #if not LOSV.min() < mu < LOSV.max():
-        #    return -np.inf
+        if not LOSV.min() < mu < LOSV.max():
+            return -np.inf
 
         return 1
 
@@ -99,7 +97,6 @@ def findLOSVDmcmc(data):
             return -np.inf
         return lp + log_likelihood(theta, LOSV, LOSV_err)
 
-
     # get data
     LOSV = data['LOSV']
     LOSV_err = np.zeros_like(LOSV)
@@ -111,11 +108,11 @@ def findLOSVDmcmc(data):
 
     # set theta near the maximum likelihood, with
     np.random.seed()
-    starting_guesses = np.random.random((nwalkers, ndim))
+    #starting_guesses = np.random.random((nwalkers, ndim))
 
-    #m = np.random.normal(np.mean(LOSV), scale=1, size=(nwalkers))
-    #s = np.random.normal(np.std(LOSV), scale=1, size=(nwalkers))
-    #starting_guesses = np.vstack([m,s]).T
+    m = np.random.normal(np.mean(LOSV), scale=1, size=(nwalkers))
+    s = np.random.normal(200, scale=1, size=(nwalkers))
+    starting_guesses = np.vstack([s,m]).T
 
     sampler = emcee.EnsembleSampler(nwalkers, ndim, log_posterior, args=[LOSV,
         LOSV_err])
@@ -125,7 +122,6 @@ def findLOSVDmcmc(data):
     sigma_rec, mean_rec = map(lambda v: (v[1], v[2]-v[1], v[1]-v[0]),
                                  zip(*np.percentile(samples, [16, 50, 84],
                                                     axis=0)))
-
     data['LOSVDgmm'] = sigma_rec[0]
     data['LOSVDgmm_err'] = sigma_rec[1], sigma_rec[2]
 
