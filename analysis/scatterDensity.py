@@ -1,6 +1,7 @@
 import numpy as np
 
-def scatterDensity(ax, xdat, ydat, extent=None, bins=[50,50], thresh=3):
+def scatterDensity(ax, xdat, ydat, extent=None, bins=[50,50], thresh=3,
+        scale=None):
 
     if extent == None:
         extent = [[xdat.min(), xdat.max()], [ydat.min(), ydat.max()]]
@@ -19,6 +20,14 @@ def scatterDensity(ax, xdat, ydat, extent=None, bins=[50,50], thresh=3):
     hh[hh < thresh] = 0 # fill the areas with low density by NaNs
 
     ax.scatter(xdat1, ydat1, s=20, c='0.8')
-    ax.imshow(hh.T, cmap='gray_r',
+    if scale == None:
+        ax.imshow(hh.T, cmap='gray_r',
             extent=np.array(extent).flatten(),
             interpolation='nearest')
+    else:
+        try:
+            ax.imshow(scale(hh.T), cmap='gray_r',
+                extent=np.array(extent).flatten(),
+                interpolation='nearest')
+        except NameError:
+            raise ValueError("Output option {0} is not supported.".format(scale))

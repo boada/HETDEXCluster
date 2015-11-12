@@ -2,7 +2,9 @@ import numpy as np
 import emcee
 from astroML.datasets import generate_mu_z
 from astroML.cosmology import Cosmology
+import matplotlib.pyplot as plt
 #from astLib import astCalc as aca
+
 
 def compute_sigma_level(trace1, trace2, nbins=20):
     """From a set of traces, bin by number of standard deviations"""
@@ -93,7 +95,7 @@ z_sample, mu_sample, dmu = generate_mu_z(100, z0=0.3,
                                          dmu_0=0.05, dmu_1=0.004)
 
 ndim = 3  # number of parameters in the model
-nwalkers = 40  # number of MCMC walkers
+nwalkers = 20  # number of MCMC walkers
 nburn = 100  # "burn-in" period to let chains stabilize
 nsteps = 500  # number of MCMC steps to take
 
@@ -109,17 +111,17 @@ emcee_trace = sampler.chain[:, nburn:, :].reshape(-1, ndim).T
 plot_MCMC_results(z_sample, mu_sample, dmu, emcee_trace)
 
 
-samples = sampler.chain[:, nburn:, :].reshape((-1, ndim))
+samples = sampler.chain[:, 2*nburn:, :].reshape((-1, ndim))
 
 z_fit = np.linspace(0.04, 2, 100)
 for h, m0, l0 in samples[np.random.randint(len(samples), size=50)]:
     cosmo = Cosmology(h=h, omegaM=m0, omegaL=l0)
     mu_fit = np.asarray(map(cosmo.mu, z_fit))
-    plot(z_fit, mu_fit, color="k", alpha=0.1)
+    plt.plot(z_fit, mu_fit, color="k", alpha=0.1)
 cosmo = Cosmology(h=0.71, omegaM=0.27, omegaL=0.73)
 mu_fit = np.asarray(map(cosmo.mu, z_fit))
-plot(z_fit, mu_fit , color="r", lw=2, alpha=0.8)
-errorbar(z_sample, mu_sample, yerr=dmu, fmt="ok")
+plt.plot(z_fit, mu_fit , color="r", lw=2, alpha=0.8)
+plt.errorbar(z_sample, mu_sample, yerr=dmu, fmt="ok")
 
 m_mcmc, b_mcmc, f_mcmc = map(lambda v: (v[1], v[2]-v[1], v[1]-v[0]),
                              zip(*np.percentile(samples, [16, 50, 84],

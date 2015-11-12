@@ -1,15 +1,18 @@
 from multiprocessing import Pool
 import h5py as hdf
 import numpy as np
+from numpy.lib import recfunctions as rfns
 from data_handler import mkTruth, mkHalo
-from calc_cluster_props import *
+from halo_handler import find_indices, find_indices_multi
+from calc_cluster_props import (updateArray, findClusterRedshift, findLOSV,\
+                                findLOSVD, findLOSVDmcmc, calc_mass_Evrard)
 import os
 
 class AsyncFactory:
     def __init__(self, func, cb_func):
         self.func = func
         self.cb_func = cb_func
-        self.pool = Pool()
+        self.pool = Pool(maxtasksperchild=10)
 
     def call(self,*args, **kwargs):
         self.pool.apply_async(self.func, args, kwargs, self.cb_func)
@@ -25,7 +28,12 @@ def worker(pos, data, center):
     #data = findSeperationSpatial(data, center)
     data = findLOSV(data)
     data = findLOSVD(data)
-    data = findLOSVDgmm(data)
+    # try:
+    #     data = findLOSVDgmm(data)
+    # except RuntimeError:
+    #     print(pos, 'RuntimeError')
+    #     data['LOSVDgmm'] = -1.0
+    data = findLOSVDmcmc(data)
     data = calc_mass_Evrard(data, A1D = 1177, alpha = 0.364)
     return pos, data
 
@@ -38,57 +46,8 @@ def cb_func((pos, data)):
     results['LOSVDgmm'][pos] = data['LOSVDgmm'][0]
     results['R200'][pos] = data['R200'][0]
     results['MASS'][pos] = data['MASS'][0]
-
-def find_indices(bigArr, smallArr):
-    from bisect import bisect_left, bisect_right
-    ''' Takes the full halo catalog and picks out the HALOIDs that we are
-    interested in. Only returns their indexes. It will need to be combined
-    with the result catalog in some other way.
-
-    '''
-
-    inds = []
-    sortedind = np.argsort(bigArr)
-    sortedbigArr = bigArr[sortedind]
-    for i, _ in enumerate(smallArr):
-        i1 = bisect_left(sortedbigArr, smallArr[i])
-        i2 = bisect_right(sortedbigArr, smallArr[i])
-        try:
-            inds.append(sortedind[i1:i2])
-        except IndexError:
-            pass
-        if i % 10000 ==0:
-            print(i)
-
-    return inds
-
-def find_indices_multi(bigArr, smallArr, multi):
-    from bisect import bisect_left, bisect_right
-    from itertools import chain
-    ''' Takes the full halo catalog and picks out the HALOIDs that we are
-    interested in. Only returns their indexes. It will need to be combined
-    with the result catalog in some other way.
-
-    '''
-
-    inds = []
-    sortedind = np.argsort(bigArr)
-    sortedbigArr = bigArr[sortedind]
-    for j, sub in enumerate(multi):
-        smallArr2 = smallArr[sub]
-        tmp = []
-        for i, _ in enumerate(smallArr2):
-            i1 = bisect_left(sortedbigArr, smallArr2[i])
-            i2 = bisect_right(sortedbigArr, smallArr2[i])
-            try:
-                tmp.append(sortedind[i1:i2])
-            except IndexError:
-                pass
-        if j % 10000 == 0:
-            print(j)
-
-        inds.append(np.array(list(chain(*tmp))))
-    return inds
+    results['LOSVD_err'][pos] = data['LOSVD_err'][0]
+    results['LOSVDgmm_err'][pos] = data['LOSVDgmm_err'][0]
 
 if __name__ == "__main__":
 
@@ -118,7 +77,12 @@ if __name__ == "__main__":
         '>i8'), ('ZSPEC', '>f4'), ('VRMS', '>f4'), ('M200c', '>f4'), ('CLUSZ',
             '>f4'), ('LOSVD', '>f4'), ('LOSVDgmm', '>f4'), ('MASS', '>f4'),
             ('R200', '>f4'), ('NGAL', '>i4')])
-    results['HALOID'] = hids
+    newnewData = np.zeros(results.size, dtype=[('LOSVD_err', '>f4', (2,)),
+            ('LOSVDgmm_err', '>f4', (2,))])
+    results = rfns.merge_arrays((results, newnewData), usemask=False,
+            asrecarray=False, flatten=True)
+
+    #x = [i for i,g in enumerate(gals) if g.size >10]
 
     print('do work')
     for i, SH in enumerate(subHalos):

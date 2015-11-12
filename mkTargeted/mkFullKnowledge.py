@@ -2,10 +2,10 @@ from multiprocessing import Pool
 import h5py as hdf
 import numpy as np
 from numpy.lib import recfunctions as rfns
-from data_handler import mkHalo
+from data_handler import mkTruth, mkHalo
 from halo_handler import find_indices, find_indices_multi
 from calc_cluster_props import (updateArray, findClusterRedshift, findLOSV,\
-                                findLOSVD, findLOSVDgmm, calc_mass_Evrard)
+                                findLOSVD, findLOSVDmcmc, calc_mass_Evrard)
 import os
 
 class AsyncFactory:
@@ -28,11 +28,12 @@ def worker(pos, data, center):
     #data = findSeperationSpatial(data, center)
     data = findLOSV(data)
     data = findLOSVD(data)
-    try:
-        data = findLOSVDgmm(data)
-    except RuntimeError:
-        print(pos, 'RuntimeError')
-        data['LOSVDgmm'] = -1.0
+    # try:
+    #     data = findLOSVDgmm(data)
+    # except RuntimeError:
+    #     print(pos, 'RuntimeError')
+    #     data['LOSVDgmm'] = -1.0
+    data = findLOSVDmcmc(data)
     data = calc_mass_Evrard(data, A1D = 1177, alpha = 0.364)
     return pos, data
 
@@ -47,14 +48,12 @@ def cb_func((pos, data)):
     results['MASS'][pos] = data['MASS'][0]
     results['LOSVD_err'][pos] = data['LOSVD_err'][0]
     results['LOSVDgmm_err'][pos] = data['LOSVDgmm_err'][0]
+
 if __name__ == "__main__":
 
     async_worker = AsyncFactory(worker, cb_func)
     halo = mkHalo()
-
-    f = hdf.File('./observations1873781.hdf5', 'r')
-    dset = f[f.keys()[0]]
-    truth = dset.value
+    truth = mkTruth()
 
     mask = (halo['m200c']/0.72 >= 1e13) & (halo['upid'] == -1)
     maskedHalo = halo[mask]
@@ -75,7 +74,6 @@ if __name__ == "__main__":
             ('LOSVDgmm_err', '>f4', (2,))])
     results = rfns.merge_arrays((results, newnewData), usemask=False,
             asrecarray=False, flatten=True)
-    results['HALOID'] = hids
 
     print('do work')
     for i, SH in enumerate(subHalos):
@@ -97,10 +95,9 @@ if __name__ == "__main__":
 
     async_worker.wait()
 
-    print('results')
     try:
-        os.remove('kasjdf.hdf5')
+        os.remove('result_FullKnowledge.hdf5')
     except OSError:
         pass
-    with hdf.File('surveyComplete.hdf5', 'w') as f:
-        f['surveyComplete'] = results
+    with hdf.File('result_FullKnowledge.hdf5', 'w') as f:
+        f['result_FullKnowledge'] = results
