@@ -24,7 +24,7 @@ def compute_sigma_level(trace1, trace2, nbins=20):
     return xbins, ybins, L_cumsum[i_unsort].reshape(shape)
 
 
-def plot_MCMC_trace(ax, xdata, ydata, trace, scatter=False, **kwargs):
+def plot_MCMC_trace(ax, trace, scatter=False, **kwargs):
     """Plot traces and contours"""
     xbins, ybins, sigma = compute_sigma_level(trace[0], trace[1])
     ax.contour(xbins, ybins, sigma.T, levels=[0.683, 0.955], **kwargs)
