@@ -57,12 +57,12 @@ if __name__ == "__main__":
 
     gmask = truth['g'] < 22
     Oiimask = truth['Oii'] > 3.5
-    zmask = truth['Z'] > 0.4
-    mask = (zmask & Oiimask) | (gmask & ~zmask) | (Oiimask & ~zmask)
+    mask = gmask | Oiimask
 
     truth = truth[mask]
 
-    mask = (halo['m200c']/0.72 >= 1e13) & (halo['upid'] == -1)
+    # there are no clusters with mass < 2e11 and more than 5 galaxies
+    mask = (halo['upid'] == -1) & (halo['m200c'] > 2e11)
     maskedHalo = halo[mask]
     hids, uniqueIdx = np.unique(maskedHalo['id'], return_index=True)
 
@@ -73,10 +73,17 @@ if __name__ == "__main__":
     gals = find_indices_multi(truth['HALOID'], halo['id'], subHalos)
 
     # make the results container
-    results = np.zeros((len(subHalos),), dtype=[('IDX', '>i4'), ('HALOID',
-        '>i8'), ('ZSPEC', '>f4'), ('VRMS', '>f4'), ('M200c', '>f4'), ('CLUSZ',
-            '>f4'), ('LOSVD', '>f4'), ('LOSVDgmm', '>f4'), ('MASS', '>f4'),
-            ('R200', '>f4'), ('NGAL', '>i4')])
+    results = np.zeros((len(subHalos),), dtype=[('IDX', '>i4'),
+        ('HALOID', '>i8'),
+        ('ZSPEC', '>f4'),
+        ('VRMS', '>f4'),
+        ('M200c', '>f4'),
+        ('CLUSZ', '>f4'),
+        ('LOSVD', '>f4'),
+        ('LOSVDgmm', '>f4'),
+        ('MASS', '>f4'),
+        ('R200', '>f4'),
+        ('NGAL', '>i4')])
     newnewData = np.zeros(results.size, dtype=[('LOSVD_err', '>f4', (2,)),
             ('LOSVDgmm_err', '>f4', (2,))])
     results = rfns.merge_arrays((results, newnewData), usemask=False,
@@ -85,6 +92,7 @@ if __name__ == "__main__":
     #x = [i for i,g in enumerate(gals) if g.size >10]
 
     print('do work')
+    keepBad = False
     for i, SH in enumerate(subHalos):
         center = (maskedHalo['ra'][uniqueIdx[i]],
                 maskedHalo['dec'][uniqueIdx[i]])
@@ -95,7 +103,7 @@ if __name__ == "__main__":
             results['ZSPEC'][i] = maskedHalo['zspec'][uniqueIdx[i]]
             results['VRMS'][i] = maskedHalo['vrms'][uniqueIdx[i]]/np.sqrt(3)
             results['M200c'][i] = maskedHalo['m200c'][uniqueIdx[i]]/0.72
-        else:
+        elif keepBad:
             results['IDX'][i] = i
             results['NGAL'][i] = gals[i].size
             results['ZSPEC'][i] = maskedHalo['zspec'][uniqueIdx[i]]
