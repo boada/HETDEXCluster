@@ -43,9 +43,10 @@ if __name__ == "__main__":
     # brightness limits
     gmask = truth['g'] < 22.
     Oiimask = truth['Oii'] > 3.5
-    zmask = truth['Z'] > 0.4
+    #zmask = truth['Z'] > 0.4
     # z > 0.4 & Oii limit | g < 22 & z < 0.4 | Oii limit & z < 0.4
-    mask = (zmask & Oiimask) | (gmask & ~zmask) | (Oiimask & ~zmask)
+    #mask = (zmask & Oiimask) | (gmask & ~zmask) | (Oiimask & ~zmask)
+    mask = gmask | Oiimask
 
     truth = truth[mask]
 
