@@ -80,7 +80,7 @@ if __name__ == "__main__":
 
     print('do work')
     keepBad = False
-    for j,i in enumerate(x[:10]):
+    for j,i in enumerate(x):
         center = (maskedHalo['ra'][uniqueIdx[i]],
                 maskedHalo['dec'][uniqueIdx[i]])
         if gals[i].size >= 5:
