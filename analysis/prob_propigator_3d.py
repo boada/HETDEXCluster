@@ -1,6 +1,5 @@
 import numpy as np
 from astLib import astCalc as aca
-from astLib.astStats import slice_sampler
 import h5py as hdf
 from sklearn.cross_validation import train_test_split
 
@@ -28,43 +27,45 @@ badData = data[mask]
 train, test = train_test_split(maskedData, test_size=0.3)
 
 # make the joint probability
-H, xbins, ybins = plot_training(np.log10(train['M200c']),
-        np.log10(train['LOSVD']), bins=50)
+data = np.column_stack((np.log10(train['M200c']), np.log10(train['LOSVD']),
+    train['ZSPEC']))
+H, (xbins, ybins, zbins) = np.histogramdd(data, bins=41)
 H = H.T
 
 # Now we try to recover, and predict
 expected_mass = np.zeros((test.size,), dtype=[('MASS', '>f4'),
     ('MASS_err', '>f4', (2,))])
 
-for j, s in enumerate(test['LOSVD_dist']):
+for j, (s, z) in enumerate(zip(test['LOSVD_dist'], test['ZSPEC'])):
     # using the distribution of sigmas we make P(s) and ds
     Ps, ds = np.histogram(np.log10(s), bins=50, density=True)
-    # and get new new sigmas from the histogram2d
     centers = (ds[1:] + ds[:-1])/2.0
 
-    # now we have to make P(mt|s) -- from the training sample
+    # now we have to make P(m|s,z) -- from the training sample
     # will need to do this a bunch of times for each sigma in centers
-    iy  = np.digitize(centers, ybins) #change this line
-    # now we make P(mt) using P(mt|s) and P(s)ds from above
-    Pmt = np.zeros(xbins.size -1)
+    iy  = np.digitize(centers, ybins)
+    iz = np.digitize([z], zbins)
+    # now we make P(m) using P(m|s,z) and P(s)ds from above
+    Pm = np.zeros(xbins.size -1)
     Psds = Ps*np.diff(ds)
     for i in range(iy.size):
         try:
-            Pmt_s = H[iy[i]] / H[iy[i]].sum()
+            Pm_sz = H[iy[i]][iz[0]] / H[iy[i]][iz[0]].sum()
+            Pm_sz[np.isnan(Pm_sz)] = 0.0
         except IndexError:
-            Pmt_s = np.zeros(xbins.size -1)
-        Pmt += Pmt_s * Psds[i]
+            Pm_sz = np.zeros(xbins.size -1)
+        Pm += Pm_sz * Psds[i]
 
     # now we can calculate the expected mass
     centers = (xbins[:-1] + xbins[1:])/2.
-    norm = np.sum(Pmt * np.diff(xbins))
-    M_expect = np.sum(centers * Pmt * np.diff(xbins))/norm
+    norm = np.sum(Pm * np.diff(xbins))
+    M_expect = np.sum(centers * Pm * np.diff(xbins))/norm
 
-    variance = np.sum((centers-M_expect)**2 * Pmt* np.diff(xbins))/norm
+    variance = np.sum((centers-M_expect)**2 * Pm* np.diff(xbins))/norm
 
     expected_mass['MASS'][j] = M_expect
     expected_mass['MASS_err'][j] = [M_expect - np.sqrt(variance), M_expect
             + np.sqrt(variance)]
-#    resamples = slice_sampler(Pmt,x=centers, N=1000)
+#    resamples = slice_sampler(Pm,x=centers, N=1000)
 #    expected_mass['MASS_err'][j] = np.percentile(resamples, [16, 84])
 
