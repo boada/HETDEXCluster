@@ -5,10 +5,8 @@ def log_prior(theta, LOSV):
     sigma, mu = theta
     if  sigma < 0:
         return -np.inf
-#    if mu < LOSV.min():
-#        return -np.inf
-    #if not LOSV.min() < mu < LOSV.max():
-    #    return -np.inf
+    if not LOSV.min() < mu < LOSV.max():
+        return -np.inf
 
     return 1
 
@@ -32,7 +30,7 @@ def log_posterior(theta, LOSV, LOSV_err):
 mean, sigma = 0, 400
 
 # make fake data
-LOSV = np.random.normal(loc=mean, scale=sigma, size=20)
+LOSV = np.random.normal(loc=mean, scale=sigma, size=10)
 # start with zero errors
 LOSV_err = np.zeros_like(LOSV)
 #LOSV_err = 0.1+0.5*np.random.rand(LOSV.size)
