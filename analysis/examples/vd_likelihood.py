@@ -29,42 +29,62 @@ def log_posterior(theta, LOSV, LOSV_err):
 
 mean, sigma = 0, 400
 
-# make fake data
-LOSV = np.random.normal(loc=mean, scale=sigma, size=10)
-# start with zero errors
-LOSV_err = np.zeros_like(LOSV)
-#LOSV_err = 0.1+0.5*np.random.rand(LOSV.size)
+Ntrials = 100
+resultsMean = np.zeros((Ntrials,3))
+resultsSigma = np.zeros((Ntrials,3))
+for i in range(Ntrials):
 
-# here is the MCMC stuff
+    # make fake data
+    LOSV = np.random.normal(loc=mean, scale=sigma, size=100)
+    # start with zero errors
+    LOSV_err = np.zeros_like(LOSV)
+    #LOSV_err = 0.1+0.5*np.random.rand(LOSV.size)
 
-ndim = 2  # number of parameters in the model
-nwalkers = 40  # number of MCMC walkers
-nburn = 100  # "burn-in" period to let chains stabilize
-nsteps = 500  # number of MCMC steps to take
+    # here is the MCMC stuff
+    ndim = 2  # number of parameters in the model
+    nwalkers = 40  # number of MCMC walkers
+    nburn = 100  #  "burn-in" period to let chains stabilize
+    nsteps = 500  # number of MCMC steps to take
 
-# set theta near the maximum likelihood, with
-np.random.seed()
-starting_guesses = np.random.random((nwalkers, ndim))
+    np.random.seed()
+    #starting_guesses = np.random.random((nwalkers, ndim))
+    m = np.random.normal(np.mean(LOSV), scale=1, size=(nwalkers))
+    s = np.random.normal(np.std(LOSV), scale=1, size=(nwalkers))
+    starting_guesses = np.vstack([s,m]).T
 
-#m = np.random.normal(np.mean(LOSV), scale=1, size=(nwalkers))
-#s = np.random.normal(np.std(LOSV), scale=1, size=(nwalkers))
-#starting_guesses = np.vstack([m,s]).T
+    sampler = emcee.EnsembleSampler(nwalkers, ndim, log_posterior, args=[LOSV,
+        LOSV_err])
+    sampler.run_mcmc(starting_guesses, nsteps)
 
-sampler = emcee.EnsembleSampler(nwalkers, ndim, log_posterior, args=[LOSV,
-    LOSV_err], threads=4)
-sampler.run_mcmc(starting_guesses, nsteps)
+    samples = sampler.chain[:, nburn:, :].reshape((-1, ndim))
+    sigma_rec, mean_rec = map(lambda v: (v[1], v[2]-v[1], v[1]-v[0]),
+                                zip(*np.percentile(samples, [16, 50, 84],
+                                                    axis=0)))
 
-samples = sampler.chain[:, nburn:, :].reshape((-1, ndim))
-sigma_rec, mean_rec = map(lambda v: (v[1], v[2]-v[1], v[1]-v[0]),
-                             zip(*np.percentile(samples, [16, 50, 84],
-                                                axis=0)))
+    resultsMean[i] = mean_rec
+    resultsSigma[i] = sigma_rec
 
-print 'True mean',
-print mean
-print 'Recovered Mean, with 68% error',
-print mean_rec
 
-print 'True dispersion',
-print sigma
-print 'Recovered dispersion, with 68% error',
-print sigma_rec
+
+meanDown = resultsMean[:,0] - resultsMean[:,2]
+meanUp = resultsMean[:,0] + resultsMean[:,1]
+sigmaDown = resultsSigma[:,0] - resultsSigma[:,2]
+sigmaUp = resultsSigma[:,0] + resultsSigma[:,1]
+
+meanMask = (meanDown < mean) & (mean < meanUp)
+sigmaMask = (sigmaDown < sigma) & (sigma < sigmaUp)
+
+print('Mean perctage', resultsMean[meanMask][:,0].size/float(Ntrials))
+print('Sigma perctage', resultsMean[sigmaMask][:,0].size/float(Ntrials))
+
+
+
+# print 'True mean',
+# print mean
+# print 'Recovered Mean, with 68% error',
+# print mean_rec
+#
+# print 'True dispersion',
+# print sigma
+# print 'Recovered dispersion, with 68% error',
+# print sigma_rec
