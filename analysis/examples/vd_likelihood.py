@@ -74,8 +74,8 @@ sigmaUp = resultsSigma[:,0] + resultsSigma[:,1]
 meanMask = (meanDown < mean) & (mean < meanUp)
 sigmaMask = (sigmaDown < sigma) & (sigma < sigmaUp)
 
-print('Mean perctage', resultsMean[meanMask][:,0].size/float(Ntrials))
-print('Sigma perctage', resultsMean[sigmaMask][:,0].size/float(Ntrials))
+print('Mean percentage', resultsMean[meanMask][:,0].size/float(Ntrials))
+print('Sigma percentage', resultsMean[sigmaMask][:,0].size/float(Ntrials))
 
 
 
