@@ -11,6 +11,9 @@ def calcMass(vd, A1D = 1082.9, alpha=0.3361):
     avgz = 0.0
     return 1e15/(aca.H0 * aca.Ez(avgz)/100.) * (vd/A1D)**(1/alpha)
 
+def calcLOSVD(M, z, A1D = 1082.9, alpha=0.3361):
+    return A1D * (M * (aca.H0 * aca.Ez(z)/100.)/1e15)**alpha
+
 f = hdf.File('result_targetedIdeal.hdf5', 'r')
 dset  = f[f.keys()[0]]
 data = dset.value
@@ -19,8 +22,14 @@ maskedData = data[~mask]
 badData = data[mask]
 train, test = train_test_split(maskedData, test_size=0.3)
 
+# compute the LOSVD based on the true mass
+LOSVD = map(calcLOSVD, train['M200c'], train['ZSPEC'])
+
+LOSVD = [abs(i + i*np.random.normal()*2) for i in LOSVD]
+
+
 # make the joint probability
-data = np.column_stack((np.log10(train['M200c']), np.log10(train['LOSVD']),
+data = np.column_stack((np.log10(train['M200c']), np.log10(LOSVD),
     train['ZSPEC'], np.log10(train['NGAL'])))
 
 Ngrid = 41, 21, 5, 10
