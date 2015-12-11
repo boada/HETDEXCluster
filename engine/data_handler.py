@@ -114,7 +114,7 @@ def apply_mask(ramin, decmin, ramax, decmax, catalog):
     y = (decmax > catalog['DEC']) & (catalog['DEC'] > decmin)
 
     selected = x & y
-    result = catalog[['HID', 'RA', 'DEC', 'Z', 'HALOID', 'g', 'r']][selected]
+    #result = catalog[['HID', 'RA', 'DEC', 'Z', 'HALOID', 'g', 'r']][selected]
     result = catalog[selected]
 
     return result

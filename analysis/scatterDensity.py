@@ -21,12 +21,12 @@ def scatterDensity(ax, xdat, ydat, extent=None, bins=[50,50], thresh=3,
 
     ax.scatter(xdat1, ydat1, s=20, c='0.8')
     if scale == None:
-        ax.imshow(hh.T, cmap='gray_r',
+        ax.imshow(hh.T, cmap='binary',
             extent=np.array(extent).flatten(),
             interpolation='nearest')
     else:
         try:
-            ax.imshow(scale(hh.T), cmap='gray_r',
+            ax.imshow(scale(hh.T), cmap='binary',
                 extent=np.array(extent).flatten(),
                 interpolation='nearest')
         except NameError:

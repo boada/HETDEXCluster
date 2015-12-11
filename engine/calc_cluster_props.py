@@ -73,7 +73,7 @@ def findLOSVDgmm(data):
 def findLOSVDmcmc(data):
     def log_prior(theta, LOSV):
         sigma, mu = theta
-        if  not 200 < sigma < 1400:
+        if  not 50 < sigma < 1400:
             return -np.inf
         if not LOSV.min() < mu < LOSV.max():
             return -np.inf
@@ -83,7 +83,6 @@ def findLOSVDmcmc(data):
     def log_likelihood(theta, LOSV, LOSV_err):
         sigma, mu = theta
         #print(theta)
-
         # break long equation into three parts
         a = -0.5 * np.sum(np.log(LOSV_err**2 + sigma**2))
         b = -0.5 * np.sum((LOSV - mu)**2/(LOSV_err**2 + sigma**2))
@@ -103,13 +102,11 @@ def findLOSVDmcmc(data):
 
     ndim = 2  # number of parameters in the model
     nwalkers = 40  # number of MCMC walkers
-    nburn = 100  # "burn-in" period to let chains stabilize
-    nsteps = 500  # number of MCMC steps to take
+    nburn = 50  # "burn-in" period to let chains stabilize
+    nsteps = 300  # number of MCMC steps to take
 
     # set theta near the maximum likelihood, with
     np.random.seed()
-    #starting_guesses = np.random.random((nwalkers, ndim))
-
     m = np.random.normal(np.mean(LOSV), scale=1, size=(nwalkers))
     s = np.random.normal(200, scale=1, size=(nwalkers))
     starting_guesses = np.vstack([s,m]).T
@@ -122,10 +119,10 @@ def findLOSVDmcmc(data):
     sigma_rec, mean_rec = map(lambda v: (v[1], v[2]-v[1], v[1]-v[0]),
                                  zip(*np.percentile(samples, [16, 50, 84],
                                                     axis=0)))
-    data['LOSVDgmm'] = sigma_rec[0]
-    data['LOSVDgmm_err'] = sigma_rec[1], sigma_rec[2]
+    data['LOSVD'] = sigma_rec[0]
+    data['LOSVD_err'] = sigma_rec[1], sigma_rec[2]
 
-    return data
+    return data, samples
 
 def calc_mass_Saro(data):
     ''' Calculates the mass using the scaling relation from Saro2013. '''
@@ -344,13 +341,11 @@ def updateArray(data):
     '''
 
     newData = np.zeros(data.size)
-    data = rfns.append_fields(data, ['SEP', 'CLUSZ', 'LOSV', 'LOSVD',
-        'LOSVDgmm', 'MASS', 'R200', 'NGAL'], [newData, newData, newData,
-            newData, newData, newData, newData, newData], dtypes='>f4',
-        usemask=False)
+    data = rfns.append_fields(data, ['SEP', 'CLUSZ', 'LOSV', 'LOSVD', 'MASS'],
+            [newData, newData, newData, newData, newData], dtypes='>f4',
+            usemask=False)
 
-    newnewData = np.zeros(data.size, dtype=[('LOSVD_err', '>f4', (2,)),
-        ('LOSVDgmm_err', '>f4', (2,))])
+    newnewData = np.zeros(data.size, dtype=[('LOSVD_err', '>f4', (2,))])
     data = rfns.merge_arrays((data, newnewData), usemask=False,
             asrecarray=False, flatten=True)
 
