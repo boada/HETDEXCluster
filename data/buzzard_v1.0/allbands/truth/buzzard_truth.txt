@@ -1,3 +1,4 @@
+#Name RAmax RAmin DECmax DECmin
 truth00_Oii 90.0 60.0 -59.6503 -61.0001
 truth01_Oii 90.0 60.0 -58.3341 -59.6503
 truth02_Oii 90.0 60.0 -57.1203 -58.3341
