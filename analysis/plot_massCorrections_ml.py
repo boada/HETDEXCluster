@@ -50,7 +50,7 @@ quants = pyl.array(y_[1])
 ax1.plot(y_[0],quants[:,1], c='#348ABD')
 ax1.fill_between(y_[0], quants[:,2], quants[:,0], facecolor='#348ABD',
     alpha=0.4, edgecolor='#348ABD')
-err = calc_err(pyl.log10(test['MASS']), pyl.log10(test['M200c']))
+err = calc_err(test['MASS'], test['M200c'])
 y_ = astStats.runningStatistic(pyl.log10(test['M200c']), err, pyl.percentile,
         binNumber=20, q=[16, 50, 84])
 quants = pyl.array(y_[1])
@@ -75,7 +75,7 @@ quants = pyl.array(y_[1])
 ax2.plot(y_[0],quants[:,1], c='#7A68A6')
 ax2.fill_between(y_[0], quants[:,2], quants[:,0], facecolor='#7A68A6',
     alpha=0.4, edgecolor='#7A68A6')
-err = calc_err(mrf, pyl.log10(test['M200c']))
+err = calc_err(10**mrf, test['M200c'])
 y_ = astStats.runningStatistic(pyl.log10(test['M200c']), err, pyl.percentile,
         binNumber=20, q=[16, 50, 84])
 quants = pyl.array(y_[1])
@@ -96,7 +96,7 @@ quants = pyl.array(y_[1])
 ax3.plot(y_[0],quants[:,1], c='#CF4457')
 ax3.fill_between(y_[0], quants[:,2], quants[:,0], facecolor='#CF4457',
     alpha=0.4, edgecolor='#CF4457')
-err = calc_err(mrf, pyl.log10(test['M200c']))
+err = calc_err(10**mrf, test['M200c'])
 y_ = astStats.runningStatistic(pyl.log10(test['M200c']), err, pyl.percentile,
         binNumber=20, q=[16, 50, 84])
 quants = pyl.array(y_[1])
@@ -118,7 +118,7 @@ quants = pyl.array(y_[1])
 ax4.plot(y_[0],quants[:,1], c='#E24A33')
 ax4.fill_between(y_[0], quants[:,2], quants[:,0], facecolor='#E24A33',
     alpha=0.4, edgecolor='#E24A33')
-err = calc_err(mrf, pyl.log10(test['M200c']))
+err = calc_err(10**mrf, test['M200c'])
 y_ = astStats.runningStatistic(pyl.log10(test['M200c']), err, pyl.percentile,
         binNumber=20, q=[16, 50, 84])
 quants = pyl.array(y_[1])
