@@ -1,1 +1,1 @@
-/Users/steven/Projects/desCluster/data/buzzard_v1.0/truth/buzzard_truth.txt
+../../data/buzzard_v1.0/allbands/truth/buzzard_truth.txt
