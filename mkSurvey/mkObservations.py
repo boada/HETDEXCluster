@@ -38,7 +38,7 @@ def cb_func((pos, data)):
 
 if __name__ == "__main__":
     async_worker = AsyncFactory(worker, cb_func)
-    truth = mkTruth()
+    truth = mkTruth(flatHMF=True)
 
     # brightness limits
     gmask = truth['g'] < 22.
