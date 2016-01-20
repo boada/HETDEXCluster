@@ -48,7 +48,7 @@ def fix_tiles():
 
     return data
 
-def mkTruth(i=-1):
+def mkTruth(i=-1, flatHMF=False):
     ''' Loads either all of the truth files and returns the data array or loads
     the individual file desired. To specify which file, call with an integer
     0-19 as an argument.
@@ -60,7 +60,11 @@ def mkTruth(i=-1):
         with hdf.File(truthPath+'truth'+str(i).zfill(2)+'_Oii.hdf5', 'r') as f:
             dset = f[f.keys()[0]]
             print(dset.file) # print the loading file
-            truth_part = dset['HALOID', 'RA', 'DEC', 'Z', 'Oii']
+            if not flatHMF:
+                truth_part = dset['HALOID', 'RA', 'DEC', 'Z', 'Oii']
+            else:
+                truth_part = dset['HALOID', 'RA', 'DEC', 'Z', 'Oii', 'VX',
+                        'VY', 'VZ']
             truth_part = rfns.append_fields(truth_part, ['g','r'],
                     [dset['OMAG'][:,1], dset['OMAG'][:,2]], usemask=False)
             try:
@@ -75,7 +79,11 @@ def mkTruth(i=-1):
                 as f:
                 dset = f[f.keys()[0]]
                 print(dset.file) # print the loading file
-                truth_part = dset['HALOID', 'RA', 'DEC', 'Z', 'Oii']
+                if not flatHMF:
+                    truth_part = dset['HALOID', 'RA', 'DEC', 'Z', 'Oii']
+                else:
+                    truth_part = dset['HALOID', 'RA', 'DEC', 'Z', 'Oii', 'VX',
+                            'VY', 'VZ']
                 truth_part = rfns.append_fields(truth_part, ['g','r'],
                         [dset['OMAG'][:,1], dset['OMAG'][:,2]],
                         usemask=False)
