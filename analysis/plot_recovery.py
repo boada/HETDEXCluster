@@ -45,7 +45,7 @@ inds = find_indices(truth['HALOID'], target['HALOID'])
 Tinds = pyl.ravel(inds)
 inds = find_indices(truth['HALOID'], survey['HALOID'])
 Sinds = pyl.ravel(inds)
-f, ax = pyl.subplots(2,2, figsize=(6,6), squeeze=True)
+f, ax = pyl.subplots(2,2, figsize=(10,10*(pyl.sqrt(5.)-1.0)/2.0), squeeze=True)
 ax = ax.ravel()
 
 targetGals = target['NGAL'] /truth['NGAL'][Tinds].astype('float')
@@ -63,8 +63,8 @@ scatterDensity(ax[3],pyl.log10(truth['M200c'][Sinds]), surveyGals, scale=pyl.log
         bins=[40,40])
 
 # adjsut the plots
-ax[0].set_ylabel('Recovery Fraction')
-ax[2].set_ylabel('Recovery Fraction')
+ax[0].set_ylabel('Recovery Fraction', fontsize=18)
+ax[2].set_ylabel('Recovery Fraction', fontsize=18)
 ax[2].set_xlabel('Redshift')
 ax[3].set_xlabel('Log Mass')
 

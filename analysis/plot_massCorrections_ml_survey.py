@@ -7,7 +7,8 @@ import h5py as hdf
 def calc_err(pred, true):
     return (pred - true)/true
 
-f = pyl.figure(1, figsize=(8,4))
+golden_mean = (pyl.sqrt(5.)-1.0)/2.0
+f = pyl.figure(1, figsize=(10,10*golden_mean))
 
 ax1 = pyl.subplot2grid((3,4), (0,0), rowspan=2)
 ax2 = pyl.subplot2grid((3,4), (0,1), rowspan=2, sharex=ax1)

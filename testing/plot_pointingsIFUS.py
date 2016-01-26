@@ -9,10 +9,10 @@ dec = 0
 if ra > 360:
     ra -= 360.
 
-fig = pyl.figure()
+fig = pyl.figure(1,figsize=(5,5*(pyl.sqrt(5.)-1.0)/2.0))
 ax = fig.add_subplot(111)
 
-for i, p in enumerate(gen_pointings(ra, dec)):
+for i, p in enumerate(gen_pointings(ra, dec, 1,1)):
     print i,p
 
     if i == 7:
