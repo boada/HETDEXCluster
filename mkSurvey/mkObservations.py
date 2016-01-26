@@ -5,6 +5,7 @@ from data_handler import mkTruth, apply_mask
 from mk_survey import gen_pointings, mk_ifus
 import os
 from astLib.astCoords import shiftRADec
+
 class AsyncFactory:
     def __init__(self, func, cb_func):
         self.func = func
@@ -41,7 +42,11 @@ if __name__ == "__main__":
     truth = mkTruth(flatHMF=True)
 
     # brightness limits
-    gmask = truth['g'] < 22.
+    #gmask = truth['g'] < 22.
+
+    # -6 is roughly the Abs mag of 22mag at redshift 0.001
+    gmask = [astCalc.absMag(22,astCalc.dl(z)) for z in truth['zspec']] < -6
+
     Oiimask = truth['Oii'] > 3.5
     #zmask = truth['Z'] > 0.4
     # z > 0.4 & Oii limit | g < 22 & z < 0.4 | Oii limit & z < 0.4
