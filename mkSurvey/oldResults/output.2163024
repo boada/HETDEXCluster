@@ -1,0 +1,104 @@
+/software/lmod/5.9.3/init/lmod_bash_completions: line 22: syntax error near unexpected token `('
+/software/lmod/5.9.3/init/lmod_bash_completions: line 22: `	comm -23  <(_module_avail|sort)  <(_module_loaded_modules|sort)'
+/software/lmod/5.9.3/init/lmod_bash_completions: line 22: warning: syntax errors in . or eval will cause future versions of the shell to abort as Posix requires
+Lmod has detected the following error: Cannot load module 
+python/2.7.10-intel-2015B" because these modules are loaded:
+   Python
+
+
+While processing the following module(s):
+
+Module fullname            Module Filename
+---------------            ---------------
+python/2.7.10-intel-2015B  /general/software/x86_64/tamusc/modulefiles/python/2.7.10-intel-2015B
+<HDF5 file "truth00_Oii.hdf5" (mode r)>
+<HDF5 file "truth01_Oii.hdf5" (mode r)>
+<HDF5 file "truth02_Oii.hdf5" (mode r)>
+<HDF5 file "truth03_Oii.hdf5" (mode r)>
+<HDF5 file "truth04_Oii.hdf5" (mode r)>
+<HDF5 file "truth05_Oii.hdf5" (mode r)>
+<HDF5 file "truth06_Oii.hdf5" (mode r)>
+<HDF5 file "truth07_Oii.hdf5" (mode r)>
+<HDF5 file "truth08_Oii.hdf5" (mode r)>
+<HDF5 file "truth09_Oii.hdf5" (mode r)>
+<HDF5 file "truth10_Oii.hdf5" (mode r)>
+<HDF5 file "truth11_Oii.hdf5" (mode r)>
+<HDF5 file "truth12_Oii.hdf5" (mode r)>
+<HDF5 file "truth13_Oii.hdf5" (mode r)>
+<HDF5 file "truth14_Oii.hdf5" (mode r)>
+<HDF5 file "truth15_Oii.hdf5" (mode r)>
+<HDF5 file "truth16_Oii.hdf5" (mode r)>
+<HDF5 file "truth17_Oii.hdf5" (mode r)>
+<HDF5 file "truth18_Oii.hdf5" (mode r)>
+<HDF5 file "truth19_Oii.hdf5" (mode r)>
+0
+500
+1000
+1500
+2000
+2500
+3000
+3500
+4000
+4500
+5000
+make results
+
+real	53m36.533s
+user	461m31.961s
+sys	53m53.429s
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@nxt1628>
+Subject: Job 2163024: <surveyObs> in cluster <Main_Compute> Done
+
+Job <surveyObs> was submitted from host <login7> by user <boada> in cluster <Main_Compute>.
+Job was executed on host(s) <20*nxt1628>, in queue <sn_regular>, as user <boada> in cluster <Main_Compute>.
+</home/boada> was used as the home directory.
+</home/boada/Projects/desCluster/mkSurvey> was used as the working directory.
+Started at Tue Jan 26 16:23:57 2016
+Results reported on Tue Jan 26 17:17:51 2016
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+## job name
+#BSUB -J surveyObs
+
+## send stderr and stdout to the same file
+#BSUB -o output.%J
+
+## login shell to avoid copying env from login session
+## also helps the module function work in batch jobs
+#BSUB -L /bin/bash
+
+## 30 minutes of walltime ([HH:]MM)
+#BSUB -W 5:00
+
+## numprocs
+#BSUB -n 20
+
+## 20 cores/node
+#BSUB -R 'span[ptile=20]'
+
+source /home/boada/.bashrc
+time py mkObservations.py
+
+
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   34200.55 sec.
+    Max Memory :                                 4357 MB
+    Average Memory :                             2652.26 MB
+    Total Requested Memory :                     51200.00 MB
+    Delta Memory :                               46843.00 MB
+    Max Processes :                              24
+    Max Threads :                                28
+
+The output (if any) is above this job summary.
+
