@@ -1,6 +1,7 @@
 import pylab as pyl
 import h5py as hdf
 from scatterDensity import scatterDensity
+from astLib import astStats
 
 def find_indices(bigArr, smallArr):
     from bisect import bisect_left, bisect_right
@@ -45,41 +46,58 @@ inds = find_indices(truth['HALOID'], target['HALOID'])
 Tinds = pyl.ravel(inds)
 inds = find_indices(truth['HALOID'], survey['HALOID'])
 Sinds = pyl.ravel(inds)
-f, ax = pyl.subplots(2,2, figsize=(10,10*(pyl.sqrt(5.)-1.0)/2.0), squeeze=True)
+f, ax = pyl.subplots(1,2, figsize=(7, 7*(pyl.sqrt(5.)-1.0)/2.0), squeeze=True)
 ax = ax.ravel()
 
 targetGals = target['NGAL'] /truth['NGAL'][Tinds].astype('float')
 surveyGals = survey['NGAL'] /truth['NGAL'][Sinds].astype('float')
 
-scatterDensity(ax[0],truth['ZSPEC'][Tinds], targetGals, scale=pyl.log10,
-        bins=[40,40])
-scatterDensity(ax[2],truth['ZSPEC'][Sinds], surveyGals, scale=pyl.log10,
-        bins=[40,40])
+# redshift plots first
+y_ = astStats.runningStatistic(truth['ZSPEC'][Tinds], targetGals,
+        pyl.percentile, binNumber=20, q=[16,50,84])
+
+quants = pyl.array(y_[1])
+ax[0].plot(y_[0], quants[:,1], c='#7A68A6')
+ax[0].fill_between(y_[0], quants[:,2], quants[:,0], facecolor='#7A68A6',
+            alpha=0.4, edgecolor='#7A68A6', label='Targeted')
+
+y_ = astStats.runningStatistic(truth['ZSPEC'][Sinds], surveyGals,
+        pyl.percentile, binNumber=20, q=[16,50,84])
+
+quants = pyl.array(y_[1])
+ax[0].plot(y_[0], quants[:,1], c='#188487')
+ax[0].fill_between(y_[0], quants[:,2], quants[:,0], facecolor='#188487',
+            alpha=0.4, edgecolor='#188487', label='Survey')
 
 # mass plots
-scatterDensity(ax[1],pyl.log10(truth['M200c'][Tinds]), targetGals, scale=pyl.log10,
-        bins=[40,40])
-scatterDensity(ax[3],pyl.log10(truth['M200c'][Sinds]), surveyGals, scale=pyl.log10,
-        bins=[40,40])
+y_ = astStats.runningStatistic(pyl.log10(truth['M200c'][Tinds]), targetGals,
+        pyl.percentile, binNumber=20, q=[16,50,84])
+
+quants = pyl.array(y_[1])
+ax[1].plot(y_[0], quants[:,1], c='#7A68A6')
+ax[1].fill_between(y_[0], quants[:,2], quants[:,0], facecolor='#7A68A6',
+            alpha=0.4, edgecolor='#7A68A6')
+
+y_ = astStats.runningStatistic(pyl.log10(truth['M200c'][Sinds]), surveyGals,
+        pyl.percentile, binNumber=20, q=[16,50,84])
+
+quants = pyl.array(y_[1])
+ax[1].plot(y_[0], quants[:,1], c='#188487')
+ax[1].fill_between(y_[0], quants[:,2], quants[:,0], facecolor='#188487',
+            alpha=0.4, edgecolor='#188487')
+
 
 # adjsut the plots
-ax[0].set_ylabel('Recovery Fraction', fontsize=18)
-ax[2].set_ylabel('Recovery Fraction', fontsize=18)
-ax[2].set_xlabel('Redshift')
-ax[3].set_xlabel('Log Mass')
+ax[0].set_ylabel('Recovery Fraction')
+ax[0].set_xlabel('Redshift')
+ax[1].set_xlabel('Log Mass')
 
-ax[0].set_xticklabels([])
 ax[1].set_yticklabels([])
-ax[1].set_xticklabels([])
-ax[3].set_yticklabels([])
 
-ax[0].set_xlim(0,0.5)
-ax[2].set_xlim(0,0.5)
+#ax[0].set_xlim(0,0.5)
 
 ax[1].set_xlim(12,15.5)
-ax[3].set_xlim(12,15.5)
 ax[1].set_xticks([12,13,14,15])
-ax[3].set_xticks([12,13,14,15])
 
 
 pyl.show()

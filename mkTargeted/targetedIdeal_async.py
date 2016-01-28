@@ -46,7 +46,8 @@ if __name__ == "__main__":
     halo = mkHalo()
     truth = mkTruth()
 
-    gmask = truth['g'] < 22
+    #gmask = truth['g'] < 22
+    gmask = truth['G'] < -15
     Oiimask = truth['Oii'] > 3.5
     mask = gmask | Oiimask
 
@@ -64,7 +65,7 @@ if __name__ == "__main__":
     gals = find_indices_multi(truth['HALOID'], halo['id'], subHalos)
 
     # make the results container
-    x = [i for i,g in enumerate(gals) if g.size >=5]
+    x = [i for i,g in enumerate(gals) if g.size >=20]
     # make the results container
     results = np.zeros((len(x),), dtype=[('IDX', '>i4'),
         ('HALOID', '>i8'),
@@ -78,7 +79,7 @@ if __name__ == "__main__":
         ('LOSVD_err', '>f4', (2,)),
         ('LOSVD_dist', '>f4', (10000,))])
 
-    print('do work')
+    print('do work', len(x), 'clusters to go!')
     keepBad = False
     for j,i in enumerate(x):
         center = (maskedHalo['ra'][uniqueIdx[i]],
@@ -86,11 +87,13 @@ if __name__ == "__main__":
         if gals[i].size >= 5:
             async_worker.call(j, truth[gals[i]], center)
             # update results array
+            results['HALOID'][j] = maskedHalo['id'][uniqueIdx[i]]
             results['NGAL'][j] = gals[i].size
             results['ZSPEC'][j] = maskedHalo['zspec'][uniqueIdx[i]]
             results['VRMS'][j] = maskedHalo['vrms'][uniqueIdx[i]]/np.sqrt(3)
             results['M200c'][j] = maskedHalo['m200c'][uniqueIdx[i]]/0.72
         elif keepBad:
+            results['HALOID'][j] = maskedHalo['id'][uniqueIdx[i]]
             results['NGAL'][j] = gals[i].size
             results['ZSPEC'][j] = maskedHalo['zspec'][uniqueIdx[i]]
             results['VRMS'][j] = maskedHalo['vrms'][uniqueIdx[i]]/np.sqrt(3)
@@ -99,8 +102,8 @@ if __name__ == "__main__":
     async_worker.wait()
 
     try:
-        os.remove('result_targetedIdeal.hdf5')
+        os.remove('result_targetedIdeal_absMag.hdf5')
     except OSError:
         pass
-    with hdf.File('result_targetedIdeal.hdf5', 'w') as f:
+    with hdf.File('result_targetedIdeal_absMag.hdf5', 'w') as f:
         f['result_targetedIdeal'] = results

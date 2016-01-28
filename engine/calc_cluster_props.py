@@ -6,10 +6,10 @@ from numpy.lib import recfunctions as rfns
 from sklearn import mixture
 import emcee
 
-# aardvark simulation cosmology
-aca.H0 = 72
-aca.OMEGA_M0 = 0.23
-aca.OMEGA_L0 = 0.77
+# buzzard simulation cosmology
+aca.H0 = 70
+aca.OMEGA_M0 = 0.286
+aca.OMEGA_L0 = 0.714
 
 def findLOSVD(data):
     if data.size >= 15:

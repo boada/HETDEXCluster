@@ -1,7 +1,7 @@
 from multiprocessing import Pool
 import h5py as hdf
 import numpy as np
-from data_handler import mkHalo
+from data_handler import mkTruth, mkHalo
 from halo_handler import find_indices, find_indices_multi
 from calc_cluster_props import (updateArray, findClusterRedshift, findLOSV,
                                 findLOSVDmcmc, calc_mass_Evrard)
@@ -21,6 +21,7 @@ class AsyncFactory:
         self.pool.close()
         self.pool.join()
 
+
 def randomR():
     ''' randomly choose a location on the unit hemisphere, r = [x,y,z] with
     -1<x<1, -1<y<1, and 0<z<1 and x^2+y^2+z^2 = 1.
@@ -32,21 +33,12 @@ def randomR():
     r = [np.sin(theta)*np.cos(phi), np.sin(theta)*np.sin(phi), np.cos(theta)]
     return r
 
-def worker(pos, data, center, rot=False):
+def worker(pos, data, center):
     #print "PID: %d \t Value: %d" % (os.getpid(), pos)
     data = updateArray(data)
     data = findClusterRedshift(data)
     #data = findSeperationSpatial(data, center)
-
-    # do the rotations or not
-    if rot:
-        r = randomR()
-        v = np.column_stack([data['VX'], data['VY'], data['VZ']])
-        rot = [np.dot(r,vi) for vi in v]
-        data['LOSV'] = rot
-    else:
-        data = findLOSV(data)
-
+    data = findLOSV(data)
     data, sigma_dist = findLOSVDmcmc(data)
     data = calc_mass_Evrard(data, A1D = 1177, alpha = 0.364)
     return pos, data, sigma_dist
@@ -63,15 +55,15 @@ def cb_func((pos, data, sigma_dist)):
 
 if __name__ == "__main__":
 
-    # original plus n-1 rotations
-    numRotations = 5
-
     async_worker = AsyncFactory(worker, cb_func)
     halo = mkHalo()
+    truth = mkTruth(flatHMF=True)
 
-    f = hdf.File('./observations2148799.hdf5', 'r')
-    dset = f[f.keys()[0]]
-    truth = dset.value
+    gmask = truth['g'] < 22
+    Oiimask = truth['Oii'] > 3.5
+    mask = gmask | Oiimask
+
+    truth = truth[mask]
 
     # there are no clusters with mass < 2e11 and more than 5 galaxies
     mask = (halo['upid'] == -1) & (halo['m200c'] > 2e11)
@@ -87,7 +79,7 @@ if __name__ == "__main__":
     # make the results container
     x = [i for i,g in enumerate(gals) if g.size >=5]
     # make the results container
-    results = np.zeros((len(x)*numRotations,), dtype=[('IDX', '>i4'),
+    results = np.zeros((len(x),), dtype=[('IDX', '>i4'),
         ('HALOID', '>i8'),
         ('ZSPEC', '>f4'),
         ('VRMS', '>f4'),
@@ -100,29 +92,28 @@ if __name__ == "__main__":
         ('LOSVD_dist', '>f4', (10000,))])
 
     print('do work')
-    for j,i in enumerate(x*numRotations):
+    keepBad = False
+    for j,i in enumerate(x):
         center = (maskedHalo['ra'][uniqueIdx[i]],
                 maskedHalo['dec'][uniqueIdx[i]])
-
-        # start the rotations
-        if j > len(x):
-            async_worker.call(j, truth[gals[i]], center, rot=True)
-        else:
-            async_worker.call(j, truth[gals[i]], center, rot=False)
-
-        # update results array
-        results['HALOID'][j] = maskedHalo['id'][uniqueIdx[i]]
-        results['NGAL'][j] = gals[i].size
-        results['ZSPEC'][j] = maskedHalo['zspec'][uniqueIdx[i]]
-        results['VRMS'][j] = maskedHalo['vrms'][uniqueIdx[i]]/np.sqrt(3)
-        results['M200c'][j] = maskedHalo['m200c'][uniqueIdx[i]]/0.72
+        if gals[i].size >= 5:
+            async_worker.call(j, truth[gals[i]], center)
+            # update results array
+            results['NGAL'][j] = gals[i].size
+            results['ZSPEC'][j] = maskedHalo['zspec'][uniqueIdx[i]]
+            results['VRMS'][j] = maskedHalo['vrms'][uniqueIdx[i]]/np.sqrt(3)
+            results['M200c'][j] = maskedHalo['m200c'][uniqueIdx[i]]/0.72
+        elif keepBad:
+            results['NGAL'][j] = gals[i].size
+            results['ZSPEC'][j] = maskedHalo['zspec'][uniqueIdx[i]]
+            results['VRMS'][j] = maskedHalo['vrms'][uniqueIdx[i]]/np.sqrt(3)
+            results['M200c'][j] = maskedHalo['m200c'][uniqueIdx[i]]/0.72
 
     async_worker.wait()
 
-    print('results')
     try:
-        os.remove('surveyComplete.hdf5')
+        os.remove('result_targetedIdeal.hdf5')
     except OSError:
         pass
-    with hdf.File('surveyComplete.hdf5', 'w') as f:
-        f['surveyComplete'] = results
+    with hdf.File('result_targetedIdeal.hdf5', 'w') as f:
+        f['result_targetedIdeal'] = results
