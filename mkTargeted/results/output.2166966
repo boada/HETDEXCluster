@@ -1,0 +1,158 @@
+/software/lmod/5.9.3/init/lmod_bash_completions: line 22: syntax error near unexpected token `('
+/software/lmod/5.9.3/init/lmod_bash_completions: line 22: `	comm -23  <(_module_avail|sort)  <(_module_loaded_modules|sort)'
+/software/lmod/5.9.3/init/lmod_bash_completions: line 22: warning: syntax errors in . or eval will cause future versions of the shell to abort as Posix requires
+Lmod has detected the following error: Cannot load module 
+python/2.7.10-intel-2015B" because these modules are loaded:
+   Python
+
+
+While processing the following module(s):
+
+Module fullname            Module Filename
+---------------            ---------------
+python/2.7.10-intel-2015B  /general/software/x86_64/tamusc/modulefiles/python/2.7.10-intel-2015B
+<HDF5 file "halo00.hdf5" (mode r)>
+<HDF5 file "halo01.hdf5" (mode r)>
+<HDF5 file "halo02.hdf5" (mode r)>
+<HDF5 file "halo03.hdf5" (mode r)>
+<HDF5 file "halo04.hdf5" (mode r)>
+<HDF5 file "halo05.hdf5" (mode r)>
+<HDF5 file "halo06.hdf5" (mode r)>
+<HDF5 file "halo07.hdf5" (mode r)>
+<HDF5 file "halo08.hdf5" (mode r)>
+<HDF5 file "halo09.hdf5" (mode r)>
+<HDF5 file "halo10.hdf5" (mode r)>
+<HDF5 file "halo11.hdf5" (mode r)>
+<HDF5 file "halo12.hdf5" (mode r)>
+<HDF5 file "halo13.hdf5" (mode r)>
+<HDF5 file "halo14.hdf5" (mode r)>
+<HDF5 file "halo15.hdf5" (mode r)>
+<HDF5 file "halo16.hdf5" (mode r)>
+<HDF5 file "halo17.hdf5" (mode r)>
+<HDF5 file "halo18.hdf5" (mode r)>
+<HDF5 file "halo19.hdf5" (mode r)>
+<HDF5 file "truth00_Oii.hdf5" (mode r)>
+<HDF5 file "truth01_Oii.hdf5" (mode r)>
+<HDF5 file "truth02_Oii.hdf5" (mode r)>
+<HDF5 file "truth03_Oii.hdf5" (mode r)>
+<HDF5 file "truth04_Oii.hdf5" (mode r)>
+<HDF5 file "truth05_Oii.hdf5" (mode r)>
+<HDF5 file "truth06_Oii.hdf5" (mode r)>
+<HDF5 file "truth07_Oii.hdf5" (mode r)>
+<HDF5 file "truth08_Oii.hdf5" (mode r)>
+<HDF5 file "truth09_Oii.hdf5" (mode r)>
+<HDF5 file "truth10_Oii.hdf5" (mode r)>
+<HDF5 file "truth11_Oii.hdf5" (mode r)>
+<HDF5 file "truth12_Oii.hdf5" (mode r)>
+<HDF5 file "truth13_Oii.hdf5" (mode r)>
+<HDF5 file "truth14_Oii.hdf5" (mode r)>
+<HDF5 file "truth15_Oii.hdf5" (mode r)>
+<HDF5 file "truth16_Oii.hdf5" (mode r)>
+<HDF5 file "truth17_Oii.hdf5" (mode r)>
+<HDF5 file "truth18_Oii.hdf5" (mode r)>
+<HDF5 file "truth19_Oii.hdf5" (mode r)>
+0
+100000
+200000
+300000
+400000
+500000
+600000
+700000
+800000
+900000
+1000000
+1100000
+1200000
+1300000
+0
+100000
+200000
+300000
+400000
+500000
+600000
+700000
+800000
+900000
+1000000
+1100000
+1200000
+1300000
+('do work', 15079, 'clusters to go!')
+0
+1000
+2000
+3000
+4000
+5000
+6000
+7000
+8000
+9000
+10000
+11000
+12000
+13000
+14000
+15000
+
+real	27m48.884s
+user	343m15.963s
+sys	3m33.153s
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@nxt1259>
+Subject: Job 2166966: <targetedIdeal_async> in cluster <Main_Compute> Done
+
+Job <targetedIdeal_async> was submitted from host <login5> by user <boada> in cluster <Main_Compute>.
+Job was executed on host(s) <20*nxt1259>, in queue <sn_regular>, as user <boada> in cluster <Main_Compute>.
+</home/boada> was used as the home directory.
+</home/boada/Projects/desCluster/mkTargeted> was used as the working directory.
+Started at Thu Jan 28 10:52:38 2016
+Results reported on Thu Jan 28 11:20:43 2016
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+## job name
+#BSUB -J targetedIdeal_async
+
+## send stderr and stdout to the same file
+#BSUB -o output.%J
+
+## login shell to avoid copying env from login session
+## also helps the module function work in batch jobs
+#BSUB -L /bin/bash
+
+## 30 minutes of walltime ([HH:]MM)
+#BSUB -W 2:00
+
+## numprocs
+#BSUB -n 20
+
+## 20 cores/node
+#BSUB -R 'span[ptile=20]'
+
+source /home/boada/.bashrc
+time py targetedIdeal_async.py
+#time py mkFullKnowledge.py
+
+
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   21027.89 sec.
+    Max Memory :                                 5890 MB
+    Average Memory :                             4051.38 MB
+    Total Requested Memory :                     51200.00 MB
+    Delta Memory :                               45310.00 MB
+    Max Processes :                              24
+    Max Threads :                                28
+
+The output (if any) is above this job summary.
+

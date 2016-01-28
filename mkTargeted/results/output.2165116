@@ -1,0 +1,116 @@
+/software/lmod/5.9.3/init/lmod_bash_completions: line 22: syntax error near unexpected token `('
+/software/lmod/5.9.3/init/lmod_bash_completions: line 22: `	comm -23  <(_module_avail|sort)  <(_module_loaded_modules|sort)'
+/software/lmod/5.9.3/init/lmod_bash_completions: line 22: warning: syntax errors in . or eval will cause future versions of the shell to abort as Posix requires
+Lmod has detected the following error: Cannot load module 
+python/2.7.10-intel-2015B" because these modules are loaded:
+   Python
+
+
+While processing the following module(s):
+
+Module fullname            Module Filename
+---------------            ---------------
+python/2.7.10-intel-2015B  /general/software/x86_64/tamusc/modulefiles/python/2.7.10-intel-2015B
+<HDF5 file "halo00.hdf5" (mode r)>
+<HDF5 file "halo01.hdf5" (mode r)>
+<HDF5 file "halo02.hdf5" (mode r)>
+<HDF5 file "halo03.hdf5" (mode r)>
+<HDF5 file "halo04.hdf5" (mode r)>
+<HDF5 file "halo05.hdf5" (mode r)>
+<HDF5 file "halo06.hdf5" (mode r)>
+<HDF5 file "halo07.hdf5" (mode r)>
+<HDF5 file "halo08.hdf5" (mode r)>
+<HDF5 file "halo09.hdf5" (mode r)>
+<HDF5 file "halo10.hdf5" (mode r)>
+<HDF5 file "halo11.hdf5" (mode r)>
+<HDF5 file "halo12.hdf5" (mode r)>
+<HDF5 file "halo13.hdf5" (mode r)>
+<HDF5 file "halo14.hdf5" (mode r)>
+<HDF5 file "halo15.hdf5" (mode r)>
+<HDF5 file "halo16.hdf5" (mode r)>
+<HDF5 file "halo17.hdf5" (mode r)>
+<HDF5 file "halo18.hdf5" (mode r)>
+<HDF5 file "halo19.hdf5" (mode r)>
+<HDF5 file "truth00_Oii.hdf5" (mode r)>
+<HDF5 file "truth01_Oii.hdf5" (mode r)>
+<HDF5 file "truth02_Oii.hdf5" (mode r)>
+<HDF5 file "truth03_Oii.hdf5" (mode r)>
+<HDF5 file "truth04_Oii.hdf5" (mode r)>
+<HDF5 file "truth05_Oii.hdf5" (mode r)>
+<HDF5 file "truth06_Oii.hdf5" (mode r)>
+<HDF5 file "truth07_Oii.hdf5" (mode r)>
+<HDF5 file "truth08_Oii.hdf5" (mode r)>
+<HDF5 file "truth09_Oii.hdf5" (mode r)>
+<HDF5 file "truth10_Oii.hdf5" (mode r)>
+<HDF5 file "truth11_Oii.hdf5" (mode r)>
+<HDF5 file "truth12_Oii.hdf5" (mode r)>
+<HDF5 file "truth13_Oii.hdf5" (mode r)>
+<HDF5 file "truth14_Oii.hdf5" (mode r)>
+<HDF5 file "truth15_Oii.hdf5" (mode r)>
+<HDF5 file "truth16_Oii.hdf5" (mode r)>
+<HDF5 file "truth17_Oii.hdf5" (mode r)>
+<HDF5 file "truth18_Oii.hdf5" (mode r)>
+<HDF5 file "truth19_Oii.hdf5" (mode r)>
+0
+100000
+200000
+300000
+400000
+500000
+600000
+700000
+800000
+900000
+1000000
+1100000
+1200000
+1300000
+0
+100000
+200000
+300000
+400000
+500000
+600000
+700000
+800000
+900000
+1000000
+1100000
+1200000
+1300000
+('do work', 15079, 'clusters to go!')
+0
+1000
+2000
+3000
+4000
+5000
+6000
+7000
+8000
+9000
+10000
+11000
+12000
+13000
+14000
+15000
+Traceback (most recent call last):
+  File "targetedIdeal_async.py", line 107, in <module>
+    f['result_targetedIdeal'] = results
+  File "h5py/_objects.pyx", line 54, in h5py._objects.with_phil.wrapper (/general/home/boada/h5py-2.5.0/h5py/_objects.c:2458)
+  File "h5py/_objects.pyx", line 55, in h5py._objects.with_phil.wrapper (/general/home/boada/h5py-2.5.0/h5py/_objects.c:2415)
+  File "/home/boada/resources/python/lib/python2.7/site-packages/h5py-2.5.0-py2.7-linux-x86_64.egg/h5py/_hl/group.py", line 283, in __setitem__
+    ds = self.create_dataset(None, data=obj, dtype=base.guess_dtype(obj))
+  File "/home/boada/resources/python/lib/python2.7/site-packages/h5py-2.5.0-py2.7-linux-x86_64.egg/h5py/_hl/group.py", line 103, in create_dataset
+    dsid = dataset.make_new_dset(self, shape, dtype, data, **kwds)
+  File "/home/boada/resources/python/lib/python2.7/site-packages/h5py-2.5.0-py2.7-linux-x86_64.egg/h5py/_hl/dataset.py", line 126, in make_new_dset
+    dset_id.write(h5s.ALL, h5s.ALL, data)
+  File "h5py/_objects.pyx", line 54, in h5py._objects.with_phil.wrapper (/general/home/boada/h5py-2.5.0/h5py/_objects.c:2458)
+  File "h5py/_objects.pyx", line 55, in h5py._objects.with_phil.wrapper (/general/home/boada/h5py-2.5.0/h5py/_objects.c:2415)
+  File "h5py/h5d.pyx", line 217, in h5py.h5d.DatasetID.write (/general/home/boada/h5py-2.5.0/h5py/h5d.c:3345)
+IOError: 
+
+real	28m1.837s
+user	344m17.088s
