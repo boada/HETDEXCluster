@@ -18,6 +18,6 @@
 #BSUB -R 'span[ptile=20]'
 
 source /home/boada/.bashrc
-#time py targetedIdeal_async.py
-time py mkFullKnowledge.py
+time py targetedIdeal_async.py
+#time py mkFullKnowledge.py
 
