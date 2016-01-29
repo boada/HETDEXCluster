@@ -1,6 +1,5 @@
 import pylab as pyl
 import h5py as hdf
-from scatterDensity import scatterDensity
 from astLib import astStats
 
 def find_indices(bigArr, smallArr):
@@ -94,7 +93,7 @@ ax[1].set_xlabel('Log Mass')
 
 ax[1].set_yticklabels([])
 
-#ax[0].set_xlim(0,0.5)
+ax[1].set_xlim(0,1)
 
 ax[1].set_xlim(12,15.5)
 ax[1].set_xticks([12,13,14,15])

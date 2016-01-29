@@ -33,8 +33,10 @@ Vc = quad(astCalc.dVcdz, 0.09, 0.11)[0] * sr
 hmf = pyl.genfromtxt('mVector_PLANCK-SMT .txt')
 
 # plot! -- the 0.7 is because that is H0 used in astLib
-pyl.plot(hmf[:,0]/0.7, hmf[:,8]*0.7**3)
-pyl.scatter(limits/0.7,sums/Vc)
+f = pyl.figure(1, figsize=(7, 7*(pyl.sqrt(5.)-1.0)/2.0))
+ax = f.add_subplot(111)
+ax.plot(hmf[:,0]/0.7, hmf[:,8]*0.7**3)
+ax.scatter(limits/0.7,sums/Vc)
 
 pyl.loglog()
 pyl.xlabel('Mass $(M_\odot)$')
