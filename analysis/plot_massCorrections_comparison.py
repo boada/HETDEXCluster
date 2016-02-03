@@ -2,6 +2,7 @@ import pylab as pyl
 from astLib import astStats
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.cross_validation import train_test_split
+from sklearn.metrics import median_absolute_error, mean_squared_error
 import h5py as hdf
 
 def calc_err(pred, true):
@@ -64,6 +65,8 @@ ax4s.axhline(0)
 ###################
 for d, c, style in zip([maskedDataT, maskedDataS], ['#7A68A6', '#188487'],
         ['-', '--']):
+
+    print('power law')
     y_ = astStats.runningStatistic(pyl.log10(d['M200c']),
             pyl.log10(d['MASS']),
             pyl.percentile, binNumber=20, q=[16, 50, 84])
@@ -78,6 +81,11 @@ for d, c, style in zip([maskedDataT, maskedDataS], ['#7A68A6', '#188487'],
     ax1s.plot(y_[0],quants[:,1], style, c=c)
     ax1s.fill_between(y_[0], quants[:,2], quants[:,0], facecolor=c,
         alpha=0.4, edgecolor=c)
+
+    print('MAE', median_absolute_error(pyl.log10(d['M200c']),
+        pyl.log10(d['MASS'])))
+    print('RMSE', pyl.sqrt(mean_squared_error(pyl.log10(d['M200c']),
+        pyl.log10(d['MASS']))))
 
 ### Add Legend ###
 ##################
@@ -112,6 +120,9 @@ for train, test, c, style in zip([trainT, trainS], [testT, testS], ['#7A68A6',
     ax2s.fill_between(y_[0], quants[:,2], quants[:,0], facecolor=c,
         alpha=0.4, edgecolor=c)
 
+    print('MAE', median_absolute_error(pyl.log10(test['M200c']), mrf))
+    print('RMSE', pyl.sqrt(mean_squared_error(pyl.log10(test['M200c']), mrf)))
+
 #############
 #### 2d #####
 #############
@@ -133,6 +144,8 @@ for train, test, c, style in zip([trainT, trainS], [testT, testS], ['#7A68A6',
     ax3s.fill_between(y_[0], quants[:,2], quants[:,0], facecolor=c,
         alpha=0.4, edgecolor=c)
 
+    print('MAE', median_absolute_error(pyl.log10(test['M200c']), mrf))
+    print('RMSE', pyl.sqrt(mean_squared_error(pyl.log10(test['M200c']), mrf)))
 ##############
 ##### 3d #####
 ##############
@@ -140,7 +153,7 @@ for train, test, c, style in zip([trainT, trainS], [testT, testS], ['#7A68A6',
     rf.fit(y, X)
     obs = pyl.column_stack([pyl.log10(test['LOSVD']), test['ZSPEC'], test['NGAL']])
     mrf = rf.predict(obs)
-    
+
     y_ = astStats.runningStatistic(pyl.log10(test['M200c']), mrf,
             pyl.percentile, binNumber=20, q=[16, 50, 84])
     quants = pyl.array(y_[1])
@@ -155,6 +168,8 @@ for train, test, c, style in zip([trainT, trainS], [testT, testS], ['#7A68A6',
     ax4s.fill_between(y_[0], quants[:,2], quants[:,0], facecolor=c,
         alpha=0.4, edgecolor=c)
 
+    print('MAE', median_absolute_error(pyl.log10(test['M200c']), mrf))
+    print('RMSE', pyl.sqrt(mean_squared_error(pyl.log10(test['M200c']), mrf)))
 
 #### tweak ####
 ax1.set_xticks([12,13,14,15])
