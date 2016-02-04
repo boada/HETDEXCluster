@@ -119,8 +119,8 @@ for train, test, c, style in zip([trainT, trainS], [testT, testS], ['#7A68A6',
     ax2s.plot(y_[0],quants[:,1], style, c=c)
     ax2s.fill_between(y_[0], quants[:,2], quants[:,0], facecolor=c,
         alpha=0.4, edgecolor=c)
-    print('MAE', median_absolute_error(pyl.log10(test['M200c']), mrf))
-    print('RMSE', pyl.sqrt(mean_squared_error(pyl.log10(test['M200c']),
+    print('MAE', median_absolute_error(pyl.log10(test2['M200c']), mrf))
+    print('RMSE', pyl.sqrt(mean_squared_error(pyl.log10(test2['M200c']),
             mrf)))
     #############
     #### 2d #####
@@ -145,8 +145,8 @@ for train, test, c, style in zip([trainT, trainS], [testT, testS], ['#7A68A6',
     ax3s.plot(y_[0],quants[:,1], style, c=c)
     ax3s.fill_between(y_[0], quants[:,2], quants[:,0], facecolor=c,
         alpha=0.4, edgecolor=c)
-    print('MAE', median_absolute_error(pyl.log10(test['M200c']), mrf))
-    print('RMSE', pyl.sqrt(mean_squared_error(pyl.log10(test['M200c']),
+    print('MAE', median_absolute_error(pyl.log10(test2['M200c']), mrf))
+    print('RMSE', pyl.sqrt(mean_squared_error(pyl.log10(test2['M200c']),
             mrf)))
     ##############
     ##### 3d #####
@@ -171,8 +171,8 @@ for train, test, c, style in zip([trainT, trainS], [testT, testS], ['#7A68A6',
     ax4s.plot(y_[0],quants[:,1], style, c=c)
     ax4s.fill_between(y_[0], quants[:,2], quants[:,0], facecolor=c,
         alpha=0.4, edgecolor=c)
-    print('MAE', median_absolute_error(pyl.log10(test['M200c']), mrf))
-    print('RMSE', pyl.sqrt(mean_squared_error(pyl.log10(test['M200c']),
+    print('MAE', median_absolute_error(pyl.log10(test2['M200c']), mrf))
+    print('RMSE', pyl.sqrt(mean_squared_error(pyl.log10(test2['M200c']),
             mrf)))
 
 #### tweak ####
