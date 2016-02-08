@@ -52,6 +52,7 @@ targetGals = target['NGAL'] /truth['NGAL'][Tinds].astype('float')
 surveyGals = survey['NGAL'] /truth['NGAL'][Sinds].astype('float')
 
 # redshift plots first
+### Targeted ###
 y_ = astStats.runningStatistic(truth['ZSPEC'][Tinds], targetGals,
         pyl.percentile, binNumber=20, q=[16,50,84])
 
@@ -60,15 +61,17 @@ ax[0].plot(y_[0], quants[:,1], c='#7A68A6')
 ax[0].fill_between(y_[0], quants[:,2], quants[:,0], facecolor='#7A68A6',
             alpha=0.4, edgecolor='#7A68A6', label='Targeted')
 
+### Survey ###
 y_ = astStats.runningStatistic(truth['ZSPEC'][Sinds], surveyGals,
         pyl.percentile, binNumber=20, q=[16,50,84])
 
 quants = pyl.array(y_[1])
-ax[0].plot(y_[0], quants[:,1], c='#188487')
+ax[0].plot(y_[0], quants[:,1], '--', c='#188487')
 ax[0].fill_between(y_[0], quants[:,2], quants[:,0], facecolor='#188487',
             alpha=0.4, edgecolor='#188487', label='Survey')
 
 # mass plots
+### Targeted ###
 y_ = astStats.runningStatistic(pyl.log10(truth['M200c'][Tinds]), targetGals,
         pyl.percentile, binNumber=20, q=[16,50,84])
 
@@ -77,19 +80,26 @@ ax[1].plot(y_[0], quants[:,1], c='#7A68A6')
 ax[1].fill_between(y_[0], quants[:,2], quants[:,0], facecolor='#7A68A6',
             alpha=0.4, edgecolor='#7A68A6')
 
+### Survey ###
 y_ = astStats.runningStatistic(pyl.log10(truth['M200c'][Sinds]), surveyGals,
         pyl.percentile, binNumber=20, q=[16,50,84])
 
 quants = pyl.array(y_[1])
-ax[1].plot(y_[0], quants[:,1], c='#188487')
+ax[1].plot(y_[0], quants[:,1], '--', c='#188487')
 ax[1].fill_between(y_[0], quants[:,2], quants[:,0], facecolor='#188487',
             alpha=0.4, edgecolor='#188487')
 
 
+### Add Legend ###
+##################
+line1 = pyl.Line2D([], [], ls='-', color='#7A68A6')
+line2 = pyl.Line2D([], [], ls='--', color='#188487')
+ax[0].legend((line1, line2), ('Targeted', 'Survey'), loc='upper right')
+
 # adjsut the plots
 ax[0].set_ylabel('Recovery Fraction')
 ax[0].set_xlabel('Redshift')
-ax[1].set_xlabel('Log Mass')
+ax[1].set_xlabel('Log M $(M_\odot)$')
 
 ax[1].set_yticklabels([])
 
