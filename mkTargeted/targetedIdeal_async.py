@@ -46,8 +46,8 @@ if __name__ == "__main__":
     halo = mkHalo()
     truth = mkTruth()
 
-    #gmask = truth['g'] < 22
-    gmask = truth['G'] < -15
+    gmask = truth['g'] < 22
+    #gmask = truth['G'] < -15
     Oiimask = truth['Oii'] > 3.5
     mask = gmask | Oiimask
 
@@ -65,7 +65,7 @@ if __name__ == "__main__":
     gals = find_indices_multi(truth['HALOID'], halo['id'], subHalos)
 
     # make the results container
-    x = [i for i,g in enumerate(gals) if g.size >=20]
+    x = [i for i,g in enumerate(gals) if g.size >=5]
     # make the results container
     results = np.zeros((len(x),), dtype=[('IDX', '>i4'),
         ('HALOID', '>i8'),
