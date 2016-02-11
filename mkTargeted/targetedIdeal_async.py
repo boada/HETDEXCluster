@@ -102,8 +102,8 @@ if __name__ == "__main__":
     async_worker.wait()
 
     try:
-        os.remove('result_targetedIdeal_absMag.hdf5')
+        os.remove('result_targetedIdeal.hdf5')
     except OSError:
         pass
-    with hdf.File('result_targetedIdeal_absMag.hdf5', 'w') as f:
+    with hdf.File('result_targetedIdeal.hdf5', 'w') as f:
         f['result_targetedIdeal'] = results
