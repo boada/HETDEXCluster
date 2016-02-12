@@ -29,10 +29,14 @@ ax2s.set_yticklabels([])
 
 ### Targeted ###
 ################
-f = hdf.File('result_targetedIdeal.hdf5', 'r')
-dset  = f[f.keys()[0]]
-data = dset.value
-f.close()
+with hdf.File('result_targetedIdeal.hdf5', 'r') as f:
+    dset  = f[f.keys()[0]]
+    data = dset.value
+
+# You have to clean the data here. This is almost certainly from the fact that
+# some of the HALOIDS are repeated at different redshifts. I have a prior on
+# the LOSVD calculation which will limit the LOSVD to a maxium. Because the
+# clusters are so far apart the LOSVD is super high.
 mask = (pyl.log10(data['LOSVD']) > 3.12 ) & (data['M200c'] < 10**14.5)
 maskedDataT = data[~mask]
 badData = data[mask]
@@ -40,10 +44,14 @@ trainT, testT = train_test_split(maskedDataT, test_size=0.3)
 
 ### Survey ###
 ##############
-f = hdf.File('surveyComplete.hdf5', 'r')
-dset  = f[f.keys()[0]]
-data = dset.value
-f.close()
+with hdf.File('surveyComplete_noRotations.hdf5', 'r') as f:
+    dset  = f[f.keys()[0]]
+    data = dset.value
+
+# You have to clean the data here. This is almost certainly from the fact that
+# some of the HALOIDS are repeated at different redshifts. I have a prior on
+# the LOSVD calculation which will limit the LOSVD to a maxium. Because the
+# clusters are so far apart the LOSVD is super high.
 mask = (pyl.log10(data['LOSVD']) > 3.12 ) & (data['M200c'] < 10**14.5)
 maskedDataS = data[~mask]
 badData = data[mask]
