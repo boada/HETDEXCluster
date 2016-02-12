@@ -10,7 +10,7 @@ def find_indices(bigArr, smallArr):
     '''
 
     inds = []
-    sortedind = np.argsort(bigArr)
+    sortedind = pyl.argsort(bigArr)
     sortedbigArr = bigArr[sortedind]
     for i, _ in enumerate(smallArr):
         i1 = bisect_left(sortedbigArr, smallArr[i])
@@ -36,9 +36,20 @@ matched = find_indices(targeted['HALOID'], RM['HALOID'])
 
 cleaned = [[j,i[0]] for j,i in enumerate(matched) if i]
 cleaned = pyl.array(cleaned)
-pyl.scatter(pyl.log10(RM['LAMBDA'][cleaned[:,0]]),
-        pyl.log10(targeted['M200c'][cleaned[:,1]]))
+#pyl.scatter(pyl.log10(RM['LAMBDA'][cleaned[:,0]]),
+#        pyl.log10(targeted['M200c'][cleaned[:,1]]))
 
 
+f = pyl.figure(1, figsize=(7, 7*(pyl.sqrt(5.)-1.0)/2.0))
+ax = f.add_subplot(111)
+
+ax.errorbar(RM['LAMBDA'][cleaned[:,0]], targeted['M200c'][cleaned[:,1]],
+        xerr=RM['LAMBDA_err'][cleaned[:,0]], fmt='o', ecolor='0.8')
 
 
+ax.set_xlabel('Richness')
+ax.set_ylabel('Mass $(M_\odot)$')
+#pyl.scatter(RM['LAMBDA'][cleaned[:,0]],targeted['M200c'][cleaned[:,1]])
+
+
+pyl.show()
