@@ -52,7 +52,7 @@ def worker(pos, data, center, rot=False):
     return pos, data, sigma_dist
 
 def cb_func((pos, data, sigma_dist)):
-    if pos % 1000 == 0:
+    if pos % 200 == 0:
         print pos
     results['IDX'][pos] = pos
     results['CLUSZ'][pos] = data['CLUSZ'][0]
@@ -63,8 +63,8 @@ def cb_func((pos, data, sigma_dist)):
 
 if __name__ == "__main__":
 
-    # original plus n-1 rotations
-    numRotations = 5
+    # original plus n rotations
+    numRotations = 0
 
     async_worker = AsyncFactory(worker, cb_func)
     halo = mkHalo()
@@ -87,7 +87,7 @@ if __name__ == "__main__":
     # make the results container
     x = [i for i,g in enumerate(gals) if g.size >=5]
     # make the results container
-    results = np.zeros((len(x)*numRotations,), dtype=[('IDX', '>i4'),
+    results = np.zeros((len(x)*(numRotations+1),), dtype=[('IDX', '>i4'),
         ('HALOID', '>i8'),
         ('ZSPEC', '>f4'),
         ('VRMS', '>f4'),
@@ -99,16 +99,17 @@ if __name__ == "__main__":
         ('LOSVD_err', '>f4', (2,)),
         ('LOSVD_dist', '>f4', (10000,))])
 
-    print('do work')
-    for j,i in enumerate(x*numRotations):
+    print('do work', len(x), 'clusters to go!')
+    for j,i in enumerate(x*(numRotations+1)):
         center = (maskedHalo['ra'][uniqueIdx[i]],
                 maskedHalo['dec'][uniqueIdx[i]])
 
         # start the rotations
-        if j > len(x):
-            async_worker.call(j, truth[gals[i]], center, rot=True)
-        else:
-            async_worker.call(j, truth[gals[i]], center, rot=False)
+        #if j > len(x):
+        #    async_worker.call(j, truth[gals[i]], center, rot=True)
+        #else:
+        async_worker.call(j, truth[gals[i]], center, rot=False)
+        #worker(j, truth[gals[i]], center, rot=False)
 
         # update results array
         results['HALOID'][j] = maskedHalo['id'][uniqueIdx[i]]
@@ -121,8 +122,8 @@ if __name__ == "__main__":
 
     print('results')
     try:
-        os.remove('surveyComplete.hdf5')
+        os.remove('surveyComplete_noRotations.hdf5')
     except OSError:
         pass
-    with hdf.File('surveyComplete.hdf5', 'w') as f:
+    with hdf.File('surveyComplete_noRotations.hdf5', 'w') as f:
         f['surveyComplete'] = results
