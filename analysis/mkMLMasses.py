@@ -160,7 +160,6 @@ if __name__ == "__main__":
         f['predicted masses'] = data
         f.flush()
 
-
     ### Survey ###
     ##############
     with hdf.File('surveyComplete_noRotations.hdf5', 'r') as f:
@@ -183,4 +182,3 @@ if __name__ == "__main__":
     with hdf.File('surveyComplete_noRotations_masses.hdf5', 'w') as f:
         f['predicted masses'] = data
         f.flush()
-
