@@ -87,30 +87,12 @@ def addMasses(data, generator):
         mrf = np.delete(mrf, mask)
         test2 = np.delete(test, mask)
         print(mrf.size, test2.size)
-        data['Prob_pred_2d'][test2['IDX']] = mrf['MASS']
-        data['Prob_pred_2d_err'][test2['IDX']] = mrf['MASS_err']
+        data['Prob_pred_3d'][test2['IDX']] = mrf['MASS']
+        data['Prob_pred_3d_err'][test2['IDX']] = mrf['MASS_err']
 
         print(i)
         i+=1
     return data
-
-def pred_ints(model, X, percentile=68):
-    ''' Calculates the prediction intervals of the estimators. '''
-
-    err_down = []
-    err_up = []
-    for x in range(len(X)):
-        preds = []
-        for pred in model.estimators_:
-            try:
-                preds.append(pred.predict(X[x][:,np.newaxis]))
-            except ValueError:
-                preds.append(pred.predict(X[x].reshape(1,-1)))
-        err_down.append(np.percentile(preds, (100 - percentile) / 2. ))
-        err_up.append(np.percentile(preds, 100 - (100 - percentile) / 2.))
-
-    return err_down, err_up
-
 
 if __name__ == "__main__":
 
