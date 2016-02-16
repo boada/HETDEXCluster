@@ -66,7 +66,7 @@ massErr_down = pyl.absolute(10**survey['ML_pred_3d'][cleanedSurvey[:,1]] -\
         10**targeted['ML_pred_3d_err'][cleanedSurvey[:,1]][:,0])
 
 ax.errorbar(RM['LAMBDA'][cleanedSurvey[:,0]],
-        10**targeted['ML_pred_3d'][cleanedSurvey[:,1]],
+        10**survey['ML_pred_3d'][cleanedSurvey[:,1]],
         xerr=RM['LAMBDA_err'][cleanedSurvey[:,0]], yerr=pyl.row_stack([massErr_up,
             massErr_down]), fmt='o', ecolor='0.8', mfc='#188487',
         capsize=0.0, ms=8,
