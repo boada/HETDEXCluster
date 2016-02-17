@@ -129,10 +129,11 @@ if __name__ == "__main__":
     # add the extra fields
     data = updateArray(data)
 
-    # You have to clean the data here. This is almost certainly from the fact that
-    # some of the HALOIDS are repeated at different redshifts. I have a prior on
-    # the LOSVD calculation which will limit the LOSVD to a maxium. Because the
-    # clusters are so far apart the LOSVD is super high.
+    # You have to clean the data here. This is almost certainly from the fact
+    # that some of the HALOIDS are repeated at different redshifts. I have a
+    # prior on the LOSVD calculation which will limit the LOSVD to a maxium.
+    # Because the clusters are so far apart the LOSVD is super high.
+
     mask = (np.log10(data['LOSVD']) > 3.12 ) & (data['M200c'] < 10**14.5)
     maskedDataS = data[~mask]
     badData = data[mask]
