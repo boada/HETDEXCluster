@@ -1,6 +1,6 @@
 import h5py as hdf
 import pylab as pyl
-
+from astLib import astStats
 def find_indices(bigArr, smallArr):
     from bisect import bisect_left, bisect_right
     ''' Takes the full halo catalog and picks out the HALOIDs that we are
@@ -59,11 +59,21 @@ ax.errorbar(RM['LAMBDA'][cleanedTargeted[:,0]],
             massErr_down]), fmt='o', ecolor='0.8', mfc='#7a68a6', capsize=0.0,
         label='Targeted')
 
+# add fits
+# DOES NOT INCLUDE ERRORS!!!
+x = pyl.log(RM['LAMBDA'][cleanedTargeted[:,0]]/60.)
+y = pyl.log(10**targeted['ML_pred_3d'][cleanedTargeted[:,1]]* 0.7/1e14)
+fit = astStats.OLSFit(pyl.column_stack([x,y]))
+x = pyl.array([10,110])
+lny = fit['intercept'] + fit['slope']*pyl.log(x/60.)
+y = pyl.exp(lny) * 1e14/0.7
+ax.plot(x,y, ls='-', c='#7a68a6', zorder=0)
+
 # survey points
 massErr_up = pyl.absolute(10**survey['ML_pred_3d'][cleanedSurvey[:,1]] -\
-        10**targeted['ML_pred_3d_err'][cleanedSurvey[:,1]][:,1])
+        10**survey['ML_pred_3d_err'][cleanedSurvey[:,1]][:,1])
 massErr_down = pyl.absolute(10**survey['ML_pred_3d'][cleanedSurvey[:,1]] -\
-        10**targeted['ML_pred_3d_err'][cleanedSurvey[:,1]][:,0])
+        10*survey['ML_pred_3d_err'][cleanedSurvey[:,1]][:,0])
 
 ax.errorbar(RM['LAMBDA'][cleanedSurvey[:,0]],
         10**survey['ML_pred_3d'][cleanedSurvey[:,1]],
@@ -72,11 +82,27 @@ ax.errorbar(RM['LAMBDA'][cleanedSurvey[:,0]],
         capsize=0.0, ms=8,
         label='Survey')
 
+# add fits
+# DOES NOT INCLUDE ERRORS!!!
+x = pyl.log(RM['LAMBDA'][cleanedSurvey[:,0]]/60.)
+y = pyl.log(10**survey['ML_pred_3d'][cleanedSurvey[:,1]]* 0.7/1e14)
+fit = astStats.OLSFit(pyl.column_stack([x,y]))
+x = pyl.array([10,110])
+lny = fit['intercept'] + fit['slope']*pyl.log(x/60.)
+y = pyl.exp(lny) * 1e14/0.7
+ax.plot(x,y, ls='--', c='#188487', zorder=0)
+
 pyl.loglog()
 ax.set_xlim(10,110)
 ax.set_ylim(5e12, 2e15)
 
 ax.set_xlabel('Richness')
 ax.set_ylabel('$M_{pred}$ $(M_\odot)$')
+
+# add the Rykoff2012 relation
+x = pyl.array([10,110])
+lny = 1.48 + 1.06*pyl.log(x/60.)
+y = pyl.exp(lny) * 1e14/0.7
+ax.plot(x,y, ls='-.', c='k', zorder=0, label='Rykoff2012')
 
 pyl.show()
