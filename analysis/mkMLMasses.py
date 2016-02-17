@@ -3,7 +3,8 @@ import h5py as hdf
 from sklearn.ensemble import RandomForestRegressor
 #from sklearn.cross_validation import train_test_split
 from numpy.lib import recfunctions as rfns
-from itertools import permutations
+from itertools import permutations, repeat, izip
+import multiprocessing
 
 
 def updateArray(data):
@@ -58,6 +59,9 @@ def addMasses(data, generator):
 
     '''
 
+    p = multiprocessing.Pool(multiprocessing.cpu_count(),
+            maxtasksperchild=1000)
+
     i = 0
     for train, test in generator:
         rf = RandomForestRegressor(n_estimators=1000, min_samples_leaf=1,
@@ -76,9 +80,8 @@ def addMasses(data, generator):
 
         # errors
         print('Calculating Error')
-        err_down, err_up = pred_ints(rf, obs, percentile=68)
-        data['ML_pred_1d_err'][test['IDX']] = np.column_stack([err_down,
-            err_up])
+        result = p.map(mp_worker_wrapper, izip(repeat(rf), obs, mrf))
+        data['ML_pred_1d_err'][test['IDX']] = result
 
     #############
     #### 2d #####
@@ -91,9 +94,9 @@ def addMasses(data, generator):
         data['ML_pred_2d'][test['IDX']] = mrf
         # errors
         print('Calculating Error, 2d')
-        err_down, err_up = pred_ints(rf, obs, percentile=68)
-        data['ML_pred_2d_err'][test['IDX']] = np.column_stack([err_down,
-            err_up])
+        result = p.map(mp_worker_wrapper, izip(repeat(rf), obs, mrf))
+        data['ML_pred_2d_err'][test['IDX']] = result
+
     ##############
     ##### 3d #####
     ##############
@@ -107,16 +110,18 @@ def addMasses(data, generator):
         data['ML_pred_3d'][test['IDX']] = mrf
         # errors
         print('Calculating Error, 3d')
-        err_down, err_up = pred_ints(rf, obs, percentile=68)
-        data['ML_pred_3d_err'][test['IDX']] = np.column_stack([err_down,
-            err_up])
+        result = p.map(mp_worker_wrapper, izip(repeat(rf), obs, mrf))
+        data['ML_pred_3d_err'][test['IDX']] = result
 
         print(i)
         i+=1
 
+    p.close()
+    p.join()
+
     return data
 
-def pred_ints(model, X, percentile=68):
+def pred_ints(model, X, mrf, percentile=68):
     ''' Calculates the prediction intervals of the estimators. '''
 
     err_down = []
@@ -133,6 +138,21 @@ def pred_ints(model, X, percentile=68):
 
     return err_down, err_up
 
+def mp_pred_ints(model, obs, mrf):
+    preds = []
+    for pred in model.estimators_:
+        try:
+            preds.append(pred.predict(obs[:,np.newaxis]))
+        except ValueError:
+            preds.append(pred.predict(obs.reshape(1,-1)))
+
+    err_down = mrf - np.std(preds)
+    err_up = mrf + np.std(preds)
+
+    return err_down, err_up
+
+def mp_worker_wrapper(args):
+    return mp_pred_ints(*args)
 
 if __name__ == "__main__":
 
@@ -162,6 +182,7 @@ if __name__ == "__main__":
 
     ### Survey ###
     ##############
+    print 'SURVEY!'
     with hdf.File('surveyComplete_noRotations.hdf5', 'r') as f:
         dset  = f[f.keys()[0]]
         data = dset.value
@@ -177,8 +198,8 @@ if __name__ == "__main__":
     maskedDataS = data[~mask]
     badData = data[mask]
 
-    sl_survey = splitData(maskedDataS, 0.3)
-    data = addMasses(data, sl_survey)
-    with hdf.File('surveyComplete_noRotations_masses.hdf5', 'w') as f:
-        f['predicted masses'] = data
-        f.flush()
+#    sl_survey = splitData(maskedDataS, 0.3)
+#    data = addMasses(data, sl_survey)
+#    with hdf.File('surveyComplete_noRotations_masses.hdf5', 'w') as f:
+#        f['predicted masses'] = data
+#        f.flush()
