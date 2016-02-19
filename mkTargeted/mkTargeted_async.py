@@ -46,12 +46,11 @@ if __name__ == "__main__":
     halo = mkHalo()
     truth = mkTruth()
 
-    gmask = truth['g'] < 22
-    #gmask = truth['G'] < -15
-    Oiimask = truth['Oii'] > 3.5
-    mask = gmask | Oiimask
+#    gmask = truth['g'] < 22
+#    Oiimask = truth['Oii'] > 3.5
+#    mask = gmask | Oiimask
 
-    truth = truth[mask]
+#    truth = truth[mask]
 
     # there are no clusters with mass < 2e11 and more than 5 galaxies
     mask = (halo['upid'] == -1) & (halo['m200c'] > 2e11)
@@ -70,7 +69,6 @@ if __name__ == "__main__":
     results = np.zeros((len(x),), dtype=[('IDX', '>i4'),
         ('HALOID', '>i8'),
         ('ZSPEC', '>f4'),
-        ('VRMS', '>f4'),
         ('M200c', '>f4'),
         ('CLUSZ', '>f4'),
         ('LOSVD', '>f4'),
@@ -90,20 +88,18 @@ if __name__ == "__main__":
             results['HALOID'][j] = maskedHalo['id'][uniqueIdx[i]]
             results['NGAL'][j] = gals[i].size
             results['ZSPEC'][j] = maskedHalo['zspec'][uniqueIdx[i]]
-            results['VRMS'][j] = maskedHalo['vrms'][uniqueIdx[i]]/np.sqrt(3)
-            results['M200c'][j] = maskedHalo['m200c'][uniqueIdx[i]]/0.72
+            results['M200c'][j] = maskedHalo['m200c'][uniqueIdx[i]]/0.70
         elif keepBad:
             results['HALOID'][j] = maskedHalo['id'][uniqueIdx[i]]
             results['NGAL'][j] = gals[i].size
             results['ZSPEC'][j] = maskedHalo['zspec'][uniqueIdx[i]]
-            results['VRMS'][j] = maskedHalo['vrms'][uniqueIdx[i]]/np.sqrt(3)
-            results['M200c'][j] = maskedHalo['m200c'][uniqueIdx[i]]/0.72
+            results['M200c'][j] = maskedHalo['m200c'][uniqueIdx[i]]/0.70
 
     async_worker.wait()
 
     try:
-        os.remove('result_targetedIdeal.hdf5')
+        os.remove('result_targetedPerfect.hdf5')
     except OSError:
         pass
-    with hdf.File('result_targetedIdeal.hdf5', 'w') as f:
-        f['result_targetedIdeal'] = results
+    with hdf.File('result_targetedPerfect.hdf5', 'w') as f:
+        f['result_targetedPerfect'] = results
