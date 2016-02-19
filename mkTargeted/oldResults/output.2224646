@@ -1,0 +1,275 @@
+<HDF5 file "halo00.hdf5" (mode r)>
+<HDF5 file "halo01.hdf5" (mode r)>
+<HDF5 file "halo02.hdf5" (mode r)>
+<HDF5 file "halo03.hdf5" (mode r)>
+<HDF5 file "halo04.hdf5" (mode r)>
+<HDF5 file "halo05.hdf5" (mode r)>
+<HDF5 file "halo06.hdf5" (mode r)>
+<HDF5 file "halo07.hdf5" (mode r)>
+<HDF5 file "halo08.hdf5" (mode r)>
+<HDF5 file "halo09.hdf5" (mode r)>
+<HDF5 file "halo10.hdf5" (mode r)>
+<HDF5 file "halo11.hdf5" (mode r)>
+<HDF5 file "halo12.hdf5" (mode r)>
+<HDF5 file "halo13.hdf5" (mode r)>
+<HDF5 file "halo14.hdf5" (mode r)>
+<HDF5 file "halo15.hdf5" (mode r)>
+<HDF5 file "halo16.hdf5" (mode r)>
+<HDF5 file "halo17.hdf5" (mode r)>
+<HDF5 file "halo18.hdf5" (mode r)>
+<HDF5 file "halo19.hdf5" (mode r)>
+<HDF5 file "truth00_Oii.hdf5" (mode r)>
+<HDF5 file "truth01_Oii.hdf5" (mode r)>
+<HDF5 file "truth02_Oii.hdf5" (mode r)>
+<HDF5 file "truth03_Oii.hdf5" (mode r)>
+<HDF5 file "truth04_Oii.hdf5" (mode r)>
+<HDF5 file "truth05_Oii.hdf5" (mode r)>
+<HDF5 file "truth06_Oii.hdf5" (mode r)>
+<HDF5 file "truth07_Oii.hdf5" (mode r)>
+<HDF5 file "truth08_Oii.hdf5" (mode r)>
+<HDF5 file "truth09_Oii.hdf5" (mode r)>
+<HDF5 file "truth10_Oii.hdf5" (mode r)>
+<HDF5 file "truth11_Oii.hdf5" (mode r)>
+<HDF5 file "truth12_Oii.hdf5" (mode r)>
+<HDF5 file "truth13_Oii.hdf5" (mode r)>
+<HDF5 file "truth14_Oii.hdf5" (mode r)>
+<HDF5 file "truth15_Oii.hdf5" (mode r)>
+<HDF5 file "truth16_Oii.hdf5" (mode r)>
+<HDF5 file "truth17_Oii.hdf5" (mode r)>
+<HDF5 file "truth18_Oii.hdf5" (mode r)>
+<HDF5 file "truth19_Oii.hdf5" (mode r)>
+0
+100000
+200000
+300000
+400000
+500000
+600000
+700000
+800000
+900000
+1000000
+1100000
+1200000
+1300000
+0
+100000
+200000
+300000
+400000
+500000
+600000
+700000
+800000
+900000
+1000000
+1100000
+1200000
+1300000
+('do work', 143338, 'clusters to go!')
+0
+1000
+2000
+3000
+4000
+5000
+6000
+7000
+8000
+9000
+10000
+11000
+12000
+13000
+14000
+15000
+16000
+17000
+18000
+19000
+20000
+21000
+22000
+23000
+24000
+25000
+26000
+27000
+28000
+29000
+30000
+31000
+32000
+33000
+34000
+35000
+36000
+37000
+38000
+39000
+40000
+41000
+42000
+43000
+44000
+45000
+46000
+47000
+48000
+49000
+50000
+51000
+52000
+53000
+54000
+55000
+56000
+57000
+58000
+59000
+60000
+61000
+62000
+63000
+64000
+65000
+66000
+67000
+68000
+69000
+70000
+71000
+72000
+73000
+74000
+75000
+76000
+77000
+78000
+79000
+80000
+81000
+82000
+83000
+84000
+85000
+86000
+87000
+88000
+89000
+90000
+91000
+92000
+93000
+94000
+95000
+96000
+97000
+98000
+99000
+100000
+101000
+102000
+103000
+104000
+105000
+106000
+107000
+108000
+109000
+110000
+111000
+112000
+113000
+114000
+115000
+116000
+117000
+118000
+119000
+120000
+121000
+122000
+123000
+124000
+125000
+126000
+127000
+128000
+129000
+130000
+131000
+132000
+133000
+134000
+135000
+136000
+137000
+138000
+139000
+140000
+141000
+142000
+143000
+
+real	163m41.846s
+user	2999m42.586s
+sys	34m57.815s
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@nxt2168>
+Subject: Job 2224646: <targetedIdeal_async> in cluster <Main_Compute> Done
+
+Job <targetedIdeal_async> was submitted from host <login8> by user <boada> in cluster <Main_Compute>.
+Job was executed on host(s) <20*nxt2168>, in queue <sn_regular>, as user <boada> in cluster <Main_Compute>.
+</home/boada> was used as the home directory.
+</home/boada/Projects/desCluster/mkTargeted> was used as the working directory.
+Started at Fri Feb 19 12:20:56 2016
+Results reported on Fri Feb 19 15:04:58 2016
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+## job name
+#BSUB -J targetedIdeal_async
+
+## send stderr and stdout to the same file
+#BSUB -o output.%J
+
+## login shell to avoid copying env from login session
+## also helps the module function work in batch jobs
+#BSUB -L /bin/bash
+
+## 30 minutes of walltime ([HH:]MM)
+## 10 hours for Perfect knowledge
+## 2 hours for Realistic knowledge
+#BSUB -W 10:00
+
+## numprocs
+#BSUB -n 20
+
+## 20 cores/node
+#BSUB -R 'span[ptile=20]'
+
+source /home/boada/.bashrc
+time py mkTargeted_async.py
+#time py mkFullKnowledge.py
+
+
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   184245.59 sec.
+    Max Memory :                                 11314 MB
+    Average Memory :                             9890.85 MB
+    Total Requested Memory :                     51200.00 MB
+    Delta Memory :                               39886.00 MB
+    Max Processes :                              24
+    Max Threads :                                28
+
+The output (if any) is above this job summary.
+
