@@ -46,11 +46,12 @@ if __name__ == "__main__":
     halo = mkHalo()
     truth = mkTruth()
 
-#    gmask = truth['g'] < 22
-#    Oiimask = truth['Oii'] > 3.5
-#    mask = gmask | Oiimask
+    # this is the part that makes it realistic or not
+    gmask = truth['g'] < 22
+    Oiimask = truth['Oii'] > 3.5
+    mask = gmask | Oiimask
 
-#    truth = truth[mask]
+    truth = truth[mask]
 
     # there are no clusters with mass < 2e11 and more than 5 galaxies
     mask = (halo['upid'] == -1) & (halo['m200c'] > 2e11)
@@ -98,8 +99,11 @@ if __name__ == "__main__":
     async_worker.wait()
 
     try:
-        os.remove('result_targetedPerfect.hdf5')
+        #os.remove('result_targetedPerfect.hdf5')
+        os.remove('result_targetedRealistic.hdf5')
     except OSError:
         pass
-    with hdf.File('result_targetedPerfect.hdf5', 'w') as f:
-        f['result_targetedPerfect'] = results
+    #with hdf.File('result_targetedPerfect.hdf5', 'w') as f:
+    #    f['result_targetedPerfect'] = results
+    with hdf.File('result_targetedRealistic.hdf5', 'w') as f:
+        f['result_targetedRealistic'] = results
