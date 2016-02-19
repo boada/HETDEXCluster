@@ -41,19 +41,11 @@ if __name__ == "__main__":
     async_worker = AsyncFactory(worker, cb_func)
     truth = mkTruth(flatHMF=True)
 
-    # brightness limits
-    #gmask = truth['g'] < 22.
+#    gmask = truth['g'] < 22
+#    Oiimask = truth['Oii'] > 3.5
+#    mask = gmask | Oiimask
 
-    # -6 is roughly the Abs mag of 22mag at redshift 0.001
-    gmask = [astCalc.absMag(22,astCalc.dl(z)) for z in truth['zspec']] < -6
-
-    Oiimask = truth['Oii'] > 3.5
-    #zmask = truth['Z'] > 0.4
-    # z > 0.4 & Oii limit | g < 22 & z < 0.4 | Oii limit & z < 0.4
-    #mask = (zmask & Oiimask) | (gmask & ~zmask) | (Oiimask & ~zmask)
-    mask = gmask | Oiimask
-
-    truth = truth[mask]
+#    truth = truth[mask]
 
     # survey bounds
     RAmax = 90
@@ -82,6 +74,12 @@ if __name__ == "__main__":
         except NameError:
             results = obj.get()[1]
 
-    with hdf.File('observations'+str(os.environ['LSB_JOBID'])+'.hdf5',
-            'w') as f:
-        f['observations'] = results
+#    with hdf.File('observations'+str(os.environ['LSB_JOBID'])+'.hdf5',
+#            'w') as f:
+#        f['observations'] = results
+    try:
+        os.remove('observationsPerfect.hdf5')
+    except OSError:
+        pass
+    with hdf.File('observationsPerfect.hdf5', 'w') as f:
+        f['observationsPerfect'] = results
