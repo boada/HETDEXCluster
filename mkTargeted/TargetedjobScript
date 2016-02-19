@@ -9,7 +9,9 @@
 #BSUB -L /bin/bash
 
 ## 30 minutes of walltime ([HH:]MM)
-#BSUB -W 2:00
+## 10 hours for Perfect knowledge
+## 2 hours for Realistic knowledge
+#BSUB -W 10:00
 
 ## numprocs
 #BSUB -n 20
@@ -18,6 +20,6 @@
 #BSUB -R 'span[ptile=20]'
 
 source /home/boada/.bashrc
-time py targetedIdeal_async.py
+time py mkTargeted_async.py
 #time py mkFullKnowledge.py
 
