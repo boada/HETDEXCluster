@@ -45,6 +45,12 @@ if __name__ == "__main__":
     halo = mkHalo()
     truth = mkTruth()
 
+    # this is the part that makes it realistic
+    gmask = truth['g'] < 22
+    Oiimask = truth['Oii'] > 3.5
+    mask = gmask | Oiimask
+    truth = truth[mask]
+
     # there are no clusters with mass < 2e11 and more than 5 galaxies
     mask = (halo['upid'] == -1) & (halo['m200c'] > 2e11)
     maskedHalo = halo[mask]
@@ -59,49 +65,13 @@ if __name__ == "__main__":
     # how many clusters are we looking at?
     x = [i for i,g in enumerate(gals) if g.size >=5]
 
-    # make the results container
-    # results = np.zeros((len(x),), dtype=[('IDX', '>i4'),
-    #     ('HALOID', '>i8'),
-    #     ('ZSPEC', '>f4'),
-    #     ('VRMS', '>f4'),
-    #     ('M200c', '>f4'),
-    #     ('CLUSZ', '>f4'),
-    #     ('LOSVD', '>f4'),
-    #     ('MASS', '>f4'),
-    #     ('NGAL', '>i4'),
-    #     ('LOSVD_err', '>f4', (2,)),
-    #     ('LOSVD_dist', '>f4', (10000,))])
-
     results = np.zeros((len(x),), dtype=[('IDX', '>i4'),
         ('HALOID', '>i8'),
         ('ZSPEC', '>f4'),
         ('M200c', '>f4'),
         ('NGAL', '>i4')])
 
-
-    # print('do work')
-    # keepBad = False
-    # for j,i in enumerate(x):
-    #     center = (maskedHalo['ra'][uniqueIdx[i]],
-    #             maskedHalo['dec'][uniqueIdx[i]])
-    #     if gals[i].size >= 5:
-    #         async_worker.call(j, truth[gals[i]], center)
-    #         # update results array
-    #         results['NGAL'][j] = gals[i].size
-    #         results['ZSPEC'][j] = maskedHalo['zspec'][uniqueIdx[i]]
-    #         results['VRMS'][j] = maskedHalo['vrms'][uniqueIdx[i]]/np.sqrt(3)
-    #         results['M200c'][j] = maskedHalo['m200c'][uniqueIdx[i]]/0.72
-    #     elif keepBad:
-    #         results['NGAL'][j] = gals[i].size
-    #         results['ZSPEC'][j] = maskedHalo['zspec'][uniqueIdx[i]]
-    #         results['VRMS'][j] = maskedHalo['vrms'][uniqueIdx[i]]/np.sqrt(3)
-    #         results['M200c'][j] = maskedHalo['m200c'][uniqueIdx[i]]/0.72
-    #
-    # async_worker.wait()
-
-
-
-    print('do work')
+    print('do work', len(x), 'clusters to go!')
     keepBad = False
     for j,i in enumerate(x):
         # update results array
