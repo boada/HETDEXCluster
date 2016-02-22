@@ -6,6 +6,10 @@ from numpy.lib import recfunctions as rfns
 from itertools import permutations, repeat, izip
 import multiprocessing
 
+def child_initializer(_rf):
+    print 'Starting', multiprocessing.current_process().name
+    global model
+    model = _rf
 
 def updateArray(data):
     ''' Adds the results containers to the data product. '''
@@ -59,9 +63,6 @@ def addMasses(data, generator):
 
     '''
 
-    p = multiprocessing.Pool(multiprocessing.cpu_count(),
-            maxtasksperchild=1000)
-
     i = 0
     for train, test in generator:
         rf = RandomForestRegressor(n_estimators=1000, min_samples_leaf=1,
@@ -80,7 +81,11 @@ def addMasses(data, generator):
 
         # errors
         print('Calculating Error')
-        result = p.map(mp_worker_wrapper, izip(repeat(rf), obs, mrf))
+        p = multiprocessing.Pool(maxtasksperchild=1000,
+                initializer=child_initializer, initargs=([rf]))
+        result = p.map(mp_worker_wrapper, izip(obs, mrf))
+        p.close()
+        p.join()
         data['ML_pred_1d_err'][test['IDX']] = result
 
     #############
@@ -94,7 +99,11 @@ def addMasses(data, generator):
         data['ML_pred_2d'][test['IDX']] = mrf
         # errors
         print('Calculating Error, 2d')
-        result = p.map(mp_worker_wrapper, izip(repeat(rf), obs, mrf))
+        p = multiprocessing.Pool(maxtasksperchild=1000,
+                initializer=child_initializer, initargs=([rf]))
+        result = p.map(mp_worker_wrapper, izip(obs, mrf))
+        p.close()
+        p.join()
         data['ML_pred_2d_err'][test['IDX']] = result
 
     ##############
@@ -110,14 +119,16 @@ def addMasses(data, generator):
         data['ML_pred_3d'][test['IDX']] = mrf
         # errors
         print('Calculating Error, 3d')
-        result = p.map(mp_worker_wrapper, izip(repeat(rf), obs, mrf))
+        p = multiprocessing.Pool(maxtasksperchild=1000,
+                initializer=child_initializer, initargs=([rf]))
+        result = p.map(mp_worker_wrapper, izip(obs, mrf))
+        p.close()
+        p.join()
         data['ML_pred_3d_err'][test['IDX']] = result
 
         print(i)
         i+=1
 
-    p.close()
-    p.join()
 
     return data
 
@@ -138,7 +149,8 @@ def pred_ints(model, X, mrf, percentile=68):
 
     return err_down, err_up
 
-def mp_pred_ints(model, obs, mrf):
+#def mp_pred_ints(model, obs, mrf):
+def mp_pred_ints(obs, mrf):
     preds = []
     for pred in model.estimators_:
         try:
@@ -172,15 +184,16 @@ if __name__ == "__main__":
     # prior on the LOSVD calculation which will limit the LOSVD to a maxium.
     # Because the clusters are so far apart the LOSVD is super high.
 
-    mask = (np.log10(data['LOSVD']) > 3.12 ) & (data['M200c'] < 10**14.5)
+    mask = ((np.log10(data['LOSVD']) > 3.12 ) & (data['M200c'] < 10**14.5) |
+        (data['LOSVD'] < 50))
     maskedDataT = data[~mask]
     badData = data[mask]
 
-    sl_targeted = splitData(maskedDataT, 0.3)
-    data = addMasses(data, sl_targeted)
-    with hdf.File('result_targetedPerfect_masses.hdf5', 'w') as f:
-        f['predicted masses'] = data
-        f.flush()
+#    sl_targeted = splitData(maskedDataT, 0.3)
+#    data = addMasses(data, sl_targeted)
+#    with hdf.File('result_targetedPerfect_masses.hdf5', 'w') as f:
+#        f['predicted masses'] = data
+#        f.flush()
 
     ### Survey ###
     ##############
@@ -198,7 +211,8 @@ if __name__ == "__main__":
     # some of the HALOIDS are repeated at different redshifts. I have a prior on
     # the LOSVD calculation which will limit the LOSVD to a maxium. Because the
     # clusters are so far apart the LOSVD is super high.
-    mask = (np.log10(data['LOSVD']) > 3.12 ) & (data['M200c'] < 10**14.5)
+    mask = ((np.log10(data['LOSVD']) > 3.12 ) & (data['M200c'] < 10**14.5) |
+        (data['LOSVD'] < 50))
     maskedDataS = data[~mask]
     badData = data[mask]
 
