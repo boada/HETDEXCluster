@@ -26,19 +26,17 @@ def find_indices(bigArr, smallArr):
     return inds
 
 # load the data
-f = hdf.File('./result_FullKnowledge.hdf5', 'r')
-dset = f[f.keys()[0]]
-truth = dset.value
-f.close()
+with hdf.File('./result_targetedPerfect.hdf5', 'r') as f:
+    dset = f[f.keys()[0]]
+    truth = dset['HALOID','NGAL', 'M200c', 'ZSPEC']
 
-f = hdf.File('./result_FullKnowledge_realistic.hdf5', 'r')
-dset = f[f.keys()[0]]
-target = dset.value
-f.close()
+with hdf.File('./result_targetedRealistic.hdf5', 'r') as f:
+    dset = f[f.keys()[0]]
+    target = dset['HALOID','NGAL', 'M200c', 'ZSPEC']
 
-f = hdf.File('./surveyComplete.hdf5', 'r')
-dset = f[f.keys()[0]]
-survey = dset.value
+with hdf.File('./surveyCompleteRealistic.hdf5', 'r') as f:
+    dset = f[f.keys()[0]]
+    survey = dset['HALOID','NGAL', 'M200c', 'ZSPEC']
 
 # find the matching HALOIDS
 inds = find_indices(truth['HALOID'], target['HALOID'])
@@ -98,6 +96,7 @@ ax[0].legend((line1, line2), ('Targeted', 'Survey'), loc='upper right')
 
 # adjsut the plots
 ax[0].set_ylabel('Recovery Fraction')
+ax[0].set_xticklabels([0., 0.1, 0.2, 0.3, 0.4])
 ax[0].set_xlabel('Redshift')
 ax[1].set_xlabel('Log M $(M_\odot)$')
 
