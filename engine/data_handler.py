@@ -65,8 +65,8 @@ def mkTruth(i=-1, flatHMF=False):
             else:
                 truth_part = dset['HALOID', 'RA', 'DEC', 'Z', 'Oii', 'VX',
                         'VY', 'VZ']
-            truth_part = rfns.append_fields(truth_part, ['g','G'],
-                    [dset['OMAG'][:,1], dset['AMAG'][:,1]], usemask=False)
+            truth_part = rfns.append_fields(truth_part, ['g','r'],
+                    [dset['OMAG'][:,1], dset['OMAG'][:,2]], usemask=False)
             try:
                 truth = np.append(truth, truth_part)
             except NameError:
