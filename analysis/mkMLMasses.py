@@ -3,7 +3,7 @@ import h5py as hdf
 from sklearn.ensemble import RandomForestRegressor
 #from sklearn.cross_validation import train_test_split
 from numpy.lib import recfunctions as rfns
-from itertools import permutations, repeat, izip
+from itertools import permutations, izip
 import multiprocessing
 
 def child_initializer(_rf):

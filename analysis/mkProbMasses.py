@@ -98,10 +98,9 @@ if __name__ == "__main__":
 
     ### Targeted ###
     ################
-    with hdf.File('result_targetedIdeal_masses.hdf5', 'r') as f:
+    with hdf.File('./result_targetedRealistic.hdf5', 'r') as f:
         dset  = f[f.keys()[0]]
-        data = dset.value
-
+        data = dset['IDX', 'ZSPEC', 'M200c', 'NGAL', 'LOSVD', 'LOSVD_dist']
     # add the extra fields
     data = updateArray(data)
 
@@ -110,21 +109,24 @@ if __name__ == "__main__":
     # prior on the LOSVD calculation which will limit the LOSVD to a maxium.
     # Because the clusters are so far apart the LOSVD is super high.
 
-    mask = (np.log10(data['LOSVD']) > 3.12 ) & (data['M200c'] < 10**14.5)
+    mask = ((np.log10(data['LOSVD']) > 3.12 ) & (data['M200c'] < 10**14.5) |
+        (data['LOSVD'] < 50))
     maskedDataT = data[~mask]
     badData = data[mask]
 
     sl_targeted = splitData(maskedDataT, 0.3)
     data = addMasses(data, sl_targeted)
-    with hdf.File('result_targetedIdeal_Complete.hdf5', 'w') as f:
+    # drop the LOSVD_dist field
+    data = rfns.drop_fields(data,'LOSVD_dist')
+    with hdf.File('./result_targetedRealistic_Probmasses.hdf5', 'w') as f:
         f['predicted masses'] = data
         f.flush()
 
     ### Survey ###
     ##############
-    with hdf.File('surveyComplete_noRotations_masses.hdf5', 'r') as f:
+    with hdf.File('./surveyCompleteRealistic.hdf5', 'r') as f:
         dset  = f[f.keys()[0]]
-        data = dset.value
+        data = dset['IDX', 'ZSPEC', 'M200c', 'NGAL', 'LOSVD', 'LOSVD_dist']
 
     # add the extra fields
     data = updateArray(data)
@@ -134,12 +136,15 @@ if __name__ == "__main__":
     # prior on the LOSVD calculation which will limit the LOSVD to a maxium.
     # Because the clusters are so far apart the LOSVD is super high.
 
-    mask = (np.log10(data['LOSVD']) > 3.12 ) & (data['M200c'] < 10**14.5)
+    mask = ((np.log10(data['LOSVD']) > 3.12 ) & (data['M200c'] < 10**14.5) |
+        (data['LOSVD'] < 50))
     maskedDataS = data[~mask]
     badData = data[mask]
 
     sl_survey = splitData(maskedDataS, 0.3)
     data = addMasses(data, sl_survey)
-    with hdf.File('surveyComplete_noRotations_Complete.hdf5', 'w') as f:
+    # drop the LOSVD_dist field
+    data = rfns.drop_fields(data,'LOSVD_dist')
+    with hdf.File('./surveyCompleteRealistic_Probmasses.hdf5', 'w') as f:
         f['predicted masses'] = data
         f.flush()

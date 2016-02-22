@@ -18,5 +18,6 @@
 #BSUB -R 'span[ptile=20]'
 
 source /home/boada/.bashrc
-time py mkMLMasses.py
+#time py mkMLMasses.py
+time py mkProbMasses.py
 
