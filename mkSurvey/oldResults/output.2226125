@@ -1,0 +1,333 @@
+<HDF5 file "truth00_Oii.hdf5" (mode r)>
+<HDF5 file "truth01_Oii.hdf5" (mode r)>
+<HDF5 file "truth02_Oii.hdf5" (mode r)>
+<HDF5 file "truth03_Oii.hdf5" (mode r)>
+<HDF5 file "truth04_Oii.hdf5" (mode r)>
+<HDF5 file "truth05_Oii.hdf5" (mode r)>
+<HDF5 file "truth06_Oii.hdf5" (mode r)>
+<HDF5 file "truth07_Oii.hdf5" (mode r)>
+<HDF5 file "truth08_Oii.hdf5" (mode r)>
+<HDF5 file "truth09_Oii.hdf5" (mode r)>
+<HDF5 file "truth10_Oii.hdf5" (mode r)>
+<HDF5 file "truth11_Oii.hdf5" (mode r)>
+<HDF5 file "truth12_Oii.hdf5" (mode r)>
+<HDF5 file "truth13_Oii.hdf5" (mode r)>
+<HDF5 file "truth14_Oii.hdf5" (mode r)>
+<HDF5 file "truth15_Oii.hdf5" (mode r)>
+<HDF5 file "truth16_Oii.hdf5" (mode r)>
+<HDF5 file "truth17_Oii.hdf5" (mode r)>
+<HDF5 file "truth18_Oii.hdf5" (mode r)>
+<HDF5 file "truth19_Oii.hdf5" (mode r)>
+0
+500
+Process PoolWorker-80:
+Process PoolWorker-73:
+Process PoolWorker-62:
+Traceback (most recent call last):
+Process PoolWorker-72:
+Process PoolWorker-76:
+Traceback (most recent call last):
+Traceback (most recent call last):
+Traceback (most recent call last):
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/process.py", line 258, in _bootstrap
+Traceback (most recent call last):
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/process.py", line 258, in _bootstrap
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/process.py", line 258, in _bootstrap
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/process.py", line 258, in _bootstrap
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/process.py", line 258, in _bootstrap
+Process PoolWorker-68:
+Traceback (most recent call last):
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/process.py", line 258, in _bootstrap
+    self.run()
+    self.run()
+    self.run()
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/process.py", line 114, in run
+    self.run()
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/process.py", line 114, in run
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/process.py", line 114, in run
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/process.py", line 114, in run
+    self._target(*self._args, **self._kwargs)
+    self._target(*self._args, **self._kwargs)
+    self._target(*self._args, **self._kwargs)
+    self.run()
+    self._target(*self._args, **self._kwargs)
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/pool.py", line 102, in worker
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/pool.py", line 113, in worker
+    self.run()
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/pool.py", line 102, in worker
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/process.py", line 114, in run
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/pool.py", line 102, in worker
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/process.py", line 114, in run
+    self._target(*self._args, **self._kwargs)
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/pool.py", line 113, in worker
+    self._target(*self._args, **self._kwargs)
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/pool.py", line 113, in worker
+Process PoolWorker-65:
+Traceback (most recent call last):
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/process.py", line 258, in _bootstrap
+    self.run()
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/process.py", line 114, in run
+    self._target(*self._args, **self._kwargs)
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/pool.py", line 113, in worker
+    task = get()
+    result = (True, func(*args, **kwds))
+  File "mkObservations.py", line 27, in worker
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/queues.py", line 376, in get
+    task = get()
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/queues.py", line 376, in get
+    result = (True, func(*args, **kwds))
+  File "mkObservations.py", line 27, in worker
+    task = get()
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/queues.py", line 376, in get
+    result = (True, func(*args, **kwds))
+  File "mkObservations.py", line 27, in worker
+    result = (True, func(*args, **kwds))
+  File "mkObservations.py", line 27, in worker
+    result_part = apply_mask(ifu1, ifu2, ifu3, ifu4, data)
+  File "/general/home/boada/Projects/desCluster/mkSurvey/data_handler.py", line 126, in apply_mask
+    result_part = apply_mask(ifu1, ifu2, ifu3, ifu4, data)
+    result_part = apply_mask(ifu1, ifu2, ifu3, ifu4, data)
+  File "/general/home/boada/Projects/desCluster/mkSurvey/data_handler.py", line 122, in apply_mask
+  File "/general/home/boada/Projects/desCluster/mkSurvey/data_handler.py", line 122, in apply_mask
+    result_part = apply_mask(ifu1, ifu2, ifu3, ifu4, data)
+  File "/general/home/boada/Projects/desCluster/mkSurvey/data_handler.py", line 116, in apply_mask
+    x = (ramax > catalog['RA']) & (catalog['RA'] > ramin)
+    result = catalog[selected]
+    y = (decmax > catalog['DEC']) & (catalog['DEC'] > decmin)
+    y = (decmax > catalog['DEC']) & (catalog['DEC'] > decmin)
+KeyboardInterrupt
+KeyboardInterrupt
+KeyboardInterrupt
+KeyboardInterrupt
+    racquire()
+    racquire()
+    racquire()
+KeyboardInterrupt
+KeyboardInterrupt
+KeyboardInterrupt
+Process PoolWorker-61:
+Traceback (most recent call last):
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/process.py", line 258, in _bootstrap
+    self.run()
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/process.py", line 114, in run
+    self._target(*self._args, **self._kwargs)
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/pool.py", line 113, in worker
+    result = (True, func(*args, **kwds))
+  File "mkObservations.py", line 27, in worker
+    result_part = apply_mask(ifu1, ifu2, ifu3, ifu4, data)
+  File "/general/home/boada/Projects/desCluster/mkSurvey/data_handler.py", line 122, in apply_mask
+    y = (decmax > catalog['DEC']) & (catalog['DEC'] > decmin)
+KeyboardInterrupt
+Process PoolWorker-70:
+Traceback (most recent call last):
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/process.py", line 258, in _bootstrap
+    self.run()
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/process.py", line 114, in run
+    self._target(*self._args, **self._kwargs)
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/pool.py", line 113, in worker
+    result = (True, func(*args, **kwds))
+  File "mkObservations.py", line 27, in worker
+    result_part = apply_mask(ifu1, ifu2, ifu3, ifu4, data)
+  File "/general/home/boada/Projects/desCluster/mkSurvey/data_handler.py", line 116, in apply_mask
+    x = (ramax > catalog['RA']) & (catalog['RA'] > ramin)
+KeyboardInterrupt
+Process PoolWorker-67:
+Traceback (most recent call last):
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/process.py", line 258, in _bootstrap
+    self.run()
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/process.py", line 114, in run
+    self._target(*self._args, **self._kwargs)
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/pool.py", line 113, in worker
+    result = (True, func(*args, **kwds))
+  File "mkObservations.py", line 27, in worker
+    result_part = apply_mask(ifu1, ifu2, ifu3, ifu4, data)
+  File "/general/home/boada/Projects/desCluster/mkSurvey/data_handler.py", line 122, in apply_mask
+    y = (decmax > catalog['DEC']) & (catalog['DEC'] > decmin)
+KeyboardInterrupt
+Process PoolWorker-77:
+Traceback (most recent call last):
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/process.py", line 258, in _bootstrap
+    self.run()
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/process.py", line 114, in run
+    self._target(*self._args, **self._kwargs)
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/pool.py", line 113, in worker
+    result = (True, func(*args, **kwds))
+  File "mkObservations.py", line 27, in worker
+    result_part = apply_mask(ifu1, ifu2, ifu3, ifu4, data)
+  File "/general/home/boada/Projects/desCluster/mkSurvey/data_handler.py", line 116, in apply_mask
+    x = (ramax > catalog['RA']) & (catalog['RA'] > ramin)
+KeyboardInterrupt
+Process PoolWorker-79:
+Traceback (most recent call last):
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/process.py", line 258, in _bootstrap
+    self.run()
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/process.py", line 114, in run
+    self._target(*self._args, **self._kwargs)
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/pool.py", line 113, in worker
+    result = (True, func(*args, **kwds))
+  File "mkObservations.py", line 27, in worker
+    result_part = apply_mask(ifu1, ifu2, ifu3, ifu4, data)
+  File "/general/home/boada/Projects/desCluster/mkSurvey/data_handler.py", line 122, in apply_mask
+    y = (decmax > catalog['DEC']) & (catalog['DEC'] > decmin)
+KeyboardInterrupt
+Process PoolWorker-75:
+Traceback (most recent call last):
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/process.py", line 258, in _bootstrap
+    self.run()
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/process.py", line 114, in run
+    self._target(*self._args, **self._kwargs)
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/pool.py", line 113, in worker
+    result = (True, func(*args, **kwds))
+  File "mkObservations.py", line 27, in worker
+    result_part = apply_mask(ifu1, ifu2, ifu3, ifu4, data)
+  File "/general/home/boada/Projects/desCluster/mkSurvey/data_handler.py", line 116, in apply_mask
+    x = (ramax > catalog['RA']) & (catalog['RA'] > ramin)
+KeyboardInterrupt
+Process PoolWorker-71:
+Traceback (most recent call last):
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/process.py", line 258, in _bootstrap
+    self.run()
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/process.py", line 114, in run
+    self._target(*self._args, **self._kwargs)
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/pool.py", line 113, in worker
+    result = (True, func(*args, **kwds))
+  File "mkObservations.py", line 27, in worker
+    result_part = apply_mask(ifu1, ifu2, ifu3, ifu4, data)
+  File "/general/home/boada/Projects/desCluster/mkSurvey/data_handler.py", line 122, in apply_mask
+    y = (decmax > catalog['DEC']) & (catalog['DEC'] > decmin)
+KeyboardInterrupt
+Process PoolWorker-69:
+Traceback (most recent call last):
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/process.py", line 258, in _bootstrap
+    self.run()
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/process.py", line 114, in run
+    self._target(*self._args, **self._kwargs)
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/pool.py", line 113, in worker
+    result = (True, func(*args, **kwds))
+  File "mkObservations.py", line 27, in worker
+    result_part = apply_mask(ifu1, ifu2, ifu3, ifu4, data)
+  File "/general/home/boada/Projects/desCluster/mkSurvey/data_handler.py", line 122, in apply_mask
+    y = (decmax > catalog['DEC']) & (catalog['DEC'] > decmin)
+KeyboardInterrupt
+Process PoolWorker-66:
+Traceback (most recent call last):
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/process.py", line 258, in _bootstrap
+    self.run()
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/process.py", line 114, in run
+    self._target(*self._args, **self._kwargs)
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/pool.py", line 113, in worker
+    result = (True, func(*args, **kwds))
+  File "mkObservations.py", line 27, in worker
+    result_part = apply_mask(ifu1, ifu2, ifu3, ifu4, data)
+  File "/general/home/boada/Projects/desCluster/mkSurvey/data_handler.py", line 116, in apply_mask
+    x = (ramax > catalog['RA']) & (catalog['RA'] > ramin)
+KeyboardInterrupt
+Process PoolWorker-74:
+Traceback (most recent call last):
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/process.py", line 258, in _bootstrap
+    self.run()
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/process.py", line 114, in run
+    self._target(*self._args, **self._kwargs)
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/pool.py", line 113, in worker
+    result = (True, func(*args, **kwds))
+  File "mkObservations.py", line 27, in worker
+    result_part = apply_mask(ifu1, ifu2, ifu3, ifu4, data)
+  File "/general/home/boada/Projects/desCluster/mkSurvey/data_handler.py", line 122, in apply_mask
+    y = (decmax > catalog['DEC']) & (catalog['DEC'] > decmin)
+KeyboardInterrupt
+Process PoolWorker-64:
+Traceback (most recent call last):
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/process.py", line 258, in _bootstrap
+    self.run()
+Process PoolWorker-78:
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/process.py", line 114, in run
+    self._target(*self._args, **self._kwargs)
+Traceback (most recent call last):
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/pool.py", line 113, in worker
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/process.py", line 258, in _bootstrap
+    result = (True, func(*args, **kwds))
+  File "mkObservations.py", line 27, in worker
+    self.run()
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/process.py", line 114, in run
+    result_part = apply_mask(ifu1, ifu2, ifu3, ifu4, data)
+  File "/general/home/boada/Projects/desCluster/mkSurvey/data_handler.py", line 122, in apply_mask
+    self._target(*self._args, **self._kwargs)
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/pool.py", line 113, in worker
+    y = (decmax > catalog['DEC']) & (catalog['DEC'] > decmin)
+KeyboardInterrupt
+    result = (True, func(*args, **kwds))
+  File "mkObservations.py", line 27, in worker
+    result_part = apply_mask(ifu1, ifu2, ifu3, ifu4, data)
+  File "/general/home/boada/Projects/desCluster/mkSurvey/data_handler.py", line 122, in apply_mask
+    y = (decmax > catalog['DEC']) & (catalog['DEC'] > decmin)
+KeyboardInterrupt
+Process PoolWorker-63:
+Traceback (most recent call last):
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/process.py", line 258, in _bootstrap
+    self.run()
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/process.py", line 114, in run
+    self._target(*self._args, **self._kwargs)
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/pool.py", line 102, in worker
+    task = get()
+  File "/software/easybuild/software/Python/2.7.10-intel-2015B/lib/python2.7/multiprocessing/queues.py", line 378, in get
+    return recv()
+KeyboardInterrupt
+Terminated
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@nxt1654>
+Subject: Job 2226125: <surveyObsRealistic> in cluster <Main_Compute> Exited
+
+Job <surveyObsRealistic> was submitted from host <login4> by user <boada> in cluster <Main_Compute>.
+Job was executed on host(s) <20*nxt1654>, in queue <sn_regular>, as user <boada> in cluster <Main_Compute>.
+</home/boada> was used as the home directory.
+</home/boada/Projects/desCluster/mkSurvey> was used as the working directory.
+Started at Sun Feb 21 11:17:50 2016
+Results reported on Sun Feb 21 12:17:53 2016
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+## job name
+#BSUB -J surveyObsRealistic
+##BSUB -J surveyObsPerfect
+
+## send stderr and stdout to the same file
+#BSUB -o output.%J
+
+## login shell to avoid copying env from login session
+## also helps the module function work in batch jobs
+#BSUB -L /bin/bash
+
+## 30 minutes of walltime ([HH:]MM)
+#BSUB -W 2:00
+
+## numprocs
+#BSUB -n 20
+
+## 20 cores/node
+#BSUB -R 'span[ptile=20]'
+
+source /home/boada/.bashrc
+time py mkObservations.py
+
+
+------------------------------------------------------------
+
+TERM_OWNER: job killed by owner.
+Exited with exit code 143.
+
+Resource usage summary:
+
+    CPU time :                                   61135.52 sec.
+    Max Memory :                                 44967 MB
+    Average Memory :                             33114.91 MB
+    Total Requested Memory :                     51200.00 MB
+    Delta Memory :                               6233.00 MB
+    Max Swap :                                   4 MB
+    Max Processes :                              24
+    Max Threads :                                28
+
+The output (if any) is above this job summary.
+

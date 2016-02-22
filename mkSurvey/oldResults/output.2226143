@@ -1,0 +1,249 @@
+<HDF5 file "halo00.hdf5" (mode r)>
+<HDF5 file "halo01.hdf5" (mode r)>
+<HDF5 file "halo02.hdf5" (mode r)>
+<HDF5 file "halo03.hdf5" (mode r)>
+<HDF5 file "halo04.hdf5" (mode r)>
+<HDF5 file "halo05.hdf5" (mode r)>
+<HDF5 file "halo06.hdf5" (mode r)>
+<HDF5 file "halo07.hdf5" (mode r)>
+<HDF5 file "halo08.hdf5" (mode r)>
+<HDF5 file "halo09.hdf5" (mode r)>
+<HDF5 file "halo10.hdf5" (mode r)>
+<HDF5 file "halo11.hdf5" (mode r)>
+<HDF5 file "halo12.hdf5" (mode r)>
+<HDF5 file "halo13.hdf5" (mode r)>
+<HDF5 file "halo14.hdf5" (mode r)>
+<HDF5 file "halo15.hdf5" (mode r)>
+<HDF5 file "halo16.hdf5" (mode r)>
+<HDF5 file "halo17.hdf5" (mode r)>
+<HDF5 file "halo18.hdf5" (mode r)>
+<HDF5 file "halo19.hdf5" (mode r)>
+0
+100000
+200000
+300000
+400000
+500000
+600000
+700000
+800000
+900000
+1000000
+1100000
+1200000
+1300000
+0
+100000
+200000
+300000
+400000
+500000
+600000
+700000
+800000
+900000
+1000000
+1100000
+1200000
+1300000
+('do work', 27454, 'clusters to go!')
+0
+200
+400
+600
+800
+1000
+1200
+1400
+1600
+1800
+2000
+2200
+2400
+2600
+2800
+3000
+3200
+3400
+3600
+3800
+4000
+4200
+4400
+4600
+4800
+5000
+5200
+5400
+5600
+5800
+6000
+6200
+6400
+6600
+6800
+7000
+7200
+7400
+7600
+7800
+8000
+8200
+8400
+8600
+ERROR: astStats: biweightLocation() : MAD() returned 0.
+8800
+9000
+9200
+9400
+9600
+9800
+10000
+10200
+10400
+10600
+10800
+11000
+11200
+11400
+11600
+11800
+12000
+12200
+12400
+12600
+12800
+13000
+13200
+13400
+13600
+13800
+14000
+14200
+14400
+14600
+14800
+15000
+15200
+15400
+15600
+15800
+16000
+16200
+16400
+16600
+16800
+17000
+17200
+17400
+17600
+17800
+18000
+18200
+18400
+18600
+18800
+19000
+19200
+19400
+19600
+19800
+20000
+20200
+20400
+20600
+20800
+21000
+21200
+21400
+21600
+21800
+22000
+22200
+22400
+22600
+22800
+23000
+23200
+23400
+23600
+23800
+24000
+24200
+24400
+24600
+24800
+25000
+25200
+25400
+25600
+25800
+26000
+26200
+26400
+26600
+26800
+27000
+27200
+27400
+results
+
+real	33m59.727s
+user	567m27.731s
+sys	6m4.858s
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@nxt2057>
+Subject: Job 2226143: <clustersPerfect> in cluster <Main_Compute> Done
+
+Job <clustersPerfect> was submitted from host <login4> by user <boada> in cluster <Main_Compute>.
+Job was executed on host(s) <20*nxt2057>, in queue <sn_regular>, as user <boada> in cluster <Main_Compute>.
+</home/boada> was used as the home directory.
+</home/boada/Projects/desCluster/mkSurvey> was used as the working directory.
+Started at Sun Feb 21 11:37:12 2016
+Results reported on Sun Feb 21 12:11:28 2016
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+## job name
+##BSUB -J clustersRealistic
+#BSUB -J clustersPerfect
+
+## send stderr and stdout to the same file
+#BSUB -o output.%J
+
+## login shell to avoid copying env from login session
+## also helps the module function work in batch jobs
+#BSUB -L /bin/bash
+
+## 30 minutes of walltime ([HH:]MM)
+#BSUB -W 5:00
+
+## numprocs
+#BSUB -n 20
+
+## 20 cores/node
+#BSUB -R 'span[ptile=20]'
+
+source /home/boada/.bashrc
+time py mkClusters.py
+
+
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   34805.44 sec.
+    Max Memory :                                 6150 MB
+    Average Memory :                             4918.56 MB
+    Total Requested Memory :                     51200.00 MB
+    Delta Memory :                               45050.00 MB
+    Max Processes :                              24
+    Max Threads :                                28
+
+The output (if any) is above this job summary.
+
