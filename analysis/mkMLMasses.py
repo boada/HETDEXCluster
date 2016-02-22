@@ -65,7 +65,7 @@ def addMasses(data, generator):
     i = 0
     for train, test in generator:
         rf = RandomForestRegressor(n_estimators=1000, min_samples_leaf=1,
-                verbose=1)
+                verbose=1, n_jobs=4)
         X = np.log10(train['M200c'])
 
     ############
@@ -158,9 +158,11 @@ if __name__ == "__main__":
 
     ### Targeted ###
     ################
-    with hdf.File('result_targetedIdeal.hdf5', 'r') as f:
+    with hdf.File('./result_targetedPerfect.hdf5', 'r') as f:
         dset  = f[f.keys()[0]]
-        data = dset.value
+        data = dset['IDX', 'HALOID', 'ZSPEC', 'M200c', 'NGAL', 'LOSVD',
+        'LOSVD_err', 'MASS']
+        #data = dset.value
 
     # add the extra fields
     data = updateArray(data)
@@ -176,16 +178,18 @@ if __name__ == "__main__":
 
     sl_targeted = splitData(maskedDataT, 0.3)
     data = addMasses(data, sl_targeted)
-    with hdf.File('result_targetedIdeal_masses.hdf5', 'w') as f:
+    with hdf.File('result_targetedPerfect_masses.hdf5', 'w') as f:
         f['predicted masses'] = data
         f.flush()
 
     ### Survey ###
     ##############
     print 'SURVEY!'
-    with hdf.File('surveyComplete_noRotations.hdf5', 'r') as f:
+    with hdf.File('./surveyCompletePerfect.hdf5', 'r') as f:
         dset  = f[f.keys()[0]]
-        data = dset.value
+        data = dset['IDX', 'HALOID', 'ZSPEC', 'M200c', 'NGAL', 'LOSVD',
+        'LOSVD_err', 'MASS']
+        #data = dset.value
 
     # add the extra fields
     data = updateArray(data)
@@ -198,8 +202,8 @@ if __name__ == "__main__":
     maskedDataS = data[~mask]
     badData = data[mask]
 
-#    sl_survey = splitData(maskedDataS, 0.3)
-#    data = addMasses(data, sl_survey)
-#    with hdf.File('surveyComplete_noRotations_masses.hdf5', 'w') as f:
-#        f['predicted masses'] = data
-#        f.flush()
+    sl_survey = splitData(maskedDataS, 0.3)
+    data = addMasses(data, sl_survey)
+    with hdf.File('surveyCompletePerfect_masses.hdf5', 'w') as f:
+        f['predicted masses'] = data
+        f.flush()

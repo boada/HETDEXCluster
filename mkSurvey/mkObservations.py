@@ -39,13 +39,13 @@ def cb_func((pos, data)):
 
 if __name__ == "__main__":
     async_worker = AsyncFactory(worker, cb_func)
-    truth = mkTruth(flatHMF=True)
+    truth = mkTruth()
 
-#    gmask = truth['g'] < 22
-#    Oiimask = truth['Oii'] > 3.5
-#    mask = gmask | Oiimask
+    gmask = truth['g'] < 22
+    Oiimask = truth['Oii'] > 3.5
+    mask = gmask | Oiimask
 
-#    truth = truth[mask]
+    truth = truth[mask]
 
     # survey bounds
     RAmax = 90
@@ -60,9 +60,10 @@ if __name__ == "__main__":
 
         ifus = mk_ifus(pointing[0], pointing[1])
         objs.append(async_worker.call(i, truth, ifus))
+        #objs.append(worker(i, truth, ifus))
 
         #if i == 15:
-        #    break
+            #break
 
     async_worker.wait()
 
@@ -78,8 +79,14 @@ if __name__ == "__main__":
 #            'w') as f:
 #        f['observations'] = results
     try:
-        os.remove('observationsPerfect.hdf5')
+        os.remove('observationsRealistic.hdf5')
     except OSError:
         pass
-    with hdf.File('observationsPerfect.hdf5', 'w') as f:
-        f['observationsPerfect'] = results
+    with hdf.File('observationsRealistic.hdf5', 'w') as f:
+        f['observationsRealistic'] = results
+#    try:
+#        os.remove('observationsPerfect.hdf5')
+#    except OSError:
+#        pass
+#    with hdf.File('observationsPerfect.hdf5', 'w') as f:
+#        f['observationsPerfect'] = results

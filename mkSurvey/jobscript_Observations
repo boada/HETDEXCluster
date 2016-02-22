@@ -1,5 +1,6 @@
 ## job name
-#BSUB -J surveyObs
+#BSUB -J surveyObsRealistic
+##BSUB -J surveyObsPerfect
 
 ## send stderr and stdout to the same file
 #BSUB -o output.%J
@@ -9,7 +10,7 @@
 #BSUB -L /bin/bash
 
 ## 30 minutes of walltime ([HH:]MM)
-#BSUB -W 5:00
+#BSUB -W 2:00
 
 ## numprocs
 #BSUB -n 20
