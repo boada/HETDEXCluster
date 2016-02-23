@@ -98,9 +98,10 @@ if __name__ == "__main__":
 
     ### Targeted ###
     ################
-    with hdf.File('./result_targetedRealistic.hdf5', 'r') as f:
+    with hdf.File('./result_targetedPerfect.hdf5', 'r') as f:
         dset  = f[f.keys()[0]]
-        data = dset['IDX', 'ZSPEC', 'M200c', 'NGAL', 'LOSVD', 'LOSVD_dist']
+        data = dset['IDX', 'HALOID', 'ZSPEC', 'M200c', 'NGAL', 'LOSVD',
+            'LOSVD_err', 'MASS', 'LOSVD_dist']
     # add the extra fields
     data = updateArray(data)
 
@@ -118,15 +119,16 @@ if __name__ == "__main__":
     data = addMasses(data, sl_targeted)
     # drop the LOSVD_dist field
     data = rfns.drop_fields(data,'LOSVD_dist')
-    with hdf.File('./result_targetedRealistic_Probmasses.hdf5', 'w') as f:
+    with hdf.File('./result_targetedPerfect_Probmasses.hdf5', 'w') as f:
         f['predicted masses'] = data
         f.flush()
 
     ### Survey ###
     ##############
-    with hdf.File('./surveyCompleteRealistic.hdf5', 'r') as f:
+    with hdf.File('./surveyCompletePerfect.hdf5', 'r') as f:
         dset  = f[f.keys()[0]]
-        data = dset['IDX', 'ZSPEC', 'M200c', 'NGAL', 'LOSVD', 'LOSVD_dist']
+        data = dset['IDX', 'HALOID', 'ZSPEC', 'M200c', 'NGAL', 'LOSVD',
+            'LOSVD_err', 'MASS', 'LOSVD_dist']
 
     # add the extra fields
     data = updateArray(data)
@@ -145,6 +147,6 @@ if __name__ == "__main__":
     data = addMasses(data, sl_survey)
     # drop the LOSVD_dist field
     data = rfns.drop_fields(data,'LOSVD_dist')
-    with hdf.File('./surveyCompleteRealistic_Probmasses.hdf5', 'w') as f:
+    with hdf.File('./surveyCompletePerfect_Probmasses.hdf5', 'w') as f:
         f['predicted masses'] = data
         f.flush()
