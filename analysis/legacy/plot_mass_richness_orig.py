@@ -1,6 +1,7 @@
 import h5py as hdf
 import pylab as pyl
 from astLib import astStats
+
 def find_indices(bigArr, smallArr):
     from bisect import bisect_left, bisect_right
     ''' Takes the full halo catalog and picks out the HALOIDs that we are
@@ -25,10 +26,10 @@ def find_indices(bigArr, smallArr):
     return inds
 
 
-with hdf.File('./result_targetedIdeal_Complete.hdf5', 'r') as f:
+with hdf.File('./result_targetedPerfect_MLmasses.hdf5', 'r') as f:
     dset = f[f.keys()[0]]
     targeted = dset.value
-with hdf.File('./surveyComplete_noRotations_Complete.hdf5', 'r') as f:
+with hdf.File('./surveyCompletePerfect_MLmasses.hdf5', 'r') as f:
     dset = f[f.keys()[0]]
     survey = dset.value
 with hdf.File('./redMapper_matched.hdf5', 'r') as f:
@@ -44,8 +45,9 @@ cleanedTargeted = pyl.array(cleaned)
 cleaned = [[j,i[0]] for j,i in enumerate(matchedSurvey) if i]
 cleanedSurvey = pyl.array(cleaned)
 
-f = pyl.figure(1, figsize=(7, 7*(pyl.sqrt(5.)-1.0)/2.0))
-ax = f.add_subplot(111)
+f = pyl.figure(1, figsize=(7*(pyl.sqrt(5.)-1.0)/2.0,7))
+ax1s = pyl.subplot2grid((3,1), (2,0))
+ax1 = pyl.subplot2grid((3,1), (0,0), rowspan=2)
 
 # targeted points
 massErr_up = pyl.absolute(10**targeted['ML_pred_3d'][cleanedTargeted[:,1]] -\
@@ -53,7 +55,7 @@ massErr_up = pyl.absolute(10**targeted['ML_pred_3d'][cleanedTargeted[:,1]] -\
 massErr_down = pyl.absolute(10**targeted['ML_pred_3d'][cleanedTargeted[:,1]] -\
         10**targeted['ML_pred_3d_err'][cleanedTargeted[:,1]][:,0])
 
-ax.errorbar(RM['LAMBDA'][cleanedTargeted[:,0]],
+ax1.errorbar(RM['LAMBDA'][cleanedTargeted[:,0]],
         10**targeted['ML_pred_3d'][cleanedTargeted[:,1]],
         xerr=RM['LAMBDA_err'][cleanedTargeted[:,0]], yerr=pyl.row_stack([massErr_up,
             massErr_down]), fmt='o', ecolor='0.8', mfc='#7a68a6', capsize=0.0,
@@ -67,7 +69,7 @@ fit = astStats.OLSFit(pyl.column_stack([x,y]))
 x = pyl.array([10,110])
 lny = fit['intercept'] + fit['slope']*pyl.log(x/60.)
 y = pyl.exp(lny) * 1e14/0.7
-ax.plot(x,y, ls='-', c='#7a68a6', zorder=0)
+ax1.plot(x,y, ls='-', c='#7a68a6', zorder=0)
 
 # survey points
 massErr_up = pyl.absolute(10**survey['ML_pred_3d'][cleanedSurvey[:,1]] -\
@@ -75,7 +77,7 @@ massErr_up = pyl.absolute(10**survey['ML_pred_3d'][cleanedSurvey[:,1]] -\
 massErr_down = pyl.absolute(10**survey['ML_pred_3d'][cleanedSurvey[:,1]] -\
         10*survey['ML_pred_3d_err'][cleanedSurvey[:,1]][:,0])
 
-ax.errorbar(RM['LAMBDA'][cleanedSurvey[:,0]],
+ax1.errorbar(RM['LAMBDA'][cleanedSurvey[:,0]],
         10**survey['ML_pred_3d'][cleanedSurvey[:,1]],
         xerr=RM['LAMBDA_err'][cleanedSurvey[:,0]], yerr=pyl.row_stack([massErr_up,
             massErr_down]), fmt='o', ecolor='0.8', mfc='#188487',
@@ -90,19 +92,49 @@ fit = astStats.OLSFit(pyl.column_stack([x,y]))
 x = pyl.array([10,110])
 lny = fit['intercept'] + fit['slope']*pyl.log(x/60.)
 y = pyl.exp(lny) * 1e14/0.7
-ax.plot(x,y, ls='--', c='#188487', zorder=0)
+ax1.plot(x,y, ls='--', c='#188487', zorder=0)
 
-pyl.loglog()
-ax.set_xlim(10,110)
-ax.set_ylim(5e12, 2e15)
+ax1.loglog()
+ax1.set_xlim(10,110)
+ax1s.semilogx()
+ax1s.set_xlim(10,110)
+ax1.set_ylim(5e12, 2e15)
 
-ax.set_xlabel('Richness')
-ax.set_ylabel('$M_{pred}$ $(M_\odot)$')
+ax1s.set_xlabel('Richness')
+ax1.set_ylabel('$M_{pred}$ $(M_\odot)$')
 
 # add the Rykoff2012 relation
 x = pyl.array([10,110])
 lny = 1.48 + 1.06*pyl.log(x/60.)
 y = pyl.exp(lny) * 1e14/0.7
-ax.plot(x,y, ls='-.', c='k', zorder=0, label='Rykoff2012')
+ax1.plot(x,y, ls='-.', c='k', zorder=0, label='Rykoff2012')
+
+
+# now we are going to do the scatter panel on the bottom
+bins = pyl.arange(20,120,10)
+x = RM['LAMBDA'][cleanedSurvey[:,0]]
+y = targeted['ML_pred_3d'][cleanedTargeted[:,1]]
+index = pyl.digitize(x, bins) -1
+running = [pyl.std(y[index==k]) for k in range(10)]
+running = pyl.array(running)
+tmp = pyl.where(~pyl.isnan(running))
+print(pyl.mean(running[tmp[0]]))
+ax1s.plot(bins, running, drawstyle='steps-mid', c='#7a68a6')
+ax1s.axhline(pyl.mean(running[tmp[0]]), zorder=0, lw=1)
+
+y = survey['ML_pred_3d'][cleanedSurvey[:,1]]
+running = [pyl.std(y[index==k]) for k in range(10)]
+running = pyl.array(running)
+tmp = pyl.where(~pyl.isnan(running))
+print(pyl.mean(running[tmp[0]]))
+ax1s.plot(bins, running, drawstyle='steps-post', c='#188487', linestyle='--')
+ax1s.axhline(pyl.mean(running[tmp[0]]), ls='--', zorder=0, lw=1)
+
+
+ax1s.set_ylabel('$\sigma_{M|\lambda}$ (dex)')
+
+ax1.set_xticklabels([])
+ax1s.set_yticks([0.1, 0.3, 0.5])
+
 
 pyl.show()
