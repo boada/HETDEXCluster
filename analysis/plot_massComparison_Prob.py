@@ -28,21 +28,23 @@ ax2s.set_yticklabels([])
 ################
 with hdf.File('./result_targetedRealistic_Probmasses.hdf5', 'r') as f:
     dset = f[f.keys()[0]]
-    target = dset['M200c', 'Prob_pred_1d', 'Prob_pred_2d', 'Prob_pred_3d']
+    target = dset['M200c', 'MASS', 'Prob_pred_1d', 'Prob_pred_2d',
+            'Prob_pred_3d']
 # filter bad values
 mask = ((target['Prob_pred_1d'] == 0) | (target['Prob_pred_2d'] == 0) |
     (target['Prob_pred_3d'] == 0))
-target = target[mask]
+target = target[~mask]
 
 ### Survey ###
 ##############
 with hdf.File('./surveyCompleteRealistic_Probmasses.hdf5', 'r') as f:
     dset = f[f.keys()[0]]
-    survey = dset['M200c', 'Prob_pred_1d', 'Prob_pred_2d', 'Prob_pred_3d']
+    survey = dset['M200c', 'MASS', 'Prob_pred_1d', 'Prob_pred_2d',
+            'Prob_pred_3d']
 # filter bad values
 mask = ((survey['Prob_pred_1d'] == 0) | (survey['Prob_pred_2d'] == 0) |
     (survey['Prob_pred_3d'] == 0))
-survey = survey[mask]
+survey = survey[~mask]
 
 # plot one to one lines
 ax1.plot([12,15.5], [12,15.5], c='k', zorder=0)
@@ -63,36 +65,37 @@ for d, c, style in zip([target, survey], ['#7A68A6', '#188487'],
         ['-', '--']):
 
     print('power law')
-    # y_ = astStats.runningStatistic(pyl.log10(d['M200c']),
-    #         pyl.log10(d['MASS']),
-    #         pyl.percentile, binNumber=20, q=[16, 50, 84])
-    # quants = pyl.array(y_[1])
-    # ax1.plot(y_[0],quants[:,1], style, c=c)
-    # ax1.fill_between(y_[0], quants[:,2], quants[:,0], facecolor=c,
-    #     alpha=0.4, edgecolor=c)
-    # err = calc_err(d['MASS'], d['M200c'])
-    # y_ = astStats.runningStatistic(pyl.log10(d['M200c']), err,
-    #         pyl.percentile, binNumber=20, q=[16, 50, 84])
-    # quants = pyl.array(y_[1])
-    # ax1s.plot(y_[0],quants[:,1], style, c=c)
-    # ax1s.fill_between(y_[0], quants[:,2], quants[:,0], facecolor=c,
-    #     alpha=0.4, edgecolor=c)
-    #
-    # print('MAE', median_absolute_error(pyl.log10(d['M200c']),
-    #     pyl.log10(d['MASS'])))
-    # print('RMSE', pyl.sqrt(mean_squared_error(pyl.log10(d['M200c']),
-    #     pyl.log10(d['MASS']))))
+    y_ = astStats.runningStatistic(pyl.log10(d['M200c']),
+            pyl.log10(d['MASS']),
+            pyl.percentile, binNumber=20, q=[16, 50, 84])
+    quants = pyl.array(y_[1])
+    ax1.plot(y_[0],quants[:,1], style, c=c)
+    ax1.fill_between(y_[0], quants[:,2], quants[:,0], facecolor=c,
+        alpha=0.4, edgecolor=c)
+    err = calc_err(d['MASS'], d['M200c'])
+    y_ = astStats.runningStatistic(pyl.log10(d['M200c']), err,
+            pyl.percentile, binNumber=20, q=[16, 50, 84])
+    quants = pyl.array(y_[1])
+    ax1s.plot(y_[0],quants[:,1], style, c=c)
+    ax1s.fill_between(y_[0], quants[:,2], quants[:,0], facecolor=c,
+        alpha=0.4, edgecolor=c)
+
+    print('MAE', median_absolute_error(pyl.log10(d['M200c']),
+        pyl.log10(d['MASS'])))
+    print('RMSE', pyl.sqrt(mean_squared_error(pyl.log10(d['M200c']),
+        pyl.log10(d['MASS']))))
 
 ############
 #### 1d ####
 ############
+    print('1d')
     y_ = astStats.runningStatistic(pyl.log10(d['M200c']), d['Prob_pred_1d'],
             pyl.percentile, binNumber=20, q=[16, 50, 84])
     quants = pyl.array(y_[1])
     ax2.plot(y_[0],quants[:,1], style, c=c)
     ax2.fill_between(y_[0], quants[:,2], quants[:,0], facecolor=c,
         alpha=0.4, edgecolor=c)
-    err = calc_err(d['Prob_pred_1d'], pyl.log10(d['M200c']))
+    err = calc_err(10**d['Prob_pred_1d'], d['M200c'])
     y_ = astStats.runningStatistic(pyl.log10(d['M200c']), err,
             pyl.percentile, binNumber=20, q=[16, 50, 84])
     quants = pyl.array(y_[1])
@@ -107,13 +110,14 @@ for d, c, style in zip([target, survey], ['#7A68A6', '#188487'],
 #############
 #### 2d #####
 #############
+    print('2d')
     y_ = astStats.runningStatistic(pyl.log10(d['M200c']), d['Prob_pred_2d'],
             pyl.percentile, binNumber=20, q=[16, 50, 84])
     quants = pyl.array(y_[1])
     ax3.plot(y_[0],quants[:,1], style, c=c)
     ax3.fill_between(y_[0], quants[:,2], quants[:,0], facecolor=c,
         alpha=0.4, edgecolor=c)
-    err = calc_err(d['Prob_pred_2d'], pyl.log10(d['M200c']))
+    err = calc_err(10**d['Prob_pred_2d'], d['M200c'])
     y_ = astStats.runningStatistic(pyl.log10(d['M200c']), err,
             pyl.percentile, binNumber=20, q=[16, 50, 84])
     quants = pyl.array(y_[1])
@@ -128,13 +132,14 @@ for d, c, style in zip([target, survey], ['#7A68A6', '#188487'],
 ##############
 ##### 3d #####
 ##############
+    print('3d')
     y_ = astStats.runningStatistic(pyl.log10(d['M200c']), d['Prob_pred_3d'],
             pyl.percentile, binNumber=20, q=[16, 50, 84])
     quants = pyl.array(y_[1])
     ax4.plot(y_[0],quants[:,1], style, c=c)
     ax4.fill_between(y_[0], quants[:,2], quants[:,0], facecolor=c,
         alpha=0.4, edgecolor=c)
-    err = calc_err(d['Prob_pred_3d'], pyl.log10(d['M200c']))
+    err = calc_err(10**d['Prob_pred_3d'], d['M200c'])
     y_ = astStats.runningStatistic(pyl.log10(d['M200c']), err,
             pyl.percentile, binNumber=20, q=[16, 50, 84])
     quants = pyl.array(y_[1])
@@ -156,8 +161,9 @@ ax1.legend((line1, line2), ('Targeted', 'Survey'), loc=2)
 ax1.set_xticks([12,13,14,15])
 ax2.set_xticks([12,13,14,15])
 ax2s.set_xticks([12,13,14,15])
-#ax2s.set_yticks([0.04, 0.02,0,-0.02, -0.04])
-#ax1s.set_yticks([0.04,0.02,0,-0.02, -0.04])
+ax1s.set_yticks([-2,0,2,4,6,8])
+ax2s.set_yticks([-2,0,2,4,6,8])
+ax2s.set_ylim(-2,10)
 ax1.set_ylim(ax2.get_ylim())
 ax1s.set_ylim(ax2s.get_ylim())
 
