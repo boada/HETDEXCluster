@@ -6,21 +6,20 @@ bins = [50,50]
 thresh = 3
 extent = [[-26,-10],[-1,4]]
 
-with pyf.open('sdss12_oii_flux_v2.fits') as f:
+with pyf.open('./sdss12_oii_flux_v2.fits') as f:
     data = f[1].data
 
-#ydat = data['g'] - data['r']
-#xdat = data['r']
+ydat = data['g'] - data['r']
+xdat = data['r']
 
-# convert to des magnitudes
-g = data['g'] - 0.104*(data['g'] - data['r']) - 0.01
-r = data['r'] - 0.102*(data['g'] - data['r']) - 0.02
-
-ydat = g-r
-xdat = r
+# convert to des magnitudes -- buzzard is in sdss mags
+#g = data['g'] - 0.104*(data['g'] - data['r']) - 0.01
+#r = data['r'] - 0.102*(data['g'] - data['r']) - 0.02
+#ydat = g-r
+#xdat = r
 
 # convert to absolute magnitudes
-xdat = vec_astCalc.absMag(r, vec_astCalc.dl(data['redshift']))
+xdat = vec_astCalc.absMag(xdat, vec_astCalc.dl(data['redshift']))
 
 hh, locx, locy = pyl.histogram2d(xdat, ydat, range=extent, bins=bins)
 posx = pyl.digitize(xdat, locx)

@@ -17,8 +17,11 @@ with pyf.open('sdss12_oii_flux_v2.fits') as f:
     sdssData = f[1].data
 
     # convert to DES magnitudes
-    g = sdssData['g'] - 0.104 * (sdssData['g'] - sdssData['r']) + 0.01
-    r = sdssData['r'] - 0.102 * (sdssData['g'] - sdssData['r']) + 0.02
+#    g = sdssData['g'] - 0.104 * (sdssData['g'] - sdssData['r']) + 0.01
+#    r = sdssData['r'] - 0.102 * (sdssData['g'] - sdssData['r']) + 0.02
+
+    g = sdssData['g']
+    r = sdssData['r']
 
     dl = pyl.array(p.map(astCalc.dl, sdssData['redshift'], chunksize=200))
     xdat = pyl.array(p.map(mp_wrapper, izip(r, dl), chunksize=200))
