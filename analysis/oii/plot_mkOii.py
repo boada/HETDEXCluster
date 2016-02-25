@@ -65,13 +65,13 @@ ax[0].set_xlabel('$M_r$ (mag)')
 ax[0].set_ylabel('g-r (mag)')
 ax[0].set_xticks([-24, -20, -16, -12])
 
-
 ### add the histograms and little boxes
 # the two boxes
 xcoord = [-17.706039, -21.017]
 ycoord = [0.49785233, 1.24]
+colors = ['#cf4457', '#467821']
 
-for x, y in zip(xcoord, ycoord):
+for x, y, c in zip(xcoord, ycoord, colors):
 
     # find the bins of the color/mag point of interest
     xbin = pyl.digitize([x], locx)
@@ -80,17 +80,16 @@ for x, y in zip(xcoord, ycoord):
     # find all of the points inside the bin we are interested ind
     i = (locx[xbin-1] < xdat) & (xdat < locx[xbin]) & (locy[ybin-1] < ydat) &\
         (ydat < locy[ybin])
-    ax[1].hist(pyl.log10(lum[i]), bins=20, normed=True, histtype='step',lw=2)
+    ax[1].hist(pyl.log10(lum[i]), bins=20, normed=True, histtype='step',lw=2,
+            edgecolor=c)
 
 
     # little boxes
     rec = Rectangle((locx[xbin], locy[ybin]), locx[xbin+1]-locx[xbin],
-            locy[ybin+1]-locy[ybin], lw=2, zorder=10, fc='none', ec='#188487')
+            locy[ybin+1]-locy[ybin], lw=2, zorder=10, fc='none', ec=c)
     ax[0].add_patch(rec)
-    rec = Rectangle((locx[xbin], locy[ybin]), locx[xbin+1]-locx[xbin],
-            locy[ybin+1]-locy[ybin], lw=3, zorder=9, fc='none', ec='white')
-    ax[0].add_patch(rec)
-
 
 ax[1].set_xlabel('Log $L_{[O_{ii}]}$ (erg/s)')
 ax[1].set_ylabel('P($L_{[O_{ii}]}| M_r,g-r)$')
+
+pyl.show()
