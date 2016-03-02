@@ -250,7 +250,7 @@ def shifty_gapper(r, z, zc, vlimit=10000, ngap=30, glimit=1000):
    incluster=np.zeros(nobj, dtype=bool)
 
    if nobj<ngap:
-      raise Exception('Number of sources is less thant number of gap sources')
+      raise Exception('Number of sources is less than number of gap sources')
 
    for i in range(nobj):
      if abs(v[i])<vlimit:
@@ -274,6 +274,8 @@ def shifty_gapper(r, z, zc, vlimit=10000, ngap=30, glimit=1000):
 def rejectInterlopers(data):
     ''' Does all of the work to figure out which galaxies don't belong. Makes a
     couple sorted copies of the data and then applies the fixed gapper method.
+    This is the version that does NOT use a pandas dataframe to do all of the
+    work. This uses all numpy arrays.
 
     '''
 
