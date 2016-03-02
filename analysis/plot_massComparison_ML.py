@@ -2,6 +2,7 @@ import pylab as pyl
 from astLib import astStats
 from sklearn.metrics import median_absolute_error, mean_squared_error
 import h5py as hdf
+from matplotlib.ticker import AutoMinorLocator
 
 def calc_err(pred, true):
     return (pred - true)/true
@@ -23,6 +24,9 @@ ax4s = pyl.subplot2grid((3,4), (2,3), sharex=ax1s, sharey=ax2s)
 ax2.set_yticklabels([])
 ax1.set_xticklabels([])
 ax2s.set_yticklabels([])
+# add minor ticks to the bottom
+ax1s.yaxis.set_minor_locator(AutoMinorLocator())
+ax2s.yaxis.set_minor_locator(AutoMinorLocator())
 
 ### Targeted ###
 ################

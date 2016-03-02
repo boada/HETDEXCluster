@@ -57,13 +57,17 @@ ydat1 = ydat[ind][hhsub < thresh]
 hh[hh < thresh] = 0 # fill the areas with low density by NaNs
 
 # the CMD on the left
-ax[0].scatter(xdat1, ydat1, s=20, c='0.8')
+ax[0].scatter(xdat1, ydat1, s=10, c='0.8', edgecolor='0.8')
 ax[0].imshow(pyl.log10(hh.T), cmap='gray_r',
         extent=pyl.array(extent).flatten(),
         interpolation='nearest')
 ax[0].set_xlabel('$M_r$ (mag)')
 ax[0].set_ylabel('g-r (mag)')
 ax[0].set_xticks([-24, -20, -16, -12])
+
+# add some text lables
+ax[0].text(-20, 1.25, '1', color='#467821', fontsize=20)
+ax[0].text(-16.75, 0.5, '2', color='#cf4457', fontsize=20)
 
 ### add the histograms and little boxes
 # the two boxes
@@ -91,5 +95,7 @@ for x, y, c in zip(xcoord, ycoord, colors):
 
 ax[1].set_xlabel('Log $L_{[O_{ii}]}$ (erg/s)')
 ax[1].set_ylabel('P($L_{[O_{ii}]}| M_r,g-r)$')
-
+ax[1].set_xlim(36,44)
+ax[1].text(40, 0.75, '1', color='#467821', fontsize=20)
+ax[1].text(38, 0.6, '2', color='#cf4457', fontsize=20)
 pyl.show()

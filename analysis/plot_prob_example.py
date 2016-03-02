@@ -5,7 +5,7 @@ import corner
 
 ### Targeted ###
 ################
-with hdf.File('./result_targetedPerfect.hdf5', '#a60628') as f:
+with hdf.File('./result_targetedPerfect.hdf5', 'r') as f:
     dset  = f[f.keys()[0]]
     #data = dset['IDX', 'HALOID', 'ZSPEC', 'M200c', 'NGAL', 'LOSVD',
     #    'LOSVD_err', 'MASS', 'LOSVD_dist']
@@ -25,6 +25,14 @@ f = corner.corner(X, labels=['z', 'Log $M_{200c}$', 'Log $\sigma$'], bins=50,
 # add the bars. The axes are row indexed
 
 axes = f.axes
+
+# histogram labels
+axes[0].set_ylabel('P(z)')
+axes[0].yaxis.set_label_position('right')
+axes[4].set_ylabel('P(Log $M_{200c}$)')
+axes[4].yaxis.set_label_position('right')
+axes[8].set_ylabel('P(Log $\sigma$)')
+axes[8].yaxis.set_label_position('right')
 
 # redshift
 axes[0].axvspan(0.15,0.19,facecolor='#a60628', alpha=0.25)
