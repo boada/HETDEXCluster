@@ -28,6 +28,15 @@ ax2s.set_yticklabels([])
 ax1s.yaxis.set_minor_locator(AutoMinorLocator())
 ax2s.yaxis.set_minor_locator(AutoMinorLocator())
 
+### Perfect ###
+###############
+with hdf.File('./result_targetedPerfect_MLmasses.hdf5', 'r') as f:
+    dset = f[f.keys()[0]]
+    perfect = dset['M200c', 'MASS', 'ML_pred_1d', 'ML_pred_2d', 'ML_pred_3d']
+# filter bad values
+mask = (perfect['ML_pred_1d'] != 0)
+perfect = perfect[mask]
+
 ### Targeted ###
 ################
 with hdf.File('./result_targetedRealistic_MLmasses.hdf5', 'r') as f:
@@ -61,23 +70,27 @@ ax4s.axhline(0)
 #### Power Law ####
 ###################
 
-for d, c, style in zip([target, survey], ['#7A68A6', '#188487'],
-        ['-', '--']):
+for d, c, style, zo in zip([target, survey, perfect], ['#7A68A6', '#188487',
+    '#e24a33'], ['-', '--', '-'], [1,2,0]):
 
     print('power law')
     y_ = astStats.runningStatistic(pyl.log10(d['M200c']),
             pyl.log10(d['MASS']), pyl.percentile, binNumber=20, q=[16, 50, 84])
     quants = pyl.array(y_[1])
-    ax1.plot(y_[0],quants[:,1], style, c=c)
-    ax1.fill_between(y_[0], quants[:,2], quants[:,0], facecolor=c,
-        alpha=0.4, edgecolor=c)
+    ax1.plot(y_[0],quants[:,1], style, c=c, zorder=zo)
+
+    if not c == '#e24a33':
+        ax1.fill_between(y_[0], quants[:,2], quants[:,0], facecolor=c,
+            alpha=0.3, edgecolor=c)
     err = calc_err(d['MASS'], d['M200c'])
     y_ = astStats.runningStatistic(pyl.log10(d['M200c']), err,
             pyl.percentile, binNumber=20, q=[16, 50, 84])
     quants = pyl.array(y_[1])
-    ax1s.plot(y_[0],quants[:,1], style, c=c)
-    ax1s.fill_between(y_[0], quants[:,2], quants[:,0], facecolor=c,
-        alpha=0.4, edgecolor=c)
+    ax1s.plot(y_[0],quants[:,1], style, c=c, zorder=zo)
+
+    if not c == '#e24a33':
+        ax1s.fill_between(y_[0], quants[:,2], quants[:,0], facecolor=c,
+            alpha=0.3, edgecolor=c)
 
     print('MAE', median_absolute_error(pyl.log10(d['M200c']),
         pyl.log10(d['MASS'])))
@@ -91,16 +104,18 @@ for d, c, style in zip([target, survey], ['#7A68A6', '#188487'],
     y_ = astStats.runningStatistic(pyl.log10(d['M200c']), d['ML_pred_1d'],
             pyl.percentile, binNumber=20, q=[16, 50, 84])
     quants = pyl.array(y_[1])
-    ax2.plot(y_[0],quants[:,1], style, c=c)
-    ax2.fill_between(y_[0], quants[:,2], quants[:,0], facecolor=c,
-        alpha=0.4, edgecolor=c)
+    ax2.plot(y_[0],quants[:,1], style, c=c, zorder=zo)
+    if not c == '#e24a33':
+        ax2.fill_between(y_[0], quants[:,2], quants[:,0], facecolor=c,
+            alpha=0.4, edgecolor=c)
     err = calc_err(10**d['ML_pred_1d'], d['M200c'])
     y_ = astStats.runningStatistic(pyl.log10(d['M200c']), err,
             pyl.percentile, binNumber=20, q=[16, 50, 84])
     quants = pyl.array(y_[1])
-    ax2s.plot(y_[0],quants[:,1], style, c=c)
-    ax2s.fill_between(y_[0], quants[:,2], quants[:,0], facecolor=c,
-        alpha=0.4, edgecolor=c)
+    ax2s.plot(y_[0],quants[:,1], style, c=c, zorder=zo)
+    if not c == '#e24a33':
+        ax2s.fill_between(y_[0], quants[:,2], quants[:,0], facecolor=c,
+            alpha=0.4, edgecolor=c)
 
     print('MAE', median_absolute_error(pyl.log10(d['M200c']), d['ML_pred_1d']))
     print('RMSE', pyl.sqrt(mean_squared_error(pyl.log10(d['M200c']),
@@ -113,16 +128,18 @@ for d, c, style in zip([target, survey], ['#7A68A6', '#188487'],
     y_ = astStats.runningStatistic(pyl.log10(d['M200c']), d['ML_pred_2d'],
             pyl.percentile, binNumber=20, q=[16, 50, 84])
     quants = pyl.array(y_[1])
-    ax3.plot(y_[0],quants[:,1], style, c=c)
-    ax3.fill_between(y_[0], quants[:,2], quants[:,0], facecolor=c,
-        alpha=0.4, edgecolor=c)
+    ax3.plot(y_[0],quants[:,1], style, c=c, zorder=zo)
+    if not c == '#e24a33':
+        ax3.fill_between(y_[0], quants[:,2], quants[:,0], facecolor=c,
+            alpha=0.4, edgecolor=c)
     err = calc_err(10**d['ML_pred_2d'], d['M200c'])
     y_ = astStats.runningStatistic(pyl.log10(d['M200c']), err,
             pyl.percentile, binNumber=20, q=[16, 50, 84])
     quants = pyl.array(y_[1])
-    ax3s.plot(y_[0],quants[:,1], style, c=c)
-    ax3s.fill_between(y_[0], quants[:,2], quants[:,0], facecolor=c,
-        alpha=0.4, edgecolor=c)
+    ax3s.plot(y_[0],quants[:,1], style, c=c, zorder=zo)
+    if not c == '#e24a33':
+        ax3s.fill_between(y_[0], quants[:,2], quants[:,0], facecolor=c,
+            alpha=0.4, edgecolor=c)
 
     print('MAE', median_absolute_error(pyl.log10(d['M200c']), d['ML_pred_2d']))
     print('RMSE', pyl.sqrt(mean_squared_error(pyl.log10(d['M200c']),
@@ -135,16 +152,18 @@ for d, c, style in zip([target, survey], ['#7A68A6', '#188487'],
     y_ = astStats.runningStatistic(pyl.log10(d['M200c']), d['ML_pred_3d'],
             pyl.percentile, binNumber=20, q=[16, 50, 84])
     quants = pyl.array(y_[1])
-    ax4.plot(y_[0],quants[:,1], style, c=c)
-    ax4.fill_between(y_[0], quants[:,2], quants[:,0], facecolor=c,
-        alpha=0.4, edgecolor=c)
+    ax4.plot(y_[0],quants[:,1], style, c=c, zorder=zo)
+    if not c == '#e24a33':
+        ax4.fill_between(y_[0], quants[:,2], quants[:,0], facecolor=c,
+            alpha=0.4, edgecolor=c)
     err = calc_err(10**d['ML_pred_3d'], d['M200c'])
     y_ = astStats.runningStatistic(pyl.log10(d['M200c']), err,
             pyl.percentile, binNumber=20, q=[16, 50, 84])
     quants = pyl.array(y_[1])
-    ax4s.plot(y_[0],quants[:,1], style, c=c)
-    ax4s.fill_between(y_[0], quants[:,2], quants[:,0], facecolor=c,
-        alpha=0.4, edgecolor=c)
+    ax4s.plot(y_[0],quants[:,1], style, c=c, zorder=zo)
+    if not c == '#e24a33':
+        ax4s.fill_between(y_[0], quants[:,2], quants[:,0], facecolor=c,
+            alpha=0.4, edgecolor=c)
 
     print('MAE', median_absolute_error(pyl.log10(d['M200c']), d['ML_pred_3d']))
     print('RMSE', pyl.sqrt(mean_squared_error(pyl.log10(d['M200c']),
@@ -154,7 +173,8 @@ for d, c, style in zip([target, survey], ['#7A68A6', '#188487'],
 ##################
 line1 = pyl.Line2D([], [], ls='-', color='#7A68A6')
 line2 = pyl.Line2D([], [], ls='--', color='#188487')
-ax1.legend((line1, line2), ('Targeted', 'Survey'), loc=2)
+line3 = pyl.Line2D([], [], ls='-', color='#e24a33')
+ax1.legend((line3, line1, line2), ('Perfect', 'Targeted', 'Survey'), loc=2)
 
 #### tweak ####
 ax1.set_xticks([12,13,14,15])
