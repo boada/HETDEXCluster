@@ -8,7 +8,7 @@ def calc_err(pred, true):
     return (pred - true)/true
 
 golden_mean = (pyl.sqrt(5.)-1.0)/2.0
-f = pyl.figure(1, figsize=(10,10*golden_mean))
+f = pyl.figure(figsize=(10,10*golden_mean))
 
 ax1 = pyl.subplot2grid((3,4), (0,0), rowspan=2)
 ax2 = pyl.subplot2grid((3,4), (0,1), rowspan=2, sharex=ax1)
@@ -30,7 +30,8 @@ ax2s.yaxis.set_minor_locator(AutoMinorLocator())
 
 ### Perfect ###
 ###############
-with hdf.File('./result_targetedPerfect_MLmasses.hdf5', 'r') as f:
+#with hdf.File('./result_targetedPerfect_MLmasses.hdf5', 'r') as f:
+with hdf.File('./targetedPerfect_MLmasses_realisticOnly.hdf5', 'r') as f:
     dset = f[f.keys()[0]]
     perfect = dset['M200c', 'MASS', 'ML_pred_1d', 'ML_pred_2d', 'ML_pred_3d']
 # filter bad values
@@ -39,7 +40,7 @@ perfect = perfect[mask]
 
 ### Targeted ###
 ################
-with hdf.File('./result_targetedRealistic_MLmasses.hdf5', 'r') as f:
+with hdf.File('./targetedRealistic_MLmasses.hdf5', 'r') as f:
     dset = f[f.keys()[0]]
     target = dset['M200c', 'MASS', 'ML_pred_1d', 'ML_pred_2d', 'ML_pred_3d']
 # filter bad values
@@ -168,6 +169,8 @@ for d, c, style, zo in zip([target, survey, perfect], ['#7A68A6', '#188487',
     print('MAE', median_absolute_error(pyl.log10(d['M200c']), d['ML_pred_3d']))
     print('RMSE', pyl.sqrt(mean_squared_error(pyl.log10(d['M200c']),
         d['ML_pred_3d'])))
+    print '----'
+
 
 ### Add Legend ###
 ##################

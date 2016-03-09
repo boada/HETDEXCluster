@@ -30,7 +30,8 @@ ax2s.yaxis.set_minor_locator(AutoMinorLocator())
 
 ### Perfect ###
 ###############
-with hdf.File('./result_targetedPerfect_Probmasses.hdf5', 'r') as f:
+#with hdf.File('./targetedPerfect_Probmasses.hdf5', 'r') as f:
+with hdf.File('./targetedPerfect_Probmasses_realisticOnly.hdf5', 'r') as f:
     dset = f[f.keys()[0]]
     perfect = dset['M200c', 'MASS', 'Prob_pred_1d', 'Prob_pred_2d',
             'Prob_pred_3d']
@@ -41,7 +42,7 @@ perfect = perfect[~mask]
 
 ### Targeted ###
 ################
-with hdf.File('./result_targetedRealistic_Probmasses.hdf5', 'r') as f:
+with hdf.File('./targetedRealistic_Probmasses.hdf5', 'r') as f:
     dset = f[f.keys()[0]]
     target = dset['M200c', 'MASS', 'Prob_pred_1d', 'Prob_pred_2d',
             'Prob_pred_3d']
