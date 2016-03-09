@@ -1,6 +1,5 @@
 import numpy as np
 import h5py as hdf
-from sklearn.metrics import median_absolute_error, mean_squared_error
 
 def scatter2(true, pred, mu):
     if true.size > 0:
@@ -10,11 +9,11 @@ def scatter2(true, pred, mu):
 
 def bias(true, pred):
     if true.size > 0:
-        return np.sum(pred - true) /true.size
+       return np.sum(pred - true) /true.size
         #return np.median(true)
     else:
         return np.nan
-        
+
 def runningStatistic(stat, true, pred, **kwargs):
     bins = np.arange(11.5,16,0.5)
     indx = np.digitize(true, bins) - 1
@@ -25,11 +24,11 @@ def runningStatistic(stat, true, pred, **kwargs):
     for k in xrange(binNumber):
         try:
             b = stat(true[indx==k], pred[indx==k], **kwargs)
-            s = scatter2(true[indx==k], pred[indx==k], b)
+            s = np.sqrt(scatter2(true[indx==k], pred[indx==k], b))
         except ValueError:
             b = np.nan
             s = np.nan
-        print '$%.2f\pm{%.2f}$ &' % (b,s),    
+        print '$%.2f\pm{%.2f}$ &' % (b,s),
         #print '%.3f' % (s), '&',
         runningb.append(b)
         runnings.append(s)
@@ -65,10 +64,16 @@ mask = (survey['ML_pred_1d'] != 0)
 survey = survey[mask]
 
 for d in [perfect, target, survey]:
+
+### Full survey ###
+    mu = bias(np.log10(d['M200c']), np.log10(d['MASS']))
+    s = scatter2(np.log10(d['M200c']), np.log10(d['MASS']), mu)
+    print '$%.2f\pm{%.2f}$' % (mu,np.sqrt(s))
+
+
     print('power law')
     running = runningStatistic(bias, np.log10(d['M200c']),
             np.log10(d['MASS']))
-
 ############
 #### 1d ####
 ############

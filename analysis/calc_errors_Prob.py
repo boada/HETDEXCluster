@@ -24,7 +24,7 @@ def runningStatistic(stat, true, pred, **kwargs):
     for k in xrange(binNumber):
         try:
             b = stat(true[indx==k], pred[indx==k], **kwargs)
-            s = scatter2(true[indx==k], pred[indx==k], b)
+            s = np.sqrt(scatter2(true[indx==k], pred[indx==k], b))
         except ValueError:
             b = np.nan
             s = np.nan
