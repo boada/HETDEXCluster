@@ -9,7 +9,7 @@
 #BSUB -L /bin/bash
 
 ## 30 minutes of walltime ([HH:]MM)
-#BSUB -W 2:00
+#BSUB -W 1:30
 
 ## numprocs
 #BSUB -n 20
@@ -18,6 +18,6 @@
 #BSUB -R 'span[ptile=20]'
 
 source /home/boada/.bashrc
-#time py mkMLMasses.py
-time py mkProbMasses.py
+time py mkMLMasses.py
+#time py mkProbMasses.py
 
