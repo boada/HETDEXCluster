@@ -78,7 +78,7 @@ ax4s.axhline(0)
 ###################
 
 for d, c, style, zo in zip([target, survey, perfect], ['#7A68A6', '#188487',
-    '#e24a33'], ['-', '--', '-'], [1,2,0]):
+    '#e24a33'], ['-', '--', '-.'], [1,2,0]):
 
     print('power law')
     y_ = astStats.runningStatistic(pyl.log10(d['M200c']),
@@ -180,7 +180,7 @@ for d, c, style, zo in zip([target, survey, perfect], ['#7A68A6', '#188487',
 ##################
 line1 = pyl.Line2D([], [], ls='-', color='#7A68A6')
 line2 = pyl.Line2D([], [], ls='--', color='#188487')
-line3 = pyl.Line2D([], [], ls='-', color='#e24a33')
+line3 = pyl.Line2D([], [], ls='-.', color='#e24a33')
 ax1.legend((line3, line1, line2), ('Perfect', 'Targeted', 'Survey'), loc=2)
 
 #### tweak ####
@@ -195,10 +195,10 @@ ax1s.set_ylim(ax2s.get_ylim())
 
 ax1.set_ylabel('Log $M_{pred}$ $(M_\odot)$')
 ax1s.set_ylabel('$\epsilon$')
-ax1s.set_xlabel('Log M $(M_\odot)$')
-ax2s.set_xlabel('Log M $(M_\odot)$')
-ax3s.set_xlabel('Log M $(M_\odot)$')
-ax4s.set_xlabel('Log M $(M_\odot)$')
+ax1s.set_xlabel('Log $M_{200c}$ $(M_\odot)$', fontsize=18)
+ax2s.set_xlabel('Log $M_{200c}$ $(M_\odot)$', fontsize=18)
+ax3s.set_xlabel('Log $M_{200c}$ $(M_\odot)$', fontsize=18)
+ax4s.set_xlabel('Log $M_{200c}$ $(M_\odot)$', fontsize=18)
 
 ax1.text(14, 12.25, 'Power Law', fontsize=18, horizontalalignment='center')
 ax2.text(14, 12.25, '$Prob_{\sigma}$', fontsize=18,
