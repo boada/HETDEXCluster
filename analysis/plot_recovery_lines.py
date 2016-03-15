@@ -98,7 +98,7 @@ ax[0].legend((line1, line2), ('Targeted', 'Survey'), loc='upper right')
 ax[0].set_ylabel('Recovery Fraction')
 ax[0].set_xticklabels([0., 0.1, 0.2, 0.3, 0.4])
 ax[0].set_xlabel('Redshift')
-ax[1].set_xlabel('Log M $(M_\odot)$')
+ax[1].set_xlabel('Log $M_{200c}$ $(M_\odot)$')
 
 ax[1].set_yticklabels([])
 
