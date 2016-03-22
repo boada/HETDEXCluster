@@ -20,5 +20,9 @@ on g.galaxyid = sdss.galaxyid
 where sh.fofid in (
 select fofid 
 from millimil..fof
-where snapnum=62 and m_crit200 > 1000
+where snapnum in (
+select snapnum
+from snapshots..MR
+where z between 0.01 and 0.5
+) and m_crit200 > 1000
 )
