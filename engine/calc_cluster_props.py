@@ -7,9 +7,14 @@ from sklearn import mixture
 import emcee
 
 # buzzard simulation cosmology
-aca.H0 = 70
-aca.OMEGA_M0 = 0.286
-aca.OMEGA_L0 = 0.714
+#aca.H0 = 70
+#aca.OMEGA_M0 = 0.286
+#aca.OMEGA_L0 = 0.714
+
+# millennium cosmology
+aca.H0 = 73
+aca.OMEGA_M0 = 0.25
+aca.OMEGA_L0 = 0.75
 
 def findLOSVD(data):
     if data.size >= 15:
