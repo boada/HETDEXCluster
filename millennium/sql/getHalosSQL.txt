@@ -1,0 +1,3 @@
+select * 
+from millimil..fof
+where snapnum=62 and m_crit200 > 1000

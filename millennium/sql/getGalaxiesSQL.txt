@@ -1,0 +1,24 @@
+select sh.fofid,
+sh.subhaloid, 
+g.galaxyid,
+g.x,
+g.y,
+g.z,
+g.redshift,
+g.velx, 
+g.vely,
+g.velz,
+sdss.g_sdss,
+sdss.r_sdss,
+sdss.i_sdss 
+
+from millimil..fofsubhalo as sh
+inner join millimil..DeLucia2006a as g
+on sh.subhaloid = g.subhaloid
+inner join millimil..DeLucia2006a_SDSS2MASS as sdss
+on g.galaxyid = sdss.galaxyid
+where sh.fofid in (
+select fofid 
+from millimil..fof
+where snapnum=62 and m_crit200 > 1000
+)
