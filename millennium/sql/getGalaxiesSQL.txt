@@ -12,17 +12,18 @@ sdss.g_sdss,
 sdss.r_sdss,
 sdss.i_sdss 
 
-from millimil..fofsubhalo as sh
-inner join millimil..DeLucia2006a as g
+from mfield..fofsubhalo as sh
+inner join mpagalaxies..DeLucia2006a as g
 on sh.subhaloid = g.subhaloid
-inner join millimil..DeLucia2006a_SDSS2MASS as sdss
+inner join mpagalaxies..DeLucia2006a_SDSS2MASS as sdss
 on g.galaxyid = sdss.galaxyid
 where sh.fofid in (
 select fofid 
-from millimil..fof
+from mfield..fof
 where snapnum in (
 select snapnum
 from snapshots..MR
 where z between 0.01 and 0.5
 ) and m_crit200 > 1000
+and random between 0 and 10000
 )

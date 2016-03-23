@@ -1,7 +1,8 @@
 select *
-from millimil..fof
+from mfield..fof
 where snapnum in (
 select snapnum
 from snapshots..MR
 where z between 0.01 and 0.5
-) and m_crit200 > 1000
+) and m_crit200 > 100
+and random between 0 and 10000
