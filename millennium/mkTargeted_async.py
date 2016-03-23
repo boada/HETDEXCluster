@@ -30,7 +30,6 @@ def worker(pos, data):
     return pos, data, sigma_dist
 
 def cb_func((pos, data, sigma_dist)):
-    print 'done'
     if pos % 1000 == 0:
         print pos
     results['IDX'][pos] = pos
