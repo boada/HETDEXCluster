@@ -2,10 +2,14 @@ import numpy as np
 import h5py as hdf
 
 def scatter(true, pred, mu):
-    if true.size > 0:
+    print true.size
+
+    if true.size > 1:
         var = np.sum((pred - true - mu)**2) /(true.size - 1)
         sem = np.sqrt(var/true.size)
         return sem
+    elif true.size == 1:
+        return 0
     else:
         return np.nan
 
