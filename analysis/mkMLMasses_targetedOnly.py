@@ -66,7 +66,7 @@ def addMasses(data, generator):
     i = 0
     for train, test in generator:
         rf = RandomForestRegressor(n_estimators=1000, min_samples_leaf=1,
-                verbose=1, n_jobs=4)
+                verbose=1, n_jobs=-1)
         X = np.log10(train['M200c'])
 
     ############
