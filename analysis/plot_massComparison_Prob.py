@@ -193,12 +193,12 @@ ax2s.set_ylim(-2,4)
 ax1.set_ylim(ax2.get_ylim())
 ax1s.set_ylim(ax2s.get_ylim())
 
-ax1.set_ylabel('Log $M_{pred}$ $(M_\odot)$')
+ax1.set_ylabel('Log $M_{pred}$')
 ax1s.set_ylabel('$\epsilon$')
-ax1s.set_xlabel('Log $M_{200c}$ $(M_\odot)$', fontsize=18)
-ax2s.set_xlabel('Log $M_{200c}$ $(M_\odot)$', fontsize=18)
-ax3s.set_xlabel('Log $M_{200c}$ $(M_\odot)$', fontsize=18)
-ax4s.set_xlabel('Log $M_{200c}$ $(M_\odot)$', fontsize=18)
+ax1s.set_xlabel('Log $M_{200c}$', fontsize=18)
+ax2s.set_xlabel('Log $M_{200c}$', fontsize=18)
+ax3s.set_xlabel('Log $M_{200c}$', fontsize=18)
+ax4s.set_xlabel('Log $M_{200c}$', fontsize=18)
 
 ax1.text(14, 12.25, 'Power Law', fontsize=18, horizontalalignment='center')
 ax2.text(14, 12.25, '$Prob_{\sigma}$', fontsize=18,
