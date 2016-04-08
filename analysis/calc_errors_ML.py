@@ -8,7 +8,6 @@ def error(true, pred, mu):
 
     '''
     print true.size,
-
     if true.size > 1:
         var = np.sum((pred - true - mu)**2) /(true.size - 1)
         sem = np.sqrt(var/true.size)

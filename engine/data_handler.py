@@ -58,7 +58,7 @@ def mkTruth(i=-1, flatHMF=False):
     # build truth database
     if not i == -1:
         with hdf.File(truthPath+'truth'+str(i).zfill(2)+'_Oii.hdf5', 'r') as f:
-            dset = f[f.keys()[0]]
+            dset = f['truth'+str(i).zfill(2)+'_Oii']
             print(dset.file) # print the loading file
             if not flatHMF:
                 truth_part = dset['HALOID', 'RA', 'DEC', 'Z', 'Oii']
@@ -77,7 +77,7 @@ def mkTruth(i=-1, flatHMF=False):
         for i in range(20):
             with hdf.File(truthPath+'truth'+str(i).zfill(2)+'_Oii.hdf5', 'r')\
                 as f:
-                dset = f[f.keys()[0]]
+                dset = f['truth'+str(i).zfill(2)+'_Oii']
                 print(dset.file) # print the loading file
                 if not flatHMF:
                     truth_part = dset['HALOID', 'RA', 'DEC', 'Z', 'Oii']
@@ -110,6 +110,38 @@ def mkHalo():
                 halo = halo_part
 
     return halo
+
+def mkQs(i=-1):
+    ''' Loads either all of the truth files and returns the data array or loads
+    the individual file desired. To specify which file, call with an integer
+    0-19 as an argument.
+
+    '''
+    truthPath = './../data/buzzard_v1.0/allbands/truth/'
+    # build truth database
+    if not i == -1:
+        with hdf.File(truthPath+'truth'+str(i).zfill(2)+'_Oii.hdf5', 'r') as f:
+            dset = f['Q']
+            print(dset.file) # print the loading file
+            q_part = dset.value
+            try:
+                q = np.append(q, q_part)
+            except NameError:
+                q = q_part
+        return q
+
+    else:
+        for i in range(20):
+            with hdf.File(truthPath+'truth'+str(i).zfill(2)+'_Oii.hdf5', 'r')\
+                as f:
+                dset = f['Q']
+                print(dset.file) # print the loading file
+                q = dset.value
+                try:
+                    q = np.append(q, q_part)
+                except NameError:
+                    q = q_part
+        return q
 
 def apply_mask(ramin, decmin, ramax, decmax, catalog):
     if ramin < ramax:

@@ -1,10 +1,10 @@
 import numpy as np
 import h5py as hdf
 from sklearn.ensemble import RandomForestRegressor
+#from sklearn.cross_validation import train_test_split
 from numpy.lib import recfunctions as rfns
 from itertools import permutations, izip
 import multiprocessing
-from halo_handler import find_indices
 
 def child_initializer(_rf):
     print 'Starting', multiprocessing.current_process().name
@@ -63,10 +63,17 @@ def addMasses(data, generator):
 
     '''
 
+    # load the buzzard training set
+    with hdf.File('../analysis/result_targetedRealistic.hdf5', 'r') as f:
+        dset = f[f.keys()[0]]
+        target = dset['IDX', 'HALOID', 'ZSPEC', 'M200c', 'NGAL', 'LOSVD',
+                            'LOSVD_err', 'MASS']
+
     i = 0
     for train, test in generator:
+        train = target
         rf = RandomForestRegressor(n_estimators=1000, min_samples_leaf=1,
-                verbose=1, n_jobs=-1)
+                verbose=1, n_jobs=4)
         X = np.log10(train['M200c'])
 
     ############
@@ -168,31 +175,13 @@ def mp_worker_wrapper(args):
 
 if __name__ == "__main__":
 
-    ### Perfect ###
-    ################
-    with hdf.File('./result_targetedPerfect.hdf5', 'r') as f:
-        dset  = f[f.keys()[0]]
-        perfect = dset['IDX', 'HALOID', 'ZSPEC', 'M200c', 'NGAL', 'LOSVD',
-        'LOSVD_err', 'MASS']
-        #data = dset.value
-
     ### Targeted ###
     ################
     with hdf.File('./result_targetedRealistic.hdf5', 'r') as f:
         dset  = f[f.keys()[0]]
-        target = dset['IDX', 'HALOID', 'ZSPEC', 'M200c', 'NGAL', 'LOSVD',
+        data = dset['IDX', 'HALOID', 'ZSPEC', 'M200c', 'NGAL', 'LOSVD',
         'LOSVD_err', 'MASS']
         #data = dset.value
-
-
-    # this finds the galaxies that were observed with the targeted realistic
-    # observations and then computes all of their masses using the perfect
-    # observations of the same clusters. This might work better for comparisons
-    # down the line. Right now there is something funny going on with things.
-    idx = find_indices(perfect['HALOID'], target['HALOID'])
-    idx = np.ravel(idx)
-    data = perfect[idx]
-    data['IDX'] = target['IDX']
 
     # add the extra fields
     data = updateArray(data)
@@ -209,33 +198,6 @@ if __name__ == "__main__":
 
     sl_targeted = splitData(maskedDataT, 0.3)
     data = addMasses(data, sl_targeted)
-    with hdf.File('targetedPerfect_MLmasses_realisticOnly.hdf5', 'w') as f:
+    with hdf.File('targetedRealistic_masses_Buzzard.hdf5', 'w') as f:
         f['predicted masses'] = data
         f.flush()
-
-    ### Survey ###
-    ##############
-    print 'SURVEY!'
-    with hdf.File('./surveyCompletePerfect.hdf5', 'r') as f:
-        dset  = f[f.keys()[0]]
-        data = dset['IDX', 'HALOID', 'ZSPEC', 'M200c', 'NGAL', 'LOSVD',
-        'LOSVD_err', 'MASS']
-        #data = dset.value
-
-    # add the extra fields
-    data = updateArray(data)
-
-    # You have to clean the data here. This is almost certainly from the fact
-    # that some of the HALOIDS are repeated at different redshifts. I have a
-    # prior on the LOSVD calculation which will limit the LOSVD to a maxium.
-    # Because the clusters are so far apart the LOSVD is super high.
-    mask = ((np.log10(data['LOSVD']) > 3.12 ) & (data['M200c'] < 10**14.5) |
-        (data['LOSVD'] < 50))
-    maskedDataS = data[~mask]
-    badData = data[mask]
-
-#    sl_survey = splitData(maskedDataS, 0.3)
-#    data = addMasses(data, sl_survey)
-#    with hdf.File('surveyCompletePerfect_MLmasses.hdf5', 'w') as f:
-#        f['predicted masses'] = data
-#        f.flush()
