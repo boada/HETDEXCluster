@@ -143,6 +143,45 @@ def mkQs(i=-1):
                     q = q_part
         return q
 
+def mkN200Data(catalog='truth'):
+    ''' Loads the correct data for the n200 calculation. I wrote a new function
+    instead of trying to modify the exisiting functions to deal with only
+    loading part of the full data set.
+
+    '''
+    truthPath = './../data/buzzard_v1.0/allbands/truth/'
+    haloPath = './../data/buzzard_v1.0/allbands/halos/'
+
+    if catalog == 'truth':
+        for i in range(20):
+            with hdf.File(truthPath+'truth'+str(i).zfill(2)+'_Oii.hdf5', 'r')\
+                as f:
+                dset = f['truth'+str(i).zfill(2)+'_Oii']
+                print(dset.file) # print the loading file
+                truth_part = dset['HALOID', 'RA', 'DEC']
+                try:
+                    truth = np.append(truth, truth_part)
+                except NameError:
+                    truth = truth_part
+        return truth
+
+    elif catalog == 'halo':
+        for i in range(20):
+            with hdf.File(haloPath+'halo'+str(i).zfill(2)+'.hdf5', 'r') as f:
+                dset = f[f.keys()[0]]
+                print(dset.file)
+                halo_part = dset['id','upid', 'ra', 'dec', 'm200c']
+                try:
+                    halo = np.append(halo, halo_part)
+                except NameError:
+                    halo = halo_part
+
+        return halo
+
+    else:
+        print 'catalog must be either truth or halo'
+        return 0
+
 def apply_mask(ramin, decmin, ramax, decmax, catalog):
     if ramin < ramax:
         x = (ramax > catalog['RA']) & (catalog['RA'] > ramin)
