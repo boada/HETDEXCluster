@@ -1,5 +1,6 @@
 ## job name
-#BSUB -J targetedRealistic_async
+#BSUB -J N200c_async
+##BSUB -J targetedRealistic_async
 ##BSUB -J targetedPerfect_async
 
 ## send stderr and stdout to the same file
@@ -12,7 +13,7 @@
 ## 30 minutes of walltime ([HH:]MM)
 ## 10 hours for Perfect knowledge
 ## 0.25 hours for Realistic knowledge
-#BSUB -W 1:00
+#BSUB -W 2:00
 
 ## numprocs
 #BSUB -n 20
@@ -21,6 +22,7 @@
 #BSUB -R 'span[ptile=20]'
 
 source /home/boada/.bashrc
-time py mkTargeted_async.py
+time py mkN200.py
+#time py mkTargeted_async.py
 #time py mkFullKnowledge.py
 
