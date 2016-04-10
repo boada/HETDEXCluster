@@ -100,11 +100,11 @@ ax.text(14.75, 13.5, '$ML_{\sigma, z, Ngal}$', fontsize=18,
                 horizontalalignment='center')
 
 ax.plot([13,15.5],[13,15.5],c='k', zorder=0)
-ax.set_ylabel('Log $M_{pred}$ $(M_\odot)$')
+ax.set_ylabel('Log $M_{pred}$')
 ax.set_xticklabels([])
 
 axs.set_ylabel('$\epsilon$')
-axs.set_xlabel('Log $M_{200c}$ $(M_\odot)$')
+axs.set_xlabel('Log $M_{200c}$')
 axs.set_ylim(-0.6, 0.6)
 axs.set_yticklabels(axs.get_yticks()[:-2])
 axs.axhline(0, c='k', zorder=0)
