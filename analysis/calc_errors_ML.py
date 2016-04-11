@@ -81,9 +81,10 @@ survey = survey[mask]
 for d in [perfect, target, survey]:
 
 ### Full survey ###
-#    mu = bias(np.log10(d['M200c']), np.log10(d['MASS']))
-#    s = scatter(np.log10(d['M200c']), np.log10(d['MASS']), mu)
-#    print '$%.2f\pm{%.3f}$' % (mu,s)
+    mean, var, std = stats.mvsdist(np.log10(d['MASS']) - np.log10(d['M200c']))
+    s = stats.sem(np.log10(d['MASS']) - np.log10(d['M200c']))
+    #print '$%.2f\pm{%.3f}$' % (mean.mean(),s)
+    print '$%.2f\pm{%.3f}$' % (std.mean(), std.std())
 
 
     print('power law')
