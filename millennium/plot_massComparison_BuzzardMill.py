@@ -1,43 +1,57 @@
 import pylab as pyl
 import h5py as hdf
+from scipy import stats
 from astLib import astStats
 from astroML.density_estimation import bayesian_blocks
 
-def scatter(true, pred, mu):
-    if true.size > 0:
+def error(true, pred, mu):
+    ''' Unused, but kept to see how I did it when I wasn't using the Scipy
+    functions. Calculates the error on the mean.
+
+    '''
+    print true.size,
+    if true.size > 1:
         var = pyl.sum((pred - true - mu)**2) /(true.size - 1)
         sem = pyl.sqrt(var/true.size)
         return sem
+    elif true.size == 1:
+        return 0
     else:
         return pyl.nan
 
 def bias(true, pred):
+    ''' unused, but calculates the mean bias. '''
+
     if true.size > 0:
        return pyl.sum(pred - true) /true.size
         #return pyl.median(true)
     else:
         return pyl.nan
 
-def runningBias(stat, true, pred, bins, **kwargs):
-    #bins = pyl.arange(11.5,16,0.5)
-    indx = pyl.digitize(true, bins) - 1
+def runningStatistic(stat, true, pred, **kwargs):
+    ''' b = bias and s = uncertainty on that bias '''
+
+    bins = pyl.arange(11.5,16,0.5)
+    indx = pyl.digitize(true, bins)-1
     binNumber = len(bins)
 
     runningb = []
     runnings = []
     for k in xrange(binNumber):
+        #print true[indx==k].size,
+        b = pyl.mean(pred[indx==k] - true[indx==k])
+        s = stats.sem(pred[indx==k] - true[indx==k])
+        #print '$%.2f\pm{%.4f}$ &' % (b,s)
         try:
-            b = stat(true[indx==k], pred[indx==k], **kwargs)
-            s = scatter(true[indx==k], pred[indx==k], b)
+            mean, var, std = stats.mvsdist(pred[indx==k] - true[indx==k])
+            print '$%.2f\pm{%.2f}$ &' % (std.mean(),std.std()),
         except ValueError:
-            b = pyl.nan
-            s = pyl.nan
-        print '$%.2f\pm{%.2f}$ &' % (b,s),
-        #print '%.3f' % (s), '&',
+            print '$%.2f\pm{%.2f}$ &' % (pyl.nan,pyl.nan),
         runningb.append(b)
         runnings.append(s)
     print ''
     return runningb, runnings
+
 
 def calc_err(pred, true):
         return (pred - true)/true
