@@ -157,17 +157,16 @@ for scatter in pyl.arange(0.1, 0.5, 0.05):
         x = lam_obs
         y = m['ML_pred_3d']
         index = pyl.digitize(x, bins)
-        print [y[index==k].size for k in range(1,bins.size)]
+        #print [y[index==k].size for k in range(1,bins.size)]
         running = [pyl.std(y[index==k]) for k in range(1,bins.size)]
         running = pyl.array(running)
         tmp = pyl.where(~pyl.isnan(running))
-        print(pyl.mean(running[tmp[0]]))
+        #print scatter, pyl.mean(running[tmp[0]]), stats.sem(running[tmp[0]])
 
         if s:
             survey_rec.append(pyl.mean(running[tmp[0]]))
         else:
             target_rec.append(pyl.mean(running[tmp[0]]))
-
 
 # add the insert
 rect = [.6, .15, .4, .4]
