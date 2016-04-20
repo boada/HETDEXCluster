@@ -81,7 +81,6 @@ survey_mlMasses = survey_mlMasses[mask]
 scatter = 0.05
 
 for d, m, in zip([target, survey], [target_mlMasses, survey_mlMasses]):
-    bins = np.arange(10,150,20)
 
     # add the noise to the true masses-- 0.25 dex at the moment
     m_obs = stats.norm(np.log10(d['M200c']), scatter).rvs(d.size)
@@ -113,8 +112,9 @@ for d, m, in zip([target, survey], [target_mlMasses, survey_mlMasses]):
 
     # Print results.
     samples = sampler.flatchain
-    print("m = {0} ± {1}".format(np.mean(samples[:, 0]), np.std(samples[:, 0])))
-    print("b = {0} ± {1}".format(np.mean(samples[:, 1]), np.std(samples[:, 1])))
+    print("m = {0} ± {1}".format(np.median(samples[:, 0]), np.std(samples[:, 0])))
+    print("b = {0} ± {1}".format(np.median(samples[:, 1]), np.std(samples[:, 1])))
+    print("s = {0} ± {1}".format(np.median(samples[:, 2]), np.std(samples[:, 2])))
 
 
 
