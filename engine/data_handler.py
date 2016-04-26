@@ -136,7 +136,7 @@ def mkQs(i=-1):
                 as f:
                 dset = f['Q']
                 print(dset.file) # print the loading file
-                q = dset.value
+                q_part = dset.value
                 try:
                     q = np.append(q, q_part)
                 except NameError:
