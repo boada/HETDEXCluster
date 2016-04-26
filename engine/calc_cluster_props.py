@@ -7,14 +7,14 @@ from sklearn import mixture
 import emcee
 
 # buzzard simulation cosmology
-#aca.H0 = 70
-#aca.OMEGA_M0 = 0.286
-#aca.OMEGA_L0 = 0.714
+aca.H0 = 70
+aca.OMEGA_M0 = 0.286
+aca.OMEGA_L0 = 0.714
 
 # millennium cosmology
-aca.H0 = 73
-aca.OMEGA_M0 = 0.25
-aca.OMEGA_L0 = 0.75
+#aca.H0 = 73
+#aca.OMEGA_M0 = 0.25
+#aca.OMEGA_L0 = 0.75
 
 def findLOSVD(data):
     if data.size >= 15:
@@ -339,7 +339,7 @@ def rejectInterlopers_group(data, sigmav=500):
     selected = (abs(data['Z'] - avgz) <= deltaZmax) & (data['SEP'] <=\
             deltaRmax)
 
-    return data[selected]
+    return selected
 
 def updateArray(data):
     ''' Makes the new fields that we are going to add things into in the
