@@ -327,7 +327,7 @@ def rejectInterlopers_group(data, sigmav=500):
 
     '''
 
-    c = 2.99e5
+    c = 2.99792458e5
 
     avgz = data['CLUSZ'][0]
 
