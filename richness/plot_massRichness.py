@@ -3,6 +3,7 @@ import h5py as hdf
 from scipy import stats
 import pylab as pyl
 from astLib import astStats
+from line import fit
 
 def mklogMass(theta):
     ''' Makes Log10 Mass from a given richness following the simet2016
@@ -61,7 +62,7 @@ with hdf.File('./result_targetedRealistic.hdf5', 'r') as f:
 
 with hdf.File('./targetedRealistic_MLmasses.hdf5', 'r') as f:
     dset = f[f.keys()[0]]
-    target_mlMasses = dset['HALOID', 'ML_pred_3d']
+    target_mlMasses = dset['HALOID', 'ML_pred_3d', 'ML_pred_3d_err']
 
 # mask out the values with failed ML masses
 mask = (target_mlMasses['ML_pred_3d'] != 0)
@@ -74,7 +75,7 @@ with hdf.File('./surveyCompleteRealistic.hdf5', 'r') as f:
 
 with hdf.File('./surveyCompleteRealistic_MLmasses.hdf5', 'r') as f:
     dset = f[f.keys()[0]]
-    survey_mlMasses = dset['HALOID', 'ML_pred_3d']
+    survey_mlMasses = dset['HALOID', 'ML_pred_3d', 'ML_pred_3d_err']
 
 # mask out the values with failed ML masses
 mask = (survey_mlMasses['ML_pred_3d'] != 0)
@@ -151,11 +152,16 @@ for scatter in pyl.arange(0.1, 0.5, 0.05):
         m_obs = stats.norm(pyl.log10(d['M200c']), scatter).rvs(d.size)
         # use the noisy masses to calculate an observed lambda
         lam_obs = mklambda(truth)(m_obs)
+        mask = (10 <= lam_obs) & (lam_obs < 130)
 
         # now we are going to do the scatter panel on the bottom
         bins = pyl.arange(10,150,10)
-        x = lam_obs
-        y = m['ML_pred_3d']
+        x = lam_obs[mask]
+        y = m['ML_pred_3d'][mask]
+        yerr = (m['ML_pred_3d'][mask] - m['ML_pred_3d_err'][:,0][mask])/2
+
+        m,b,sc = fit(pyl.log10(x), y, yerr=yerr)
+
         index = pyl.digitize(x, bins)
         #print [y[index==k].size for k in range(1,bins.size)]
         running = [pyl.std(y[index==k]) for k in range(1,bins.size)]
@@ -164,9 +170,9 @@ for scatter in pyl.arange(0.1, 0.5, 0.05):
         #print scatter, pyl.mean(running[tmp[0]]), stats.sem(running[tmp[0]])
 
         if s:
-            survey_rec.append(pyl.mean(running[tmp[0]]))
+            survey_rec.append(sc)
         else:
-            target_rec.append(pyl.mean(running[tmp[0]]))
+            target_rec.append(sc)
 
 # add the insert
 rect = [.6, .15, .4, .4]

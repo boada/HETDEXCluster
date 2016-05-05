@@ -46,11 +46,11 @@ truth = 14.344, 1.33, 40 # simet2016
 # truth = 14.2042, 1.1655, 30 # me
 
 ### Fake Data for Testing ###
-#N = 100
-#x_true = np.linspace(1,250, N)
+N = 100
+#x_true = np.linspace(10,130, N)
 #y_true = mklogMass(truth)(x_true)
 
-#x_err, y_err = 0, 0.250
+#x_err, y_err = 0, 0.10
 #x_obs = stats.norm(x_true, x_err).rvs(N)
 #y_obs = stats.norm(y_true, y_err).rvs(N)
 
@@ -80,7 +80,7 @@ mask = (survey_mlMasses['ML_pred_3d'] != 0)
 survey = survey[mask]
 survey_mlMasses = survey_mlMasses[mask]
 
-scatter = 0.05
+scatter = 0.25
 
 for d, m, in zip([target, survey], [target_mlMasses, survey_mlMasses]):
 
@@ -88,12 +88,14 @@ for d, m, in zip([target, survey], [target_mlMasses, survey_mlMasses]):
     m_obs = stats.norm(np.log10(d['M200c']), scatter).rvs(d.size)
     # use the noisy masses to calculate an observed lambda
     lam_obs = mklambda(truth)(m_obs)
+    mask = (10 <= lam_obs) & (lam_obs < 130)
 
     # setup the data
-    x_obs = np.log(lam_obs/40.)
-    y_obs = np.log(10**m['ML_pred_3d']/1e14)
+    x_obs = np.log10(lam_obs)[mask]
+    y_obs = m['ML_pred_3d'][mask]
 
-    yerr = np.zeros_like(y_obs)
+    yerr = (m['ML_pred_3d'][mask] - m['ML_pred_3d_err'][:,0][mask])/2
+    #yerr = np.zeros_like(y_obs)
 
     # Set up the sampler.
     nwalkers, ndim = 100, 3
@@ -114,9 +116,12 @@ for d, m, in zip([target, survey], [target_mlMasses, survey_mlMasses]):
 
     # Print results.
     samples = sampler.flatchain
-    print("m = {0} ± {1}".format(np.median(samples[:, 0]), np.std(samples[:, 0])))
-    print("b = {0} ± {1}".format(np.median(samples[:, 1]), np.std(samples[:, 1])))
-    print("s = {0} ± {1}".format(np.median(samples[:, 2]), np.std(samples[:, 2])))
+    print('m = {0} +/- {1}'.format(np.median(samples[:, 0]),
+        np.std(samples[:,0])))
+    print('b = {0} +/- {1}'.format(np.median(samples[:, 1]),
+        np.std(samples[:, 1])))
+    print('s = {0} +/- {1}'.format(np.median(samples[:, 2]),
+        np.std(samples[:, 2])))
 
 
 
