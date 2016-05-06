@@ -47,12 +47,12 @@ truth = 14.344, 1.33, 40 # simet2016
 
 ### Fake Data for Testing ###
 N = 100
-#x_true = np.linspace(10,130, N)
-#y_true = mklogMass(truth)(x_true)
+x_true = np.linspace(10,130, N)
+y_true = mklogMass(truth)(x_true)
 
-#x_err, y_err = 0, 0.10
-#x_obs = stats.norm(x_true, x_err).rvs(N)
-#y_obs = stats.norm(y_true, y_err).rvs(N)
+x_err, y_err = 0, 0.40
+x_obs = stats.norm(x_true, x_err).rvs(N)
+y_obs = stats.norm(y_true, y_err).rvs(N)
 
 with hdf.File('./result_targetedRealistic.hdf5', 'r') as f:
     dset = f[f.keys()[0]]
@@ -80,7 +80,7 @@ mask = (survey_mlMasses['ML_pred_3d'] != 0)
 survey = survey[mask]
 survey_mlMasses = survey_mlMasses[mask]
 
-scatter = 0.25
+scatter = 0.3
 
 for d, m, in zip([target, survey], [target_mlMasses, survey_mlMasses]):
 
@@ -94,8 +94,8 @@ for d, m, in zip([target, survey], [target_mlMasses, survey_mlMasses]):
     x_obs = np.log10(lam_obs)[mask]
     y_obs = m['ML_pred_3d'][mask]
 
-    yerr = (m['ML_pred_3d'][mask] - m['ML_pred_3d_err'][:,0][mask])/2
-    #yerr = np.zeros_like(y_obs)
+    #yerr = (m['ML_pred_3d'][mask] - m['ML_pred_3d_err'][:,0][mask])
+    yerr = np.zeros_like(y_obs)
 
     # Set up the sampler.
     nwalkers, ndim = 100, 3
