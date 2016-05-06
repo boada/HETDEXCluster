@@ -45,7 +45,11 @@ def add_subplot_axes(ax,rect,axisbg='w'):
     return subax
 
 # normalization, power-law index, and lambda0 of the lambda-mass relation
-truth = 14.19312, 1.31, 30
+#truth = 14.344, 1.33, 40 # simet2016
+truth = 14.191, 1.31, 30 # farahi2016
+# truth = 14.2042, 1.1655, 30 # me
+
+
 
 ### Fake Data for Testing ###
 #N = 100
@@ -158,7 +162,8 @@ for scatter in pyl.arange(0.1, 0.5, 0.05):
         bins = pyl.arange(10,150,10)
         x = lam_obs[mask]
         y = m['ML_pred_3d'][mask]
-        yerr = (m['ML_pred_3d'][mask] - m['ML_pred_3d_err'][:,0][mask])/2
+        #yerr = (m['ML_pred_3d'][mask] - m['ML_pred_3d_err'][:,0][mask])/2
+        yerr = pyl.zeros_like(y)
 
         m,b,sc = fit(pyl.log10(x), y, yerr=yerr)
 
