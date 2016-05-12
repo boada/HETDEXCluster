@@ -16,17 +16,12 @@ def updateArray(data):
 
     newData = np.zeros(data.size)
     data = rfns.append_fields(data, ['ML_pred_1d', 'ML_pred_2d',
-        'ML_pred_3d'],
-            [newData, newData, newData], dtypes='>f4',
+        'ML_pred_2d2', 'ML_pred_3d', 'ML_pred_1d_err', 'ML_pred_2d_err',
+        'ML_pred_2d2_err', 'ML_pred_3d_err' ], [newData, newData, newData,
+            newData, newData, newData, newData, newData], dtypes='>f4',
             usemask=False)
 
-    newnewData = np.zeros(data.size, dtype=[('ML_pred_1d_err', '>f4', (2,)),
-        ('ML_pred_2d_err', '>f4', (2,)), ('ML_pred_3d_err', '>f4', (2,)),])
-    data = rfns.merge_arrays((data, newnewData), usemask=False,
-            asrecarray=False, flatten=True)
-
     return data
-
 
 def splitData(data, test_size=0.3):
     def splitList(alist, wanted_parts=1):
@@ -105,6 +100,24 @@ def addMasses(data, generator):
         p.close()
         p.join()
         data['ML_pred_2d_err'][test['IDX']] = result
+        
+    #############
+    #### 2d #####
+    #############
+        y = np.column_stack([np.log10(train['LOSVD']), train['NGAL']])
+        rf.fit(y, X)
+        obs = np.column_stack([np.log10(test['LOSVD']), test['NGAL']])
+        mrf = rf.predict(obs)
+
+        data['ML_pred_2d2'][test['IDX']] = mrf
+        # errors
+        print('Calculating Error, 2d2')
+        p = multiprocessing.Pool(maxtasksperchild=1000,
+                initializer=child_initializer, initargs=([rf]))
+        result = p.map(mp_worker_wrapper, izip(obs, mrf))
+        p.close()
+        p.join()
+        data['ML_pred_2d2_err'][test['IDX']] = result        
 
     ##############
     ##### 3d #####
@@ -158,11 +171,13 @@ def mp_pred_ints(obs, mrf):
         except ValueError:
             preds.append(pred.predict(obs.reshape(1,-1)))
 
-    err_down = mrf - np.std(preds)
-    err_up = mrf + np.std(preds)
+    #err_down = mrf - np.std(preds)
+    #err_up = mrf + np.std(preds)
 
-    return err_down, err_up
+    # Bessel corrected std
+    err = np.std(preds, ddof=1)
 
+    return err
 def mp_worker_wrapper(args):
     return mp_pred_ints(*args)
 
@@ -170,7 +185,7 @@ if __name__ == "__main__":
 
     ### Targeted ###
     ################
-    with hdf.File('./result_targetedPerfect.hdf5', 'r') as f:
+    with hdf.File('./result_targetedRealistic.hdf5', 'r') as f:
         dset  = f[f.keys()[0]]
         data = dset['IDX', 'HALOID', 'ZSPEC', 'M200c', 'NGAL', 'LOSVD',
         'LOSVD_err', 'MASS']
@@ -189,16 +204,16 @@ if __name__ == "__main__":
     maskedDataT = data[~mask]
     badData = data[mask]
 
-#    sl_targeted = splitData(maskedDataT, 0.3)
-#    data = addMasses(data, sl_targeted)
-#    with hdf.File('result_targetedPerfect_masses.hdf5', 'w') as f:
-#        f['predicted masses'] = data
-#        f.flush()
+    sl_targeted = splitData(maskedDataT, 0.3)
+    data = addMasses(data, sl_targeted)
+    with hdf.File('targetedRealistic_MLmasses.hdf5', 'w') as f:
+        f['predicted masses'] = data
+        f.flush()
 
     ### Survey ###
     ##############
     print 'SURVEY!'
-    with hdf.File('./surveyCompletePerfect.hdf5', 'r') as f:
+    with hdf.File('./surveyCompleteRealistic.hdf5', 'r') as f:
         dset  = f[f.keys()[0]]
         data = dset['IDX', 'HALOID', 'ZSPEC', 'M200c', 'NGAL', 'LOSVD',
         'LOSVD_err', 'MASS']
@@ -218,6 +233,6 @@ if __name__ == "__main__":
 
     sl_survey = splitData(maskedDataS, 0.3)
     data = addMasses(data, sl_survey)
-    with hdf.File('surveyCompletePerfect_masses.hdf5', 'w') as f:
+    with hdf.File('surveyCompleteRealistic_MLmasses.hdf5', 'w') as f:
         f['predicted masses'] = data
         f.flush()
