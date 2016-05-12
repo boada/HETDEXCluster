@@ -29,22 +29,22 @@ def bias(true, pred):
 def runningStatistic(stat, true, pred, **kwargs):
     ''' b = bias and s = uncertainty on that bias '''
 
-    bins = np.arange(11.5,16,0.5)
-    indx = np.digitize(true, bins)-1
+    bins = np.arange(12.5,16,0.5)
+    indx = np.digitize(true, bins)
     binNumber = len(bins)
 
     runningb = []
     runnings = []
-    for k in xrange(binNumber):
+    for k in xrange(1, binNumber):
         #print true[indx==k].size,
         b = np.mean(pred[indx==k] - true[indx==k])
         s = stats.sem(pred[indx==k] - true[indx==k])
         #print '$%.2f\pm{%.4f}$ &' % (b,s)
         try:
             mean, var, std = stats.mvsdist(pred[indx==k] - true[indx==k])
-            print '$%.2f\pm{%.2f}$ &' % (std.mean(),std.std()),
+            print '$%.2f\pm{%.3f}$ &' % (std.mean(),std.std()),
         except ValueError:
-            print '$%.2f\pm{%.2f}$ &' % (np.nan,np.nan),
+            print '$%.2f\pm{%.3f}$ &' % (np.nan,np.nan),
         runningb.append(b)
         runnings.append(s)
     print ''
@@ -55,7 +55,8 @@ def runningStatistic(stat, true, pred, **kwargs):
 ###############
 with hdf.File('./targetedPerfect_MLmasses_realisticOnly.hdf5', 'r') as f:
     dset = f[f.keys()[0]]
-    perfect = dset['M200c', 'MASS', 'ML_pred_1d', 'ML_pred_2d', 'ML_pred_3d']
+    perfect = dset['M200c', 'MASS', 'ML_pred_1d', 'ML_pred_2d', 'ML_pred_2d2',
+            'ML_pred_3d']
 # filter bad values
 mask = (perfect['ML_pred_1d'] != 0)
 perfect = perfect[mask]
@@ -64,7 +65,8 @@ perfect = perfect[mask]
 ################
 with hdf.File('./targetedRealistic_MLmasses.hdf5', 'r') as f:
     dset = f[f.keys()[0]]
-    target = dset['M200c', 'MASS', 'ML_pred_1d', 'ML_pred_2d', 'ML_pred_3d']
+    target = dset['M200c', 'MASS', 'ML_pred_1d', 'ML_pred_2d', 'ML_pred_2d2',
+            'ML_pred_3d']
 # filter bad values
 mask = (target['ML_pred_1d'] != 0)
 target = target[mask]
@@ -73,7 +75,8 @@ target = target[mask]
 ##############
 with hdf.File('./surveyCompleteRealistic_MLmasses.hdf5', 'r') as f:
     dset = f[f.keys()[0]]
-    survey = dset['M200c', 'MASS', 'ML_pred_1d', 'ML_pred_2d', 'ML_pred_3d']
+    survey = dset['M200c', 'MASS', 'ML_pred_1d', 'ML_pred_2d', 'ML_pred_2d2',
+            'ML_pred_3d']
 # filter bad values
 mask = (survey['ML_pred_1d'] != 0)
 survey = survey[mask]
@@ -103,6 +106,14 @@ for d in [perfect, target, survey]:
     print('2d')
     running = runningStatistic(bias, np.log10(d['M200c']),
             d['ML_pred_2d'])
+
+#############
+#### 2d2 #####
+#############
+    print('2d2')
+    running = runningStatistic(bias, np.log10(d['M200c']),
+            d['ML_pred_2d2'])
+
 
 ##############
 ##### 3d #####

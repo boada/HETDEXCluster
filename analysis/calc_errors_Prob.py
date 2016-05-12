@@ -30,22 +30,22 @@ def bias(true, pred):
 def runningStatistic(stat, true, pred, **kwargs):
     ''' b = bias and s = uncertainty on that bias '''
 
-    bins = np.arange(11.5,16,0.5)
-    indx = np.digitize(true, bins)-1
+    bins = np.arange(12.5,16,0.5)
+    indx = np.digitize(true, bins)
     binNumber = len(bins)
 
     runningb = []
     runnings = []
-    for k in xrange(binNumber):
+    for k in xrange(1, binNumber):
         #print true[indx==k].size,
         b = np.mean(pred[indx==k] - true[indx==k])
         s = stats.sem(pred[indx==k] - true[indx==k])
         #print '$%.2f\pm{%.4f}$ &' % (b,s)
         try:
             mean, var, std = stats.mvsdist(pred[indx==k] - true[indx==k])
-            print '$%.2f\pm{%.2f}$ &' % (std.mean(),std.std()),
+            print '$%.2f\pm{%.3f}$ &' % (std.mean(),std.std()),
         except ValueError:
-            print '$%.2f\pm{%.2f}$ &' % (np.nan,np.nan),
+            print '$%.2f\pm{%.3f}$ &' % (np.nan,np.nan),
         runningb.append(b)
         runnings.append(s)
     print ''
@@ -81,10 +81,12 @@ survey = survey[mask]
 for d in [perfect, target, survey]:
 
 ### Full survey ###
-#    mu = bias(np.log10(d['M200c']), np.log10(d['MASS']))
-#    s = scatter(np.log10(d['M200c']), np.log10(d['MASS']), mu)
-#    print '$%.2f\pm{%.3f}$' % (mu,s)
 
+    print('full survey')
+    mean, var, std = stats.mvsdist(np.log10(d['MASS']) - np.log10(d['M200c']))
+    s = stats.sem(np.log10(d['MASS']) - np.log10(d['M200c']))
+    print '$%.3f\pm{%.3f}$' % (mean.mean(),s)
+    print '$%.3f\pm{%.3f}$' % (std.mean(), std.std())
 
     print('power law')
     running = runningStatistic(bias, np.log10(d['M200c']),
