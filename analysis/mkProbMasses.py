@@ -6,8 +6,6 @@ from prob_propigator import prob1d
 from prob_propigator_3d import prob2d
 from prob_propigator_4d import prob3d
 
-from halo_handler import find_indices
-
 def updateArray(data):
     ''' Adds the results containers to the data product. '''
 
@@ -102,34 +100,8 @@ if __name__ == "__main__":
     ################
     with hdf.File('./result_targetedRealistic.hdf5', 'r') as f:
         dset  = f[f.keys()[0]]
-        target = dset['IDX', 'HALOID']
-        #data = dset.value
-
-    print 'load perfect'
-    ### Perfect ###
-    ################
-    with hdf.File('./result_targetedPerfect.hdf5', 'r') as f:
-        dset  = f[f.keys()[0]]
-        perfect = dset['IDX','HALOID']
-        print perfect.dtype
-        # this finds the galaxies that were observed with the targeted realistic
-        # observations and then computes all of their masses using the perfect
-        # observations of the same clusters. This might work better for
-        # comparisonsd
-        # down the line. Right now there is something funny going on with things.
-
-
-        idx = find_indices(perfect['HALOID'], target['HALOID'])
-        idx = np.ravel(idx)
-
-        print 'load more perfect data'
-        perfect = dset['IDX', 'HALOID', 'ZSPEC', 'M200c', 'NGAL', 'LOSVD',
-        'LOSVD_err', 'MASS', 'LOSVD_dist'][idx.tolist()]
-        print perfect.size
-
-    data = perfect
-    data['IDX'] = target['IDX']
-
+        data = dset['IDX', 'HALOID', 'ZSPEC', 'M200c', 'NGAL', 'LOSVD',
+            'LOSVD_err', 'MASS', 'LOSVD_dist']
     # add the extra fields
     data = updateArray(data)
 
@@ -147,13 +119,13 @@ if __name__ == "__main__":
     data = addMasses(data, sl_targeted)
     # drop the LOSVD_dist field
     data = rfns.drop_fields(data,'LOSVD_dist')
-    with hdf.File('./targetedPerfect_Probmasses_realisticOnly.hdf5', 'w') as f:
+    with hdf.File('./result_targetedRealistic_Probmasses.hdf5', 'w') as f:
         f['predicted masses'] = data
         f.flush()
 
     ### Survey ###
     ##############
-    with hdf.File('./surveyCompletePerfect.hdf5', 'r') as f:
+    with hdf.File('./surveyCompleteRealistic.hdf5', 'r') as f:
         dset  = f[f.keys()[0]]
         data = dset['IDX', 'HALOID', 'ZSPEC', 'M200c', 'NGAL', 'LOSVD',
             'LOSVD_err', 'MASS', 'LOSVD_dist']
@@ -171,10 +143,10 @@ if __name__ == "__main__":
     maskedDataS = data[~mask]
     badData = data[mask]
 
-#    sl_survey = splitData(maskedDataS, 0.3)
-#    data = addMasses(data, sl_survey)
+    sl_survey = splitData(maskedDataS, 0.3)
+    data = addMasses(data, sl_survey)
     # drop the LOSVD_dist field
-#    data = rfns.drop_fields(data,'LOSVD_dist')
-#    with hdf.File('./surveyCompletePerfect_Probmasses.hdf5', 'w') as f:
-#        f['predicted masses'] = data
-#        f.flush()
+    data = rfns.drop_fields(data,'LOSVD_dist')
+    with hdf.File('./surveyCompleteRealistic_Probmasses.hdf5', 'w') as f:
+        f['predicted masses'] = data
+        f.flush()
