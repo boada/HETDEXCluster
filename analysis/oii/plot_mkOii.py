@@ -93,8 +93,8 @@ for x, y, c in zip(xcoord, ycoord, colors):
             locy[ybin+1]-locy[ybin], lw=2, zorder=10, fc='none', ec=c)
     ax[0].add_patch(rec)
 
-ax[1].set_xlabel('Log $L_{[O_{ii}]}$ (erg/s)')
-ax[1].set_ylabel('P($L_{[O_{ii}]}| M_r,g-r)$')
+ax[1].set_xlabel('Log $L_{[O_{II}]}$')
+ax[1].set_ylabel('P($L_{[O_{II}]}| M_r,g-r)$')
 ax[1].set_xlim(36,44)
 ax[1].text(40, 0.75, '1', color='#467821', fontsize=20)
 ax[1].text(38, 0.6, '2', color='#cf4457', fontsize=20)
