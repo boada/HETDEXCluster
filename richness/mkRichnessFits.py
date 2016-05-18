@@ -50,7 +50,7 @@ N = 100
 x_true = np.linspace(10,130, N)
 y_true = mklogMass(truth)(x_true)
 
-x_err, y_err = 0, 0.40
+x_err, y_err = 0, 0.1
 x_obs = stats.norm(x_true, x_err).rvs(N)
 y_obs = stats.norm(y_true, y_err).rvs(N)
 
@@ -80,7 +80,7 @@ mask = (survey_mlMasses['ML_pred_3d'] != 0)
 survey = survey[mask]
 survey_mlMasses = survey_mlMasses[mask]
 
-scatter = 0.3
+scatter = 0.1
 
 for d, m, in zip([target, survey], [target_mlMasses, survey_mlMasses]):
 
@@ -93,9 +93,12 @@ for d, m, in zip([target, survey], [target_mlMasses, survey_mlMasses]):
     # setup the data
     x_obs = np.log10(lam_obs)[mask]
     y_obs = m['ML_pred_3d'][mask]
+    print np.std(np.log10(d['M200c'])[mask] - y_obs)
+    print np.std(m_obs[mask] - y_obs)
 
-    #yerr = (m['ML_pred_3d'][mask] - m['ML_pred_3d_err'][:,0][mask])
-    yerr = np.zeros_like(y_obs)
+    yerr = m['ML_pred_3d_err'][mask]
+    #yerr = np.zeros_like(y_obs)
+    #yerr = np.ones_like(y_obs) * scatter
 
     # Set up the sampler.
     nwalkers, ndim = 100, 3

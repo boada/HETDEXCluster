@@ -149,7 +149,7 @@ ax1.set_xlim(1,200)
 
 target_rec = []
 survey_rec = []
-for scatter in pyl.arange(0.1, 0.5, 0.05):
+for scatter in pyl.arange(0.1, 1, 0.05):
     for d, m, s in zip([target, survey], [target_mlMasses, survey_mlMasses],
             [0,1]):
         # add the noise to the true masses-- 0.25 dex at the moment
@@ -162,10 +162,11 @@ for scatter in pyl.arange(0.1, 0.5, 0.05):
         bins = pyl.arange(10,150,10)
         x = lam_obs[mask]
         y = m['ML_pred_3d'][mask]
-        #yerr = (m['ML_pred_3d'][mask] - m['ML_pred_3d_err'][:,0][mask])/2
-        yerr = pyl.zeros_like(y)
+        yerr = m['ML_pred_3d_err'][mask]
+        #yerr = pyl.zeros_like(y)
 
-        m,b,sc = fit(pyl.log10(x), y, yerr=yerr)
+        sc = pyl.std(m_obs[mask] - y)
+        #m,b,sc = fit(pyl.log10(x), y, yerr=yerr)
 
         index = pyl.digitize(x, bins)
         #print [y[index==k].size for k in range(1,bins.size)]
@@ -174,10 +175,14 @@ for scatter in pyl.arange(0.1, 0.5, 0.05):
         tmp = pyl.where(~pyl.isnan(running))
         #print scatter, pyl.mean(running[tmp[0]]), stats.sem(running[tmp[0]])
 
+        sc = pyl.mean(running[tmp[0]])
+
         if s:
             survey_rec.append(sc)
         else:
             target_rec.append(sc)
+            print(scatter, sc, pyl.std(m_obs[mask] - y),
+            pyl.std(pyl.log10(d['M200c'])[mask] - m_obs[mask]))
 
 # add the insert
 rect = [.6, .15, .4, .4]
