@@ -22,7 +22,7 @@ def main(f1, f2, f3):
     bins = np.arange(11.5,16,0.1)
 
     # make the results container
-    results = np.zeros_like(data)
+    results = np.copy(data)
 
     results['M200c'] = np.log10(data['M200c'])
 
