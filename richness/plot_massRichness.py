@@ -45,11 +45,7 @@ def add_subplot_axes(ax,rect,axisbg='w'):
     return subax
 
 # normalization, power-law index, and lambda0 of the lambda-mass relation
-#truth = 14.344, 1.33, 40 # simet2016
-truth = 14.191, 1.31, 30 # farahi2016
-# truth = 14.2042, 1.1655, 30 # me
-
-
+truth = 14.19312, 1.31, 30
 
 ### Fake Data for Testing ###
 #N = 100
@@ -59,31 +55,20 @@ truth = 14.191, 1.31, 30 # farahi2016
 #x_err, y_err = 0, 0.250
 #x_obs = stats.norm(x_true, x_err).rvs(N)
 #y_obs = stats.norm(y_true, y_err).rvs(N)
-
-with hdf.File('./result_targetedRealistic.hdf5', 'r') as f:
+with hdf.File('./targetedRealistic_MLmasses_corrected.hdf5', 'r') as f:
     dset = f[f.keys()[0]]
-    target = dset['HALOID', 'M200c']
-
-with hdf.File('./targetedRealistic_MLmasses.hdf5', 'r') as f:
-    dset = f[f.keys()[0]]
-    target_mlMasses = dset['HALOID', 'ML_pred_3d', 'ML_pred_3d_err']
+    target_mlMasses = dset['HALOID', 'ML_pred_3d', 'ML_pred_3d_err', 'M200c']
 
 # mask out the values with failed ML masses
 mask = (target_mlMasses['ML_pred_3d'] != 0)
-target = target[mask]
 target_mlMasses = target_mlMasses[mask]
 
-with hdf.File('./surveyCompleteRealistic.hdf5', 'r') as f:
+with hdf.File('./surveyCompleteRealistic_MLmasses_corrected.hdf5', 'r') as f:
     dset = f[f.keys()[0]]
-    survey = dset['HALOID', 'M200c']
-
-with hdf.File('./surveyCompleteRealistic_MLmasses.hdf5', 'r') as f:
-    dset = f[f.keys()[0]]
-    survey_mlMasses = dset['HALOID', 'ML_pred_3d', 'ML_pred_3d_err']
+    survey_mlMasses = dset['HALOID', 'ML_pred_3d', 'ML_pred_3d_err', 'M200c']
 
 # mask out the values with failed ML masses
 mask = (survey_mlMasses['ML_pred_3d'] != 0)
-survey = survey[mask]
 survey_mlMasses = survey_mlMasses[mask]
 
 f = pyl.figure(1, figsize=(7*(pyl.sqrt(5.)-1.0)/2.0,7))
@@ -92,12 +77,12 @@ ax1 = pyl.subplot2grid((3,1), (0,0), rowspan=2)
 
 scatter = 0.25
 
-for d, m, c, style, zo in zip([target, survey], [target_mlMasses,
-    survey_mlMasses], ['#7A68A6', '#188487'], ['-', '--'], [1,2]):
+for m, c, style, zo in zip([target_mlMasses, survey_mlMasses], ['#7A68A6',
+    '#188487'], ['-', '--'], [1,2]):
     bins = pyl.arange(10,150,20)
 
     # add the noise to the true masses-- 0.25 dex at the moment
-    m_obs = stats.norm(pyl.log10(d['M200c']), scatter).rvs(d.size)
+    m_obs = stats.norm(m['M200c'], scatter).rvs(m.size)
     # use the noisy masses to calculate an observed lambda
     lam_obs = mklambda(truth)(m_obs)
 
@@ -132,7 +117,7 @@ ax1.legend((line1, line2), ('Targeted', 'Survey'), loc=2)
 ax1s.axhline(scatter, zorder=0)
 
 ax1s.set_xlabel('Richness, $\lambda$')
-ax1.set_ylabel('Log $M_{pred}$')
+ax1.set_ylabel('Log $M_{pred, corr}$')
 
 ax1s.set_ylabel('$\sigma_{M|\lambda}$ (dex)')
 ax1.set_xticklabels([])
@@ -149,40 +134,25 @@ ax1.set_xlim(1,200)
 
 target_rec = []
 survey_rec = []
-for scatter in pyl.arange(0.1, 1, 0.05):
-    for d, m, s in zip([target, survey], [target_mlMasses, survey_mlMasses],
-            [0,1]):
-        # add the noise to the true masses-- 0.25 dex at the moment
-        m_obs = stats.norm(pyl.log10(d['M200c']), scatter).rvs(d.size)
+for scatter in pyl.arange(0.1, 0.5, 0.05):
+    for m, s in zip([target_mlMasses, survey_mlMasses], [0,1]):
+        # add the noise to the true masses
+        m_pert = stats.norm(m['M200c'], scatter).rvs(m.size)
         # use the noisy masses to calculate an observed lambda
-        lam_obs = mklambda(truth)(m_obs)
-        mask = (10 <= lam_obs) & (lam_obs < 130)
+        lam = mklambda(truth)(m_pert)
 
-        # now we are going to do the scatter panel on the bottom
-        bins = pyl.arange(10,150,10)
-        x = lam_obs[mask]
-        y = m['ML_pred_3d'][mask]
-        yerr = m['ML_pred_3d_err'][mask]
-        #yerr = pyl.zeros_like(y)
+        lam_bins = pyl.arange(10, 140, 10)
+        idx = pyl.digitize(lam, lam_bins)
+        scatters = pyl.zeros(lam_bins.size-1)
+        for i in range(1, lam_bins.size):
+            scatters[i-1] = pyl.std(m['ML_pred_3d'][idx==i])
 
-        sc = pyl.std(m_obs[mask] - y)
-        #m,b,sc = fit(pyl.log10(x), y, yerr=yerr)
-
-        index = pyl.digitize(x, bins)
-        #print [y[index==k].size for k in range(1,bins.size)]
-        running = [pyl.std(y[index==k]) for k in range(1,bins.size)]
-        running = pyl.array(running)
-        tmp = pyl.where(~pyl.isnan(running))
-        #print scatter, pyl.mean(running[tmp[0]]), stats.sem(running[tmp[0]])
-
-        sc = pyl.mean(running[tmp[0]])
+        sc = pyl.mean(scatters)
 
         if s:
             survey_rec.append(sc)
         else:
             target_rec.append(sc)
-            print(scatter, sc, pyl.std(m_obs[mask] - y),
-            pyl.std(pyl.log10(d['M200c'])[mask] - m_obs[mask]))
 
 # add the insert
 rect = [.6, .15, .4, .4]
