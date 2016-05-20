@@ -45,47 +45,27 @@ truth = 14.344, 1.33, 40 # simet2016
 # truth = 14.191, 1.31, 30 # farahi2016
 # truth = 14.2042, 1.1655, 30 # me
 
-### Fake Data for Testing ###
-N = 100
-x_true = np.linspace(10,130, N)
-y_true = mklogMass(truth)(x_true)
-
-x_err, y_err = 0, 0.1
-x_obs = stats.norm(x_true, x_err).rvs(N)
-y_obs = stats.norm(y_true, y_err).rvs(N)
-
-with hdf.File('./result_targetedRealistic.hdf5', 'r') as f:
+with hdf.File('./targetedRealistic_MLmasses_corrected.hdf5', 'r') as f:
     dset = f[f.keys()[0]]
-    target = dset['HALOID', 'M200c']
-
-with hdf.File('./targetedRealistic_MLmasses.hdf5', 'r') as f:
-    dset = f[f.keys()[0]]
-    target_mlMasses = dset['HALOID', 'ML_pred_3d', 'ML_pred_3d_err']
+    target_mlMasses = dset['HALOID', 'ML_pred_3d', 'ML_pred_3d_err', 'M200c']
 
 # mask out the values with failed ML masses
 mask = (target_mlMasses['ML_pred_3d'] != 0)
-target = target[mask]
 target_mlMasses = target_mlMasses[mask]
 
-with hdf.File('./surveyCompleteRealistic.hdf5', 'r') as f:
+with hdf.File('./surveyCompleteRealistic_MLmasses_corrected.hdf5', 'r') as f:
     dset = f[f.keys()[0]]
-    survey = dset['HALOID', 'M200c']
-
-with hdf.File('./surveyCompleteRealistic_MLmasses.hdf5', 'r') as f:
-    dset = f[f.keys()[0]]
-    survey_mlMasses = dset['HALOID', 'ML_pred_3d', 'ML_pred_3d_err']
+    survey_mlMasses = dset['HALOID', 'ML_pred_3d', 'ML_pred_3d_err', 'M200c']
 
 # mask out the values with failed ML masses
 mask = (survey_mlMasses['ML_pred_3d'] != 0)
-survey = survey[mask]
 survey_mlMasses = survey_mlMasses[mask]
 
-scatter = 0.1
+scatter = 0.25
 
-for d, m, in zip([target, survey], [target_mlMasses, survey_mlMasses]):
-
+for m in [target_mlMasses, survey_mlMasses]:
     # add the noise to the true masses-- 0.25 dex at the moment
-    m_obs = stats.norm(np.log10(d['M200c']), scatter).rvs(d.size)
+    m_obs = stats.norm(m['M200c'], scatter).rvs(m.size)
     # use the noisy masses to calculate an observed lambda
     lam_obs = mklambda(truth)(m_obs)
     mask = (10 <= lam_obs) & (lam_obs < 130)
@@ -93,7 +73,7 @@ for d, m, in zip([target, survey], [target_mlMasses, survey_mlMasses]):
     # setup the data
     x_obs = np.log10(lam_obs)[mask]
     y_obs = m['ML_pred_3d'][mask]
-    print np.std(np.log10(d['M200c'])[mask] - y_obs)
+    print np.std(m['M200c'][mask] - y_obs)
     print np.std(m_obs[mask] - y_obs)
 
     yerr = m['ML_pred_3d_err'][mask]
@@ -125,8 +105,3 @@ for d, m, in zip([target, survey], [target_mlMasses, survey_mlMasses]):
         np.std(samples[:, 1])))
     print('s = {0} +/- {1}'.format(np.median(samples[:, 2]),
         np.std(samples[:, 2])))
-
-
-
-
-
