@@ -2,9 +2,9 @@ import pylab as pyl
 import pyfits as pyf
 from astLib import vec_astCalc
 
-bins = [50,50]
+bins = [50, 50]
 thresh = 3
-extent = [[-26,-10],[-1,4]]
+extent = [[-26, -10], [-1, 4]]
 
 with pyf.open('./sdss12_oii_flux_v2.fits') as f:
     data = f[1].data

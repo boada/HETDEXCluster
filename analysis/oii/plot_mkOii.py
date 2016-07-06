@@ -82,20 +82,19 @@ for x, y, c in zip(xcoord, ycoord, colors):
     ybin = pyl.digitize([y], locy)
 
     # find all of the points inside the bin we are interested ind
-    i = (locx[xbin-1] < xdat) & (xdat < locx[xbin]) & (locy[ybin-1] < ydat) &\
-        (ydat < locy[ybin])
-    ax[1].hist(pyl.log10(lum[i]), bins=20, normed=True, histtype='step',lw=2,
+    i = (locx[xbin - 1] < xdat) & (xdat < locx[xbin]) & \
+        (locy[ybin - 1] < ydat) & (ydat < locy[ybin])
+    ax[1].hist(pyl.log10(lum[i]), bins=20, normed=True, histtype='step', lw=2,
             edgecolor=c)
 
-
     # little boxes
-    rec = Rectangle((locx[xbin], locy[ybin]), locx[xbin+1]-locx[xbin],
-            locy[ybin+1]-locy[ybin], lw=2, zorder=10, fc='none', ec=c)
+    rec = Rectangle((locx[xbin], locy[ybin]), locx[xbin + 1] - locx[xbin],
+            locy[ybin + 1] - locy[ybin], lw=2, zorder=10, fc='none', ec=c)
     ax[0].add_patch(rec)
 
-ax[1].set_xlabel('Log $L_{[O_{II}]}$')
+ax[1].set_xlabel('Log $L_{[O_{II}]}$ (erg/s)')
 ax[1].set_ylabel('P($L_{[O_{II}]}| M_r,g-r)$')
-ax[1].set_xlim(36,44)
+ax[1].set_xlim(36, 44)
 ax[1].text(40, 0.75, '1', color='#467821', fontsize=20)
 ax[1].text(38, 0.6, '2', color='#cf4457', fontsize=20)
 pyl.show()

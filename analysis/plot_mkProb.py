@@ -5,24 +5,25 @@ import h5py as hdf
 ### Targeted ###
 ################
 with hdf.File('./result_targetedPerfect.hdf5', 'r') as f:
-    dset  = f[f.keys()[0]]
+    dset = f[f.keys()[0]]
     #data = dset['IDX', 'HALOID', 'ZSPEC', 'M200c', 'NGAL', 'LOSVD',
     #    'LOSVD_err', 'MASS', 'LOSVD_dist']
-    data = dset['ZSPEC', 'M200c', 'LOSVD',]
+    data = dset['ZSPEC', 'M200c', 'LOSVD']
 
-mask = ((pyl.log10(data['LOSVD']) > 3.12 ) & (data['M200c'] < 10**14.5) |
+mask = ((pyl.log10(data['LOSVD']) > 3.12) & (data['M200c'] < 10**14.5) |
     (data['LOSVD'] < 50))
 data = data[~mask]
 badData = data[mask]
 
-bins = [25,25]
+bins = [25, 25]
 extent = [[0.0, 0.5], [pyl.log10(50), 3.12]]
 thresh = 3
 
 xdat = data['ZSPEC']
 ydat = pyl.log10(data['LOSVD'])
 
-f, ax = pyl.subplots(1,2, figsize=(7, 7*(pyl.sqrt(5.)-1.0)/2.0), squeeze=True)
+f, ax = pyl.subplots(1, 2, figsize=(7, 7 * (pyl.sqrt(5.) - 1.0) / 2.0),
+                     squeeze=True)
 ax = ax.ravel()
 
 hh, locx, locy = pyl.histogram2d(xdat, ydat, range=extent, bins=bins)
@@ -44,7 +45,7 @@ ax[0].imshow(pyl.log10(hh.T), cmap='gray_r',
         extent=pyl.array(extent).flatten(),
         interpolation='nearest')
 ax[0].set_xlabel('Redshift')
-ax[0].set_ylabel('Log $\sigma$')
+ax[0].set_ylabel('Log $\sigma$ (km $s^{-1}$)')
 #ax[0].set_xticks([-24, -20, -16, -12])
 
 # add some text lables
@@ -64,18 +65,17 @@ for x, y, c in zip(xcoord, ycoord, colors):
     ybin = pyl.digitize([y], locy)
 
     # find all of the points inside the bin we are interested ind
-    i = (locx[xbin-1] < xdat) & (xdat < locx[xbin]) & (locy[ybin-1] < ydat) &\
-        (ydat < locy[ybin])
-    ax[1].hist(pyl.log10(data['M200c'][i]), bins=10, normed=True, histtype='step',lw=2,
-            edgecolor=c)
-
+    i = (locx[xbin - 1] < xdat) & (xdat < locx[xbin]) & \
+        (locy[ybin - 1] < ydat) & (ydat < locy[ybin])
+    ax[1].hist(pyl.log10(data['M200c'][i]), bins=10, normed=True,
+               histtype='step', lw=2, edgecolor=c)
 
     # little boxes
-    rec = Rectangle((locx[xbin], locy[ybin]), locx[xbin+1]-locx[xbin],
-            locy[ybin+1]-locy[ybin], lw=2, zorder=10, fc='none', ec=c)
+    rec = Rectangle((locx[xbin], locy[ybin]), locx[xbin + 1] - locx[xbin],
+            locy[ybin + 1] - locy[ybin], lw=2, zorder=10, fc='none', ec=c)
     ax[0].add_patch(rec)
 
-ax[1].set_xlabel('Log $M_{200c}$')
+ax[1].set_xlabel('Log $M_{200c}$ ($M_{\odot}$)')
 ax[1].set_ylabel('P($M_{200c}| z, Log\, \sigma)$')
 ax[1].text(12.25, 1, '1', color='#467821', fontsize=20)
 ax[1].text(13.75, 1, '2', color='#cf4457', fontsize=20)
