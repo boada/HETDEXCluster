@@ -31,16 +31,18 @@ with pyf.open('sdss12_oii_flux_v2.fits') as f:
     p.close()
     p.join()
 
-    bins = [50,50]
-    extent = [[-26,-10],[-1,4]]
+    bins = [50, 50]
+    extent = [[-26, -10], [-1, 4]]
     thresh = 3
 
     _, locx, locy = pyl.histogram2d(xdat, ydat, range=extent, bins=bins)
 
     # need the Oii luminosity
-    lum = sdssData['oii_3726_flux']*4.*pyl.pi*(dl* 3.0857e24)**2. *1e-17
+    lum = sdssData['oii_3726_flux'] * 4. * pyl.pi * (dl * 3.0857e24) ** 2. *\
+                1e-17
 
-f, ax = pyl.subplots(1,2, figsize=(7, 7*(pyl.sqrt(5.)-1.0)/2.0), squeeze=True)
+f, ax = pyl.subplots(1, 2, figsize=(7, 7 * (pyl.sqrt(5.) - 1.0) / 2.0),
+                     squeeze=True)
 ax = ax.ravel()
 
 hh, locx, locy = pyl.histogram2d(xdat, ydat, range=extent, bins=bins)
@@ -93,7 +95,7 @@ for x, y, c in zip(xcoord, ycoord, colors):
     ax[0].add_patch(rec)
 
 ax[1].set_xlabel('Log $L_{[O_{II}]}$ (erg/s)')
-ax[1].set_ylabel('P($L_{[O_{II}]}| M_r,g-r)$')
+ax[1].set_ylabel('P(Log $L_{[O_{II}]}| M_r,g-r)$')
 ax[1].set_xlim(36, 44)
 ax[1].text(40, 0.75, '1', color='#467821', fontsize=20)
 ax[1].text(38, 0.6, '2', color='#cf4457', fontsize=20)
