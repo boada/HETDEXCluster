@@ -211,10 +211,10 @@ ax1.legend((line3, line1, line2), ('Perfect', 'Targeted', 'Survey'), loc=2)
 ax1.set_xticks([12, 13, 14, 15])
 ax2.set_xticks([12, 13, 14, 15])
 ax2s.set_xticks([12, 13, 14, 15])
-ax2s.set_ylim(-2, 4)
-ax1s.set_ylim(-2, 4)
-ax2s.set_yticks([-2, 0, 2])
-ax1s.set_yticks([-2, 0, 2])
+ax2s.set_ylim(-1, 1)
+ax1s.set_ylim(-1, 1)
+ax2s.set_yticks([-0.5, 0, 0.5])
+ax1s.set_yticks([-0.5, 0, 0.5])
 ax1.set_ylim(ax2.get_ylim())
 ax1s.set_ylim(ax2s.get_ylim())
 
@@ -234,3 +234,5 @@ ax4.text(14, 12.25, '$ML_{\sigma, z, Ngal}$', fontsize=18,
         horizontalalignment='center')
 ax5.text(14, 12.25, '$ML_{\sigma, Ngal}$', fontsize=18,
         horizontalalignment='center')
+
+pyl.show()

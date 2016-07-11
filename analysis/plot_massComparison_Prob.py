@@ -1,3 +1,4 @@
+from __future__ import print_function
 import pylab as pyl
 from astLib import astStats
 from sklearn.metrics import median_absolute_error, mean_squared_error
@@ -67,10 +68,10 @@ ax1.plot([12, 15.5], [12, 15.5], c='k', zorder=0)
 ax2.plot([12, 15.5], [12, 15.5], c='k', zorder=0)
 ax3.plot([12, 15.5], [12, 15.5], c='k', zorder=0)
 ax4.plot([12, 15.5], [12, 15.5], c='k', zorder=0)
-ax1s.axhline(0)
-ax2s.axhline(0)
-ax3s.axhline(0)
-ax4s.axhline(0)
+ax1s.axhline(0, zorder=0)
+ax2s.axhline(0, zorder=0)
+ax3s.axhline(0, zorder=0)
+ax4s.axhline(0, zorder=0)
 
 # now for the plotting
 ###################
@@ -125,7 +126,7 @@ for d, c, style, zo in zip([target, survey, perfect], ['#7A68A6',
             alpha=0.4, edgecolor=c)
 
     print('MAE', median_absolute_error(pyl.log10(d['M200c']),
-                                       d['Prob_pred_1d']))d
+                                       d['Prob_pred_1d']))
     print('RMSE', pyl.sqrt(mean_squared_error(pyl.log10(d['M200c']),
         d['Prob_pred_1d'])))
 
@@ -150,7 +151,7 @@ for d, c, style, zo in zip([target, survey, perfect], ['#7A68A6',
             alpha=0.4, edgecolor=c)
 
     print('MAE', median_absolute_error(pyl.log10(d['M200c']),
-                                       d['Prob_pred_2d']))d
+                                       d['Prob_pred_2d']))
     print('RMSE', pyl.sqrt(mean_squared_error(pyl.log10(d['M200c']),
         d['Prob_pred_2d'])))
 
@@ -175,9 +176,9 @@ for d, c, style, zo in zip([target, survey, perfect], ['#7A68A6',
             alpha=0.4, edgecolor=c)
 
     print('MAE', median_absolute_error(pyl.log10(d['M200c']),
-                                       d['Prob_pred_3d'])
+                                       d['Prob_pred_3d']))
     print('RMSE', pyl.sqrt(mean_squared_error(pyl.log10(d['M200c']),
-        d['Prob_pred_3d'])))
+                                              d['Prob_pred_3d'])))
 
 ### Add Legend ###
 ##################
@@ -190,9 +191,9 @@ ax1.legend((line3, line1, line2), ('Perfect', 'Targeted', 'Survey'), loc=2)
 ax1.set_xticks([12, 13, 14, 15])
 ax2.set_xticks([12, 13, 14, 15])
 ax2s.set_xticks([12, 13, 14, 15])
-ax1s.set_yticks([-2, 0, 2])
-ax2s.set_yticks([-2, 0, 2])
-ax2s.set_ylim(-2, 4)
+ax1s.set_yticks([-0.5, 0, 0.5])
+ax2s.set_yticks([-0.5, 0, 0.5])
+ax2s.set_ylim(-1, 1)
 ax1.set_ylim(ax2.get_ylim())
 ax1s.set_ylim(ax2s.get_ylim())
 
@@ -210,3 +211,4 @@ ax3.text(14, 12.25, '$Prob_{\sigma, z}$', fontsize=18,
             horizontalalignment='center')
 ax4.text(14, 12.25, '$Prob_{\sigma, z, Ngal}$', fontsize=18,
                 horizontalalignment='center')
+pyl.show()
