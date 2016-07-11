@@ -76,7 +76,7 @@ for x, y, c in zip(xcoord, ycoord, colors):
     ax[0].add_patch(rec)
 
 ax[1].set_xlabel('Log $M_{200c}$ ($M_{\odot}$)')
-ax[1].set_ylabel('P($M_{200c}| z, Log\, \sigma)$')
+ax[1].set_ylabel('P(Log $M_{200c}| z, Log\, \sigma)$')
 ax[1].text(12.25, 1, '1', color='#467821', fontsize=20)
 ax[1].text(13.75, 1, '2', color='#cf4457', fontsize=20)
 pyl.show()
