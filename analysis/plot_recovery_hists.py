@@ -73,6 +73,8 @@ cbar_ax = fig.add_axes([0.85, 0.20, 0.05, 0.7])
 cbar = fig.colorbar(im, cax=cbar_ax)
 
 # Adjust things
+ax1.set_title('Targeted')
+ax2.set_title('Survey')
 ax1.set_xlim(12, 15.5)
 ax2.set_xlim(12, 15.5)
 ax1.set_xticks([12, 13, 14, 15])
