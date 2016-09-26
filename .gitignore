@@ -4,3 +4,5 @@
 *.hdf5
 *.swp
 .DS_Store
+
+testing/shot_centers.txt
