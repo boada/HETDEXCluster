@@ -22,7 +22,7 @@ def mklambda(theta):
     m0, alpha, lambda0 = theta
     return lambda y: lambda0 * (10 ** y / 10 ** m0) ** (1 / alpha)
 
-def add_subplot_axes(ax, rect, axisbg='w'):
+def add_subplot_axes(ax, rect, axisbg='None'):
     ''' Add an inset axes to the first subplot. '''
     fig = pyl.gcf()
     box = ax.get_position()
@@ -112,7 +112,8 @@ for m, c, style, zo in zip([target_mlMasses, survey_mlMasses], ['#7A68A6',
 ##################
 line1 = pyl.Line2D([], [], ls='-', color='#7A68A6')
 line2 = pyl.Line2D([], [], ls='--', color='#188487')
-ax1.legend((line1, line2), ('Targeted', 'Survey'), loc=2)
+line3 = pyl.Line2D([], [], ls='--', color='k', lw=1)
+#ax1.legend((line1, line2), ('Targeted', 'Survey'), loc=2)
 
 ax1s.axhline(scatter, zorder=0)
 
@@ -125,8 +126,10 @@ ax1s.set_yticks([0.1, 0.2, 0.3, 0.4])
 ax1s.set_ylim(0, 0.5)
 ax1.set_xticks(pyl.arange(10, 200, 40).tolist())
 ax1s.set_xticks(pyl.arange(10, 200, 40).tolist())
-ax1s.set_xlim(1, 200)
-ax1.set_xlim(1, 200)
+ax1s.set_xlim(15, 200)
+ax1.set_xlim(15, 200)
+ax1.semilogx()
+ax1s.semilogx()
 
 #####################
 #### Now all of the stuff for the insert axes ####

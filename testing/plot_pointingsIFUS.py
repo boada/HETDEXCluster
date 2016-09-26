@@ -1,4 +1,5 @@
 import pylab as pyl
+from astLib.astCoords import shiftRADec
 from matplotlib.patches import Rectangle as rec
 from matplotlib.patches import RegularPolygon as RP
 
@@ -12,24 +13,35 @@ def mk_pointings(startRA, startDEC):
 
     numRA = 4
     numDEC = 3
-    coords = np.asarray([(x, y) for x in xrange(numRA) for y in xrange(numDEC)])
+    coords = pyl.asarray([(x, y) for x in xrange(numRA) for y in xrange(numDEC)])
     # 1320'' = 22', the width of the pointings.
     x = [shiftRADec(startRA, startDEC, i*960, 0)[0] for i in coords[:,0]]
     y = [shiftRADec(startRA, startDEC, 0, i*960)[1] for i in coords[:,1]]
 
     return x, y
 
-def gen_pointings(startRA, startDEC):
+def gen_pointings(startRA, startDEC, shots=False):
     ''' Takes the pointings made in mk_pointings and adds the appropriate
     height/width. Gives the lower left and upper right corner of each pointing.
     Is a generate so it can be called in a loop for each survey made.
     '''
 
+    # remove this line to use a preset list of RA/DEC pairs
     coords = mk_pointings(startRA, startDEC)
-    for x, y in zip(coords[0], coords[1]):
-        # Take the RA / DEC and add the 22' widths.
-        # yields RAmin/DECmin -- RAmax/DECmax
-        yield x, y, shiftRADec(x, y, 1320, 0)[0], shiftRADec(x, y, 0, 1320)[1]
+    if shots:
+        coords = pyl.genfromtxt('./shot_centers.txt', names=True)
+        for x, y in zip(coords['RA'][:500], coords['DEC'][:500]):
+            # Take the RA / DEC and add the 22' widths.
+            # yields RAmin/DECmin -- RAmax/DECmax
+            yield x, y, shiftRADec(x, y, 1320, 0)[0], shiftRADec(x, y, 0,
+                                                                 1320)[1]
+
+    else:
+        for x, y in zip(coords[0][:500], coords[1][:500]):
+            # Take the RA / DEC and add the 22' widths.
+            # yields RAmin/DECmin -- RAmax/DECmax
+            yield x, y, shiftRADec(x, y, 1320, 0)[0], shiftRADec(x, y, 0,
+                                                                 1320)[1]
 
 def mk_ifus(RA, DEC):
     ''' Generates the IFU arrays, and puts them in RA/DEC space. Returns the
@@ -41,8 +53,8 @@ def mk_ifus(RA, DEC):
     #coords = np.asarray([(x, y) for x in xrange(10) for y in xrange(10)])
 
     # Generate the 10 x 10 grid
-    ifus = np.arange(10)
-    xgrid, ygrid = np.meshgrid(ifus, ifus)
+    ifus = pyl.arange(10)
+    xgrid, ygrid = pyl.meshgrid(ifus, ifus)
 
     # make ifu mask
     xmask = [6, 8, 8, 10, 10]
@@ -102,10 +114,11 @@ dec = 0
 if ra > 360:
     ra -= 360.
 
-fig = pyl.figure(1,figsize=(5,5*(pyl.sqrt(5.)-1.0)/2.0))
-ax = fig.add_subplot(111)
+fig = pyl.figure(1,figsize=(5*(pyl.sqrt(5.)-1.0)/2.0, 5))
+ax = fig.add_subplot(212)
+ax2 = fig.add_subplot(211)
 
-for i, p in enumerate(gen_pointings(ra, dec, 1,1)):
+for i, p in enumerate(gen_pointings(ra, dec)):
     print i,p
 
     if i == 7:
@@ -121,19 +134,40 @@ for i, p in enumerate(gen_pointings(ra, dec, 1,1)):
                 fc='none', linestyle='dashed', orientation=pyl.pi/8.)
     ax.add_patch(cir1)
 
+for i, p in enumerate(gen_pointings(ra, dec, shots=True)):
+    print i,p
+
+    if i == 7:
+        for i in gen_ifus(p[0], p[1]):
+            rec1 = rec((i[0], i[1]), i[2]-i[0], i[3]-i[1], color='#188487')
+            ax2.add_patch(rec1)
+    else:
+        gi = gen_ifus(p[0], p[1])
+        i1 = gi.next()
+        x,y = shiftRADec(p[0], p[1], 480., 480.)
+
+        cir1 = RP((x, y), 8, 550*pyl.cos(pyl.pi/8)**-1/3600., zorder=0,
+                fc='none', linestyle='dashed', orientation=pyl.pi/8.)
+    ax2.add_patch(cir1)
+
 
 ax.set_xlim(-0.05, 1.1)
 ax.set_ylim(-0.05,0.85)
 
-ax.spines['right'].set_visible(False)
-ax.spines['bottom'].set_visible(False)
-ax.spines['left'].set_visible(False)
-ax.spines['top'].set_visible(False)
+ax2.set_xlim(195.3, 196.7)
+ax2.set_ylim(55.5, 56.4)
 
-ax.set_xlabel('Right Ascension')
-ax.set_ylabel('Declination')
-ax.set_xticks([])
-ax.set_yticks([])
+for i in [ax, ax2]:
+
+#    i.spines['right'].set_visible(False)
+#    i.spines['bottom'].set_visible(False)
+#    i.spines['left'].set_visible(False)
+#    i.spines['top'].set_visible(False)
+
+    #ax.set_xlabel('Right Ascension')
+    #ax.set_ylabel('Declination')
+    i.set_xticks([])
+    i.set_yticks([])
 
 pyl.draw()
 pyl.show()
