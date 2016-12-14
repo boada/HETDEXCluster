@@ -5,6 +5,7 @@ import pylab as pyl
 from astLib import astStats
 from line import fit
 
+
 def mklogMass(theta):
     ''' Makes Log10 Mass from a given richness following the simet2016
     mass-richness relationship.
@@ -13,6 +14,7 @@ def mklogMass(theta):
     m0, alpha, lambda0 = theta
     return lambda x: m0 + alpha * pyl.log10(x / lambda0)
 
+
 def mklambda(theta):
     ''' Makes Lambda given a Log10 Mass. If mass is not Log10 it won't work
     correctly.
@@ -20,7 +22,8 @@ def mklambda(theta):
     '''
 
     m0, alpha, lambda0 = theta
-    return lambda y: lambda0 * (10 ** y / 10 ** m0) ** (1 / alpha)
+    return lambda y: lambda0 * (10**y / 10**m0)**(1 / alpha)
+
 
 def add_subplot_axes(ax, rect, axisbg='None'):
     ''' Add an inset axes to the first subplot. '''
@@ -77,8 +80,8 @@ ax1 = pyl.subplot2grid((3, 1), (0, 0), rowspan=2)
 
 scatter = 0.25
 
-for m, c, style, zo in zip([target_mlMasses, survey_mlMasses], ['#7A68A6',
-    '#188487'], ['-', '--'], [1, 2]):
+for m, c, style, zo in zip([target_mlMasses, survey_mlMasses],
+                           ['#7A68A6', '#188487'], ['-', '--'], [1, 2]):
     bins = pyl.arange(10, 150, 20)
 
     # add the noise to the true masses-- 0.25 dex at the moment
@@ -86,19 +89,26 @@ for m, c, style, zo in zip([target_mlMasses, survey_mlMasses], ['#7A68A6',
     # use the noisy masses to calculate an observed lambda
     lam_obs = mklambda(truth)(m_obs)
 
-    y_ = astStats.runningStatistic(lam_obs, m['ML_pred_3d'],
-            pyl.percentile, binNumber=bins, q=[16, 50, 84])
+    y_ = astStats.runningStatistic(lam_obs,
+                                   m['ML_pred_3d'],
+                                   pyl.percentile,
+                                   binNumber=bins,
+                                   q=[16, 50, 84])
     quants = pyl.array(y_[1])
     ax1.plot(y_[0], quants[:, 1], style, c=c, zorder=zo)
-    ax1.fill_between(y_[0], quants[:, 2], quants[:, 0], facecolor=c,
-            alpha=0.4, edgecolor=c)
+    ax1.fill_between(y_[0],
+                     quants[:, 2],
+                     quants[:, 0],
+                     facecolor=c,
+                     alpha=0.4,
+                     edgecolor=c)
 
     # now we are going to do the scatter panel on the bottom
     bins = pyl.arange(10, 150, 10)
     x = lam_obs
     y = m['ML_pred_3d']
     index = pyl.digitize(x, bins)
-    print [y[index == k].size for k in range(1, bins.size)]
+    print[y[index == k].size for k in range(1, bins.size)]
     running = [pyl.std(y[index == k]) for k in range(1, bins.size)]
     running = pyl.array(running)
     tmp = pyl.where(~pyl.isnan(running))
@@ -107,9 +117,8 @@ for m, c, style, zo in zip([target_mlMasses, survey_mlMasses], ['#7A68A6',
     ax1s.plot(centers, running, style, drawstyle='steps', c=c)
     #ax1s.axhline(pyl.mean(running[tmp[0]]), zorder=0, lw=1)
 
-
-### Add Legend ###
-##################
+    ### Add Legend ###
+    ##################
 line1 = pyl.Line2D([], [], ls='-', color='#7A68A6')
 line2 = pyl.Line2D([], [], ls='--', color='#188487')
 line3 = pyl.Line2D([], [], ls='--', color='k', lw=1)

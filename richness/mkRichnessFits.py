@@ -4,13 +4,15 @@ from scipy import stats
 import numpy as np
 import emcee
 
+
 def mklogMass(theta):
     ''' Makes Log10 Mass from a given richness following the simet2016
     mass-richness relationship.
 
     '''
     m0, alpha, lambda0 = theta
-    return lambda x: m0 + alpha*np.log10(x/lambda0)
+    return lambda x: m0 + alpha * np.log10(x / lambda0)
+
 
 def mklambda(theta):
     ''' Makes Lambda given a Log10 Mass. If mass is not Log10 it won't work
@@ -19,7 +21,8 @@ def mklambda(theta):
     '''
 
     m0, alpha, lambda0 = theta
-    return lambda y: lambda0*(10**y/10**m0)**(1/alpha)
+    return lambda y: lambda0 * (10**y / 10**m0)**(1 / alpha)
+
 
 def log_prior(theta):
     m, b, s = theta
@@ -27,12 +30,14 @@ def log_prior(theta):
         return 0
     return -np.inf
 
+
 def log_likelihood(theta, x, y, yerr):
     m, b, s = theta
-    model = m*x + b
+    model = m * x + b
     sigma = s**2 + yerr**2
 
-    return -0.5 * np.sum(np.log(2 *np.pi*sigma) + (y-model)**2 / sigma)
+    return -0.5 * np.sum(np.log(2 * np.pi * sigma) + (y - model)**2 / sigma)
+
 
 def log_probfn(theta, x, y, yerr):
     lp = log_prior(theta)
@@ -41,7 +46,7 @@ def log_probfn(theta, x, y, yerr):
     return log_prior(theta) + log_likelihood(theta, x, y, yerr)
 
 # normalization, power-law index, and lambda0 of the lambda-mass relation
-truth = 14.344, 1.33, 40 # simet2016
+truth = 14.344, 1.33, 40  # simet2016
 # truth = 14.191, 1.31, 30 # farahi2016
 # truth = 14.2042, 1.1655, 30 # me
 
@@ -85,7 +90,9 @@ for m in [target_mlMasses, survey_mlMasses]:
     p0 = np.random.random((nwalkers, ndim))
     #p0 = np.append(truth, x_obs)
     #p0 = [p0 + np.random.randn(ndim) for i in range(nwalkers)]
-    sampler = emcee.EnsembleSampler(nwalkers, ndim, log_probfn,
+    sampler = emcee.EnsembleSampler(nwalkers,
+                                    ndim,
+                                    log_probfn,
                                     args=[x_obs, y_obs, yerr])
 
     # Burn in.
@@ -99,9 +106,9 @@ for m in [target_mlMasses, survey_mlMasses]:
 
     # Print results.
     samples = sampler.flatchain
-    print('m = {0} +/- {1}'.format(np.median(samples[:, 0]),
-        np.std(samples[:,0])))
-    print('b = {0} +/- {1}'.format(np.median(samples[:, 1]),
-        np.std(samples[:, 1])))
-    print('s = {0} +/- {1}'.format(np.median(samples[:, 2]),
-        np.std(samples[:, 2])))
+    print('m = {0} +/- {1}'.format(
+        np.median(samples[:, 0]), np.std(samples[:, 0])))
+    print('b = {0} +/- {1}'.format(
+        np.median(samples[:, 1]), np.std(samples[:, 1])))
+    print('s = {0} +/- {1}'.format(
+        np.median(samples[:, 2]), np.std(samples[:, 2])))
