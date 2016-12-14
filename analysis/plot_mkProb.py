@@ -11,7 +11,7 @@ with hdf.File('./result_targetedPerfect.hdf5', 'r') as f:
     data = dset['ZSPEC', 'M200c', 'LOSVD']
 
 mask = ((pyl.log10(data['LOSVD']) > 3.12) & (data['M200c'] < 10**14.5) |
-    (data['LOSVD'] < 50))
+        (data['LOSVD'] < 50))
 data = data[~mask]
 badData = data[mask]
 
@@ -22,7 +22,9 @@ thresh = 3
 xdat = data['ZSPEC']
 ydat = pyl.log10(data['LOSVD'])
 
-f, ax = pyl.subplots(1, 2, figsize=(7, 7 * (pyl.sqrt(5.) - 1.0) / 2.0),
+f, ax = pyl.subplots(1,
+                     2,
+                     figsize=(7, 7 * (pyl.sqrt(5.) - 1.0) / 2.0),
                      squeeze=True)
 ax = ax.ravel()
 
@@ -35,15 +37,17 @@ ind = (posx > 0) & (posx <= bins[0]) & (posy > 0) & (posy <= bins[1])
 # values of histogram with points in the bins.
 hhsub = hh[posx[ind] - 1, posy[ind] - 1]
 
-xdat1 = xdat[ind][hhsub < thresh] # low density points
+xdat1 = xdat[ind][hhsub < thresh]  # low density points
 ydat1 = ydat[ind][hhsub < thresh]
-hh[hh < thresh] = 0 # fill the areas with low density by NaNs
+hh[hh < thresh] = 0  # fill the areas with low density by NaNs
 
 # the CMD on the left
 ax[0].scatter(xdat1, ydat1, s=10, c='0.8', edgecolor='0.8')
-ax[0].imshow(pyl.log10(hh.T), cmap='gray_r',
-        extent=pyl.array(extent).flatten(),
-        interpolation='nearest')
+ax[0].imshow(
+    pyl.log10(hh.T),
+    cmap='gray_r',
+    extent=pyl.array(extent).flatten(),
+    interpolation='nearest')
 ax[0].set_xlabel('Redshift')
 ax[0].set_ylabel('Log $\sigma$ (km $s^{-1}$)')
 #ax[0].set_xticks([-24, -20, -16, -12])
@@ -67,12 +71,22 @@ for x, y, c in zip(xcoord, ycoord, colors):
     # find all of the points inside the bin we are interested ind
     i = (locx[xbin - 1] < xdat) & (xdat < locx[xbin]) & \
         (locy[ybin - 1] < ydat) & (ydat < locy[ybin])
-    ax[1].hist(pyl.log10(data['M200c'][i]), bins=10, normed=True,
-               histtype='step', lw=2, edgecolor=c)
+    ax[1].hist(
+        pyl.log10(data['M200c'][i]),
+        bins=10,
+        normed=True,
+        histtype='step',
+        lw=2,
+        edgecolor=c)
 
     # little boxes
-    rec = Rectangle((locx[xbin], locy[ybin]), locx[xbin + 1] - locx[xbin],
-            locy[ybin + 1] - locy[ybin], lw=2, zorder=10, fc='none', ec=c)
+    rec = Rectangle((locx[xbin], locy[ybin]),
+                    locx[xbin + 1] - locx[xbin],
+                    locy[ybin + 1] - locy[ybin],
+                    lw=2,
+                    zorder=10,
+                    fc='none',
+                    ec=c)
     ax[0].add_patch(rec)
 
 ax[1].set_xlabel('Log $M_{200c}$ ($M_{\odot}$)')

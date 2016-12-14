@@ -2,6 +2,7 @@ import h5py as hdf
 import numpy as np
 from numpy.lib import recfunctions as rfns
 
+
 def find_tile(RAmin, DECmin, RAmax, DECmax, data=False):
     ''' Returns the name of the tile(s) that the current pointing is located
     inside of. The pointing is a box defined by the max/min of the RA/DEC.
@@ -17,16 +18,17 @@ def find_tile(RAmin, DECmin, RAmax, DECmax, data=False):
     # Find all of the tiles that don't overlap with the box defined. We'll take
     # the inverse of that below to find all of the tiles we want.
     # left/right
-    leftRight = (RAmin > data['RAmax'] ) | (RAmax < data['RAmin'])
+    leftRight = (RAmin > data['RAmax']) | (RAmax < data['RAmin'])
     # top/bottom
     topBottom = (DECmin > data['DECmax']) | (DECmax < data['DECmin'])
 
-    tile = np.intersect1d(data['name'][~leftRight],data['name'][~topBottom])
+    tile = np.intersect1d(data['name'][~leftRight], data['name'][~topBottom])
 
     if len(tile):
         return tile
     else:
         raise ValueError('Out of RA/DEC bounds!')
+
 
 def fix_tiles():
     ''' fixes the tile catalog for the tiles that overlap zero. Now the tiles
@@ -48,6 +50,7 @@ def fix_tiles():
 
     return data
 
+
 def mkTruth(i=-1, flatHMF=False):
     ''' Loads either all of the truth files and returns the data array or loads
     the individual file desired. To specify which file, call with an integer
@@ -57,16 +60,19 @@ def mkTruth(i=-1, flatHMF=False):
     truthPath = './../data/buzzard_v1.0/allbands/truth/'
     # build truth database
     if not i == -1:
-        with hdf.File(truthPath+'truth'+str(i).zfill(2)+'_Oii.hdf5', 'r') as f:
-            dset = f['truth'+str(i).zfill(2)+'_Oii']
-            print(dset.file) # print the loading file
+        with hdf.File(truthPath + 'truth' + str(i).zfill(2) + '_Oii.hdf5',
+                      'r') as f:
+            dset = f['truth' + str(i).zfill(2) + '_Oii']
+            print(dset.file)  # print the loading file
             if not flatHMF:
                 truth_part = dset['HALOID', 'RA', 'DEC', 'Z', 'Oii']
             else:
                 truth_part = dset['HALOID', 'RA', 'DEC', 'Z', 'Oii', 'VX',
-                        'VY', 'VZ']
-            truth_part = rfns.append_fields(truth_part, ['g','r'],
-                    [dset['OMAG'][:,1], dset['OMAG'][:,2]], usemask=False)
+                                  'VY', 'VZ']
+            truth_part = rfns.append_fields(
+                truth_part, ['g', 'r'],
+                [dset['OMAG'][:, 1], dset['OMAG'][:, 2]],
+                usemask=False)
             try:
                 truth = np.append(truth, truth_part)
             except NameError:
@@ -77,21 +83,23 @@ def mkTruth(i=-1, flatHMF=False):
         for i in range(20):
             with hdf.File(truthPath+'truth'+str(i).zfill(2)+'_Oii.hdf5', 'r')\
                 as f:
-                dset = f['truth'+str(i).zfill(2)+'_Oii']
-                print(dset.file) # print the loading file
+                dset = f['truth' + str(i).zfill(2) + '_Oii']
+                print(dset.file)  # print the loading file
                 if not flatHMF:
                     truth_part = dset['HALOID', 'RA', 'DEC', 'Z', 'Oii']
                 else:
                     truth_part = dset['HALOID', 'RA', 'DEC', 'Z', 'Oii', 'VX',
-                            'VY', 'VZ']
-                truth_part = rfns.append_fields(truth_part, ['g','r'],
-                        [dset['OMAG'][:,1], dset['OMAG'][:,2]],
-                        usemask=False)
+                                      'VY', 'VZ']
+                truth_part = rfns.append_fields(
+                    truth_part, ['g', 'r'],
+                    [dset['OMAG'][:, 1], dset['OMAG'][:, 2]],
+                    usemask=False)
                 try:
                     truth = np.append(truth, truth_part)
                 except NameError:
                     truth = truth_part
         return truth
+
 
 def mkHalo():
     ''' Loads *ALL* of the halo information and returns the data array. '''
@@ -99,17 +107,18 @@ def mkHalo():
     haloPath = './../data/buzzard_v1.0/allbands/halos/'
     # build halo database
     for i in range(20):
-        with hdf.File(haloPath+'halo'+str(i).zfill(2)+'.hdf5', 'r') as f:
+        with hdf.File(haloPath + 'halo' + str(i).zfill(2) + '.hdf5', 'r') as f:
             dset = f[f.keys()[0]]
             print(dset.file)
-            halo_part = dset['id','upid', 'ra', 'dec', 'zspec', 'vrms',
-                    'm200c', 'rvir']
+            halo_part = dset['id', 'upid', 'ra', 'dec', 'zspec', 'vrms',
+                             'm200c', 'rvir']
             try:
                 halo = np.append(halo, halo_part)
             except NameError:
                 halo = halo_part
 
     return halo
+
 
 def mkQs(i=-1):
     ''' Loads either all of the truth files and returns the data array or loads
@@ -120,9 +129,10 @@ def mkQs(i=-1):
     truthPath = './../data/buzzard_v1.0/allbands/truth/'
     # build truth database
     if not i == -1:
-        with hdf.File(truthPath+'truth'+str(i).zfill(2)+'_Oii.hdf5', 'r') as f:
+        with hdf.File(truthPath + 'truth' + str(i).zfill(2) + '_Oii.hdf5',
+                      'r') as f:
             dset = f['Q']
-            print(dset.file) # print the loading file
+            print(dset.file)  # print the loading file
             q_part = dset.value
             try:
                 q = np.append(q, q_part)
@@ -135,13 +145,14 @@ def mkQs(i=-1):
             with hdf.File(truthPath+'truth'+str(i).zfill(2)+'_Oii.hdf5', 'r')\
                 as f:
                 dset = f['Q']
-                print(dset.file) # print the loading file
+                print(dset.file)  # print the loading file
                 q_part = dset.value
                 try:
                     q = np.append(q, q_part)
                 except NameError:
                     q = q_part
         return q
+
 
 def mkN200Data(catalog='truth'):
     ''' Loads the correct data for the n200 calculation. I wrote a new function
@@ -156,8 +167,8 @@ def mkN200Data(catalog='truth'):
         for i in range(20):
             with hdf.File(truthPath+'truth'+str(i).zfill(2)+'_Oii.hdf5', 'r')\
                 as f:
-                dset = f['truth'+str(i).zfill(2)+'_Oii']
-                print(dset.file) # print the loading file
+                dset = f['truth' + str(i).zfill(2) + '_Oii']
+                print(dset.file)  # print the loading file
                 truth_part = dset['HALOID', 'RA', 'DEC']
                 try:
                     truth = np.append(truth, truth_part)
@@ -167,10 +178,11 @@ def mkN200Data(catalog='truth'):
 
     elif catalog == 'halo':
         for i in range(20):
-            with hdf.File(haloPath+'halo'+str(i).zfill(2)+'.hdf5', 'r') as f:
+            with hdf.File(haloPath + 'halo' + str(i).zfill(2) + '.hdf5',
+                          'r') as f:
                 dset = f[f.keys()[0]]
                 print(dset.file)
-                halo_part = dset['id','upid', 'ra', 'dec', 'm200c']
+                halo_part = dset['id', 'upid', 'ra', 'dec', 'm200c']
                 try:
                     halo = np.append(halo, halo_part)
                 except NameError:
@@ -181,6 +193,7 @@ def mkN200Data(catalog='truth'):
     else:
         print 'catalog must be either truth or halo'
         return 0
+
 
 def apply_mask(ramin, decmin, ramax, decmax, catalog):
     if ramin < ramax:
@@ -197,4 +210,3 @@ def apply_mask(ramin, decmin, ramax, decmax, catalog):
     result = catalog[selected]
 
     return result
-

@@ -2,6 +2,7 @@ import h5py as hdf
 import numpy as np
 import sys
 
+
 def main(f1, f2, f3):
     ### biased ###
     ###############
@@ -19,7 +20,7 @@ def main(f1, f2, f3):
         data_bias = dset.value
 
     # these are the mass bins we used for the corrections
-    bins = np.arange(11.5,16,0.1)
+    bins = np.arange(11.5, 16, 0.1)
 
     # make the results container
     results = np.copy(data)
@@ -41,18 +42,14 @@ def main(f1, f2, f3):
         results['ML_pred_2d'][indx==i] =\
         data['ML_pred_2d'][indx==i] - data_bias['ML_bias_2d'][i-1]
 
-
     indx = np.digitize(data['ML_pred_3d'], bins)
     for i in range(1, bins.size):
         results['ML_pred_3d'][indx==i] =\
         data['ML_pred_3d'][indx==i] - data_bias['ML_bias_3d'][i-1]
 
-
     with hdf.File(f3, 'w') as f:
         f['corrected'] = results
 
+
 if __name__ == "__main__":
     main(sys.argv[1], sys.argv[2], sys.argv[3])
-
-
-

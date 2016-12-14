@@ -16,28 +16,36 @@ aca.OMEGA_L0 = 0.714
 #aca.OMEGA_M0 = 0.25
 #aca.OMEGA_L0 = 0.75
 
+
 def findLOSVD(data):
     if data.size >= 15:
         data['LOSVD'] = ast.biweightScale_test(data['LOSV'],
-                tuningConstant=9.0)
+                                               tuningConstant=9.0)
         try:
             data['LOSVD_err'] = ast.bootstrap(data['LOSV'],
-                    ast.biweightScale_test, resamples=10000, alpha=0.32,
-                    output='errorbar', tuningConstant=9.0)
+                                              ast.biweightScale_test,
+                                              resamples=10000,
+                                              alpha=0.32,
+                                              output='errorbar',
+                                              tuningConstant=9.0)
         except ZeroDivisionError:
             data['LOSVD_err'] = [0.0, 0.0]
-    elif data.size >=5:
+    elif data.size >= 5:
         data['LOSVD'] = ast.gapperEstimator(data['LOSV'])
-        data['LOSVD_err'] = ast.bootstrap(data['LOSV'], ast.gapperEstimator,
-                resamples=10000, alpha=0.32, output='errorbar')
+        data['LOSVD_err'] = ast.bootstrap(data['LOSV'],
+                                          ast.gapperEstimator,
+                                          resamples=10000,
+                                          alpha=0.32,
+                                          output='errorbar')
     else:
         data['LOSVD'] = 0.0
         data['LOSVD_err'] = [0.0, 0.0]
 
     return data
 
+
 def findLOSVDgmm(data):
-    LOSV = data['LOSV'][:,np.newaxis]
+    LOSV = data['LOSV'][:, np.newaxis]
     lowest_bic = np.infty
     bic = []
     n_components_range = range(1, 4)
@@ -47,7 +55,8 @@ def findLOSVDgmm(data):
         for n_components in n_components_range:
             # Fit a mixture of Gaussians with EM
             gmm = mixture.GMM(n_components=n_components,
-                    covariance_type=cv_type, n_init=10)
+                              covariance_type=cv_type,
+                              n_init=10)
             gmm.fit(LOSV)
             bic.append(gmm.bic(LOSV))
             if bic[-1] < lowest_bic:
@@ -65,20 +74,21 @@ def findLOSVDgmm(data):
     #newLOSVD = np.sqrt(np.sum(parts))
 
     ## now we resample and then see
-    dx = np.linspace(LOSV.min()-100,LOSV.max()+100,1000)
-    logprob, responsibilities = best_gmm.score_samples(dx[:,np.newaxis])
+    dx = np.linspace(LOSV.min() - 100, LOSV.max() + 100, 1000)
+    logprob, responsibilities = best_gmm.score_samples(dx[:, np.newaxis])
     pdf = np.exp(logprob)
 
-    normedPDF = pdf/np.sum(pdf)
+    normedPDF = pdf / np.sum(pdf)
 
-    u = np.sum(dx*normedPDF)
-    data['LOSVDgmm'] = np.sqrt(np.sum(normedPDF*(dx-u)**2))
+    u = np.sum(dx * normedPDF)
+    data['LOSVDgmm'] = np.sqrt(np.sum(normedPDF * (dx - u)**2))
     return data
+
 
 def findLOSVDmcmc(data):
     def log_prior(theta, LOSV):
         sigma, mu = theta
-        if  not 50 < sigma < 1400:
+        if not 50 < sigma < 1400:
             return -np.inf
         if not LOSV.min() < mu < LOSV.max():
             return -np.inf
@@ -90,10 +100,10 @@ def findLOSVDmcmc(data):
         #print(theta)
         # break long equation into three parts
         a = -0.5 * np.sum(np.log(LOSV_err**2 + sigma**2))
-        b = -0.5 * np.sum((LOSV - mu)**2/(LOSV_err**2 + sigma**2))
-        c = -1. * LOSV.size/2. * np.log(2*np.pi)
+        b = -0.5 * np.sum((LOSV - mu)**2 / (LOSV_err**2 + sigma**2))
+        c = -1. * LOSV.size / 2. * np.log(2 * np.pi)
 
-        return a +b +c
+        return a + b + c
 
     def log_posterior(theta, LOSV, LOSV_err):
         lp = log_prior(theta, LOSV)
@@ -114,20 +124,23 @@ def findLOSVDmcmc(data):
     np.random.seed()
     m = np.random.normal(np.mean(LOSV), scale=1, size=(nwalkers))
     s = np.random.normal(200, scale=1, size=(nwalkers))
-    starting_guesses = np.vstack([s,m]).T
+    starting_guesses = np.vstack([s, m]).T
 
-    sampler = emcee.EnsembleSampler(nwalkers, ndim, log_posterior, args=[LOSV,
-        LOSV_err])
+    sampler = emcee.EnsembleSampler(nwalkers,
+                                    ndim,
+                                    log_posterior,
+                                    args=[LOSV, LOSV_err])
     sampler.run_mcmc(starting_guesses, nsteps)
 
     samples = sampler.chain[:, nburn:, :].reshape((-1, ndim))
-    sigma_rec, mean_rec = map(lambda v: (v[1], v[2]-v[1], v[1]-v[0]),
-                                 zip(*np.percentile(samples, [16, 50, 84],
-                                                    axis=0)))
+    sigma_rec, mean_rec = map(
+        lambda v: (v[1], v[2] - v[1], v[1] - v[0]),
+        zip(*np.percentile(samples, [16, 50, 84], axis=0)))
     data['LOSVD'] = sigma_rec[0]
     data['LOSVD_err'] = sigma_rec[1], sigma_rec[2]
 
     return data, samples
+
 
 def calc_mass_Saro(data):
     ''' Calculates the mass using the scaling relation from Saro2013. '''
@@ -139,10 +152,11 @@ def calc_mass_Saro(data):
     b = 2.91
     c = 0.33
 
-    m200 = (vd**b/(a * ((aca.H0 * aca.Ez(avgz))/72)**c)**b)
+    m200 = (vd**b / (a * ((aca.H0 * aca.Ez(avgz)) / 72)**c)**b)
     return m200 * 1e15
 
-def calc_mass_Evrard(data, A1D = 1082.9, alpha=0.3361):
+
+def calc_mass_Evrard(data, A1D=1082.9, alpha=0.3361):
     ''' Calculates the mass using the scaling relation from Saro2013. Really it
     is using the relationship from Munari2013.'''
 
@@ -151,8 +165,10 @@ def calc_mass_Evrard(data, A1D = 1082.9, alpha=0.3361):
     if vd == 0.0:
         data['MASS'] = 0.0
         return data
-    data['MASS'] = 1e15/(aca.H0 * aca.Ez(avgz)/100.) * (vd/A1D)**(1/alpha)
+    data['MASS'] = 1e15 / (aca.H0 * aca.Ez(avgz) / 100.) * (vd / A1D)**(1 /
+                                                                        alpha)
     return data
+
 
 def findSeperationSpatial(data, center, unit='Mpc'):
     ''' Finds the distance to all of the galaxies from the center of the
@@ -161,15 +177,16 @@ def findSeperationSpatial(data, center, unit='Mpc'):
     '''
 
     data['SEP'] = aco.calcAngSepDeg(center[0], center[1], data['RA'],
-            data['DEC'])
+                                    data['DEC'])
 
     if unit == 'Mpc':
         for index, value in enumerate(data['Z']):
-            data['SEP'][index] *= aca.da(value)/57.2957795131
+            data['SEP'][index] *= aca.da(value) / 57.2957795131
     elif unit == 'arcsecond':
         data['SEP'] *= 3600
 
     return data
+
 
 def findClusterRedshift(data):
     ''' Finds the center of the cluster in redshift space using the
@@ -183,25 +200,28 @@ def findClusterRedshift(data):
         data['CLUSZ'] = 0.0
     return data
 
+
 def findLOSV(data, ClusZ=None):
     ''' Finds the line of sight velocity for each of the galaxies and puts it
     in the LOSV column of the data array.
 
     '''
 
-    c = 2.99e5 # speed of light in km/s
-    if ClusZ == None:
-        data['LOSV'] = c * (data['Z'] - data['CLUSZ'])/(1 + data['CLUSZ'])
+    c = 2.99e5  # speed of light in km/s
+    if ClusZ is None:
+        data['LOSV'] = c * (data['Z'] - data['CLUSZ']) / (1 + data['CLUSZ'])
         return data
     else:
-        losv = c * (data['Z'] - ClusZ)/(1 + ClusZ)
+        losv = c * (data['Z'] - ClusZ) / (1 + ClusZ)
         return losv
+
 
 def findR200(data):
     LOSVD = data['LOSVD'][0]
     avgz = data['CLUSZ'][0]
-    data['R200'] = np.sqrt(3) * (LOSVD)/(10*aca.H0 * aca.Ez(avgz))
+    data['R200'] = np.sqrt(3) * (LOSVD) / (10 * aca.H0 * aca.Ez(avgz))
     return data
+
 
 def splitList(alist, wanted_parts=1):
     ''' Breaks a list into a number of parts. If it does not divide evenly then
@@ -210,17 +230,17 @@ def splitList(alist, wanted_parts=1):
     '''
 
     length = len(alist)
-    return [alist[i*length // wanted_parts: (i+1)*length // wanted_parts] for i
-        in range(wanted_parts)]
+    return [alist[i * length // wanted_parts:(i + 1) * length // wanted_parts]
+            for i in range(wanted_parts)]
 
 
 def z2v(z, zc):
     """Convert the redshift to km/s relative to the cluster center"""
-    return 2.99792458e5*(z-zc)/(1+zc)
+    return 2.99792458e5 * (z - zc) / (1 + zc)
 
 
 def shifty_gapper(r, z, zc, vlimit=10000, ngap=30, glimit=1000):
-   """Determine cluster membersip according to the shifty
+    """Determine cluster membersip according to the shifty
       gapper technique
       The shifty gapper technique includes the following steps:
       1.  Remove outliers outside of +- vlimit
@@ -245,35 +265,35 @@ def shifty_gapper(r, z, zc, vlimit=10000, ngap=30, glimit=1000):
           a value of True
    """
 
-   #convert to the velocity scale
-   v = z2v(z,zc)
+    #convert to the velocity scale
+    v = z2v(z, zc)
 
-   #limit the source to only sources within the vlimit
-   vmask = abs(v) < vlimit
+    #limit the source to only sources within the vlimit
+    vmask = abs(v) < vlimit
 
-   nobj=len(r)
-   incluster=np.zeros(nobj, dtype=bool)
+    nobj = len(r)
+    incluster = np.zeros(nobj, dtype=bool)
 
-   if nobj<ngap:
-      raise Exception('Number of sources is less than number of gap sources')
+    if nobj < ngap:
+        raise Exception('Number of sources is less than number of gap sources')
 
-   for i in range(nobj):
-     if abs(v[i])<vlimit:
-       #find the ngap closest sources
-       r_j=abs(r[vmask]-r[i]).argsort()
-       vg=v[vmask][r_j[0:ngap]]
+    for i in range(nobj):
+        if abs(v[i]) < vlimit:
+            #find the ngap closest sources
+            r_j = abs(r[vmask] - r[i]).argsort()
+            vg = v[vmask][r_j[0:ngap]]
 
-       #find the sources with |v_pec| < |v_pec_i|
-       mask=abs(vg)<=abs(v[i])
-       if mask.sum()>1:
-          vg=vg[mask]
-          #now sort these sources and find the biggest gap
-          vg.sort()
-          if np.diff(vg).max()<glimit: incluster[i]=True
-       else:
-          incluster[i]=True
+            #find the sources with |v_pec| < |v_pec_i|
+            mask = abs(vg) <= abs(v[i])
+            if mask.sum() > 1:
+                vg = vg[mask]
+                #now sort these sources and find the biggest gap
+                vg.sort()
+                if np.diff(vg).max() < glimit: incluster[i] = True
+            else:
+                incluster[i] = True
 
-   return incluster
+    return incluster
 
 
 def rejectInterlopers(data):
@@ -286,7 +306,7 @@ def rejectInterlopers(data):
 
     # sort the part that we want in place in the array
     data = np.sort(data, order='SEP')
-    parts = len(data)//15
+    parts = len(data) // 15
     splitData = splitList(data, parts)
 
     for part in splitData:
@@ -304,10 +324,10 @@ def rejectInterlopers(data):
                 # Always take the more extreme index
                 for index, i in enumerate(indices[0]):
                     if (abs(LOSVsorted['LOSV'][i]) -
-                            abs(LOSVsorted['LOSV'][i+1]) > 0):
+                            abs(LOSVsorted['LOSV'][i + 1]) > 0):
                         pass
                     elif (abs(LOSVsorted['LOSV'][i]) -
-                            abs(LOSVsorted['LOSV'][i+1]) < 0):
+                          abs(LOSVsorted['LOSV'][i + 1]) < 0):
                         indices[0][index] = i + 1
 
                 #print indices[0]
@@ -319,6 +339,7 @@ def rejectInterlopers(data):
                 except NameError:
                     result = LOSVsorted
     return result
+
 
 def rejectInterlopers_group(data, sigmav=500):
     ''' This method is given in Wilman+2005 and Connelly+2012 and talked about
@@ -333,13 +354,14 @@ def rejectInterlopers_group(data, sigmav=500):
 
     deltaZmax = 2 * sigmav * (1 + avgz) / c
     #deltaRmax = (c *deltaZmax)/(3.5*(1+avgz)*aca.H0*aca.Ez(avgz)) # 1/Mpc
-    deltaRmax = (c * deltaZmax)/(9.5*aca.H0*aca.Ez(avgz)) # Mpc
+    deltaRmax = (c * deltaZmax) / (9.5 * aca.H0 * aca.Ez(avgz))  # Mpc
 
     # Apply limits
-    selected = (abs(data['Z'] - avgz) <= deltaZmax) & (data['SEP'] <=\
-            deltaRmax)
+    selected = (abs(data['Z'] - avgz) <= deltaZmax) & (
+        data['SEP'] <= deltaRmax)
 
     return selected
+
 
 def updateArray(data):
     ''' Makes the new fields that we are going to add things into in the
@@ -349,11 +371,14 @@ def updateArray(data):
 
     newData = np.zeros(data.size)
     data = rfns.append_fields(data, ['SEP', 'CLUSZ', 'LOSV', 'LOSVD', 'MASS'],
-            [newData, newData, newData, newData, newData], dtypes='>f4',
-            usemask=False)
+                              [newData, newData, newData, newData, newData],
+                              dtypes='>f4',
+                              usemask=False)
 
-    newnewData = np.zeros(data.size, dtype=[('LOSVD_err', '>f4', (2,))])
-    data = rfns.merge_arrays((data, newnewData), usemask=False,
-            asrecarray=False, flatten=True)
+    newnewData = np.zeros(data.size, dtype=[('LOSVD_err', '>f4', (2, ))])
+    data = rfns.merge_arrays((data, newnewData),
+                             usemask=False,
+                             asrecarray=False,
+                             flatten=True)
 
     return data

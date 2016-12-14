@@ -1,7 +1,9 @@
 import numpy as np
 
 data_dir = '/home/boada/scratch/halos/'
+
 #data_dir= '/Users/steven/Projects/desCluster/data/halos/'
+
 
 def find_indices(bigArr, smallArr):
     from bisect import bisect_left, bisect_right
@@ -21,10 +23,11 @@ def find_indices(bigArr, smallArr):
             inds.append(sortedind[i1:i2])
         except IndexError:
             pass
-        if i % 100000 ==0:
+        if i % 100000 == 0:
             print i
 
     return inds
+
 
 def find_indices_bool(bigArr, smallArr):
     from bisect import bisect_left, bisect_right
@@ -46,6 +49,7 @@ def find_indices_bool(bigArr, smallArr):
             pass
 
     return inds
+
 
 def find_indices_multi(bigArr, smallArr, multi):
     from bisect import bisect_left, bisect_right
@@ -74,6 +78,7 @@ def find_indices_multi(bigArr, smallArr, multi):
 
         inds.append(np.array(list(chain(*tmp))))
     return inds
+
 
 def findRADECmaxmin(ra, dec):
     ''' Figures out the max and min RA/DEC for the observed catalog. Use this

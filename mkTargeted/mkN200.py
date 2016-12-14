@@ -12,33 +12,33 @@ aca.H0 = 70
 aca.OMEGA_M0 = 0.286
 aca.OMEGA_L0 = 0.714
 
+
 class AsyncFactory:
     def __init__(self, func, cb_func):
         self.func = func
         self.cb_func = cb_func
         self.pool = Pool(maxtasksperchild=10)
 
-    def call(self,*args, **kwargs):
+    def call(self, *args, **kwargs):
         self.pool.apply_async(self.func, args, kwargs, self.cb_func)
 
     def wait(self):
         self.pool.close()
         self.pool.join()
 
-def worker(pos, gals, center, LOSVD, clusz):
 
+def worker(pos, gals, center, LOSVD, clusz):
     def findSeperationSpatial(data, center, unit='Mpc'):
         ''' Finds the distance to all of the galaxies from the center of the
         cluster in the spatial plane. Returns the values in Mpc.
 
         '''
 
-        sep = aco.calcAngSepDeg(center[0], center[1], data['RA'],
-                data['DEC'])
+        sep = aco.calcAngSepDeg(center[0], center[1], data['RA'], data['DEC'])
 
         if unit == 'Mpc':
             for index, value in enumerate(data['Z']):
-                sep[index] *= aca.da(value)/57.2957795131
+                sep[index] *= aca.da(value) / 57.2957795131
         elif unit == 'arcsecond':
             data['SEP'] *= 3600
 
@@ -46,7 +46,7 @@ def worker(pos, gals, center, LOSVD, clusz):
 
     def findR200(LOSVD, avgz):
         ''' This is from Carlberg1997.  Their equation 8.'''
-        return np.sqrt(3) * (LOSVD)/(10*aca.H0 * aca.Ez(avgz))
+        return np.sqrt(3) * (LOSVD) / (10 * aca.H0 * aca.Ez(avgz))
 
     #print "PID: %d \t Value: %d" % (os.getpid(), pos)
     sep = findSeperationSpatial(gals, center)
@@ -56,12 +56,14 @@ def worker(pos, gals, center, LOSVD, clusz):
 
     return pos, r200c, n200c
 
+
 def cb_func((pos, r200c, n200c)):
     if pos % 1000 == 0:
         print pos
     results['IDX'][pos] = pos
     results['R200c'][pos] = r200c
     results['N200c'][pos] = n200c
+
 
 if __name__ == "__main__":
     async_worker = AsyncFactory(worker, cb_func)
@@ -80,27 +82,25 @@ if __name__ == "__main__":
     gals = find_indices_multi(truth['HALOID'], halo['id'], subHalos)
 
     # how many clusters are we looking at?
-    x = [i for i,g in enumerate(gals) if g.size >=5]
+    x = [i for i, g in enumerate(gals) if g.size >= 5]
 
-    results = np.zeros((len(x),), dtype=[('IDX', '>i4'),
-        ('HALOID', '>i8'),
-        ('M200c', '>f4'),
-        ('R200c', '>f4'),
-        ('NGAL', '>i4'),
-        ('N200c', '>i4')])
+    results = np.zeros(
+        (len(x), ),
+        dtype=[('IDX', '>i4'), ('HALOID', '>i8'), ('M200c', '>f4'),
+               ('R200c', '>f4'), ('NGAL', '>i4'), ('N200c', '>i4')])
 
     print('do work', len(x), 'clusters to go!')
-    for j,i in enumerate(x):
+    for j, i in enumerate(x):
         center = (maskedHalo['ra'][uniqueIdx[i]],
-                maskedHalo['dec'][uniqueIdx[i]])
-        losvd = maskedHalo['vrms'][uniqueIdx[i]]/np.sqrt(3)
+                  maskedHalo['dec'][uniqueIdx[i]])
+        losvd = maskedHalo['vrms'][uniqueIdx[i]] / np.sqrt(3)
         clusz = maskedHalo['zspec'][uniqueIdx[i]]
 
         async_worker.call(j, truth[gals[i]], center, losvd, clusz)
         # update results array
         results['HALOID'][j] = maskedHalo['id'][uniqueIdx[i]]
         results['NGAL'][j] = gals[i].size
-        results['M200c'][j] = maskedHalo['m200c'][uniqueIdx[i]]/0.70
+        results['M200c'][j] = maskedHalo['m200c'][uniqueIdx[i]] / 0.70
 
     async_worker.wait()
 

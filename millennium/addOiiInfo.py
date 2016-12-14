@@ -8,11 +8,14 @@ from itertools import izip
 from numpy.lib import recfunctions as rfns
 import os
 
+
 def absMag(mag, dl):
     return astCalc.absMag(mag, dl)
 
+
 def mp_wrapper(args):
     return absMag(*args)
+
 
 def updateArray(data):
     ''' Updates the data array with the new column we are going to be writing
@@ -23,7 +26,9 @@ def updateArray(data):
     print('updating array...')
     newData = -np.ones(data.shape[0])
     data = rfns.append_fields(data, ['Oii', 'g', 'r', 'Z'], [newData, newData,
-        newData, newData], dtypes='>f4', usemask=False)
+                                                             newData, newData],
+                              dtypes='>f4',
+                              usemask=False)
 
     return data
 
@@ -44,34 +49,34 @@ with pyf.open('../analysis/oii/sdss12_oii_flux_v2.fits') as f:
     xdat = np.array(map(mp_wrapper, izip(r, dl)))
     ydat = g - r
 
-    bins = [50,50]
-    extent = [[-26,-10],[-1,4]]
+    bins = [50, 50]
+    extent = [[-26, -10], [-1, 4]]
     _, locx, locy = np.histogram2d(xdat, ydat, range=extent, bins=bins)
 
     # need the Oii luminosity
-    lum = sdssData['oii_3726_flux']*4.*np.pi*(dl* 3.0857e24)**2. *1e-17
+    lum = sdssData['oii_3726_flux'] * 4. * np.pi * (dl * 3.0857e24)**2. * 1e-17
 
 # now we loop over the catalog galaxies to add the info
-SOL = 2.99e5 # speed of light in km/s
+SOL = 2.99e5  # speed of light in km/s
 with hdf.File('./galaxies.hdf5', 'r') as f:
     dset = f[f.keys()[0]]
     velx = dset['velx']
     cz = dset['redshift']
-    catRedshift = velx/SOL * (1+cz) + cz
+    catRedshift = velx / SOL * (1 + cz) + cz
     catOii = -np.ones(dset.shape[0])
 
     dl = np.array(map(astCalc.dl, catRedshift))
-    catg = dset['g_sdss'] + 5*np.log10(dl*1e6) - 5 # g band apparent mag
-    catr = dset['r_sdss'] + 5*np.log10(dl*1e6) - 5 # r band apparent mag
+    catg = dset['g_sdss'] + 5 * np.log10(dl * 1e6) - 5  # g band apparent mag
+    catr = dset['r_sdss'] + 5 * np.log10(dl * 1e6) - 5  # r band apparent mag
 
-    x = dset['r_sdss'] # absolute mag
+    x = dset['r_sdss']  # absolute mag
     y = catg - catr
 
     xbin = np.digitize(x, locx)
     ybin = np.digitize(y, locy)
 
     # find the unique pairs of bins
-    pairs = [(x_,y_) for x_,y_ in zip(xbin, ybin)]
+    pairs = [(x_, y_) for x_, y_ in zip(xbin, ybin)]
     c = Counter(pairs)
 
     for bins, number in c.items():

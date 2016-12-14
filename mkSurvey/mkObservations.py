@@ -6,18 +6,20 @@ from mk_survey import gen_pointings, mk_ifus
 import os
 from astLib.astCoords import shiftRADec
 
+
 class AsyncFactory:
     def __init__(self, func, cb_func):
         self.func = func
         self.cb_func = cb_func
         self.pool = Pool(maxtasksperchild=10)
 
-    def call(self,*args, **kwargs):
+    def call(self, *args, **kwargs):
         return self.pool.apply_async(self.func, args, kwargs, self.cb_func)
 
     def wait(self):
         self.pool.close()
         self.pool.join()
+
 
 def worker(pos, data, ifus):
     for ifu1, ifu2 in zip(ifus[0], ifus[1]):
@@ -32,10 +34,12 @@ def worker(pos, data, ifus):
 
     return pos, result
 
+
 def cb_func((pos, data)):
     #print "PID: %d \t Pos: %d" % (os.getpid(), pos)
     if pos % 500 == 0:
         print pos
+
 
 if __name__ == "__main__":
     async_worker = AsyncFactory(worker, cb_func)
@@ -55,15 +59,16 @@ if __name__ == "__main__":
 
     objs = []
 
-    for i, pointing in enumerate(gen_pointings(RAmin, DECmin, maxRA=RAmax,
-        maxDEC=DECmax)):
+    for i, pointing in enumerate(gen_pointings(
+            RAmin, DECmin, maxRA=RAmax,
+            maxDEC=DECmax)):
 
         ifus = mk_ifus(pointing[0], pointing[1])
         objs.append(async_worker.call(i, truth, ifus))
         #objs.append(worker(i, truth, ifus))
 
         #if i == 15:
-            #break
+        #break
 
     async_worker.wait()
 

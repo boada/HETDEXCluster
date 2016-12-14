@@ -1,4 +1,4 @@
-import numpy as np  
+import numpy as np
 
 
 def median_absolute_deviation(a, axis=None):
@@ -113,13 +113,12 @@ def biweight_location(a, c=6.0, M=None):
 
     #set up the weighting
     u = d / c / median_absolute_deviation(a)
-    
 
     #now remove the outlier points
     mask = np.abs(u) < 1
     u = (1 - u**2)**2
 
-    return M+(d[mask]*u[mask]).sum()/u[mask].sum()
+    return M + (d[mask] * u[mask]).sum() / u[mask].sum()
 
 
 def biweight_midvariance(a, c=9.0, M=None):
@@ -183,11 +182,10 @@ def biweight_midvariance(a, c=9.0, M=None):
 
     #set up the weighting
     u = d / c / median_absolute_deviation(a)
-   
 
     #now remove the outlier points
     mask = np.abs(u) < 1
-    n=mask.sum()
+    n = mask.sum()
     u = u**2
     return n**0.5 * (d[mask] * d[mask] * (1 - u[mask])**4).sum()**0.5 \
            / np.abs(((1 - u[mask]) * (1 - 5 * u[mask])).sum())
