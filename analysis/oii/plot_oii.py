@@ -1,12 +1,13 @@
 import pylab as pyl
-import pyfits as pyf
+from astropy.io import fits as pyf
 from astLib import vec_astCalc
 
 bins = [50, 50]
 thresh = 3
 extent = [[-26, -10], [-1, 4]]
 
-with pyf.open('./sdss12_oii_flux_v2.fits') as f:
+#with pyf.open('./sdss12_oii_flux_v2.fits') as f:
+with pyf.open('./sdss12_oii_flux_all.fits') as f:
     data = f[1].data
 
 ydat = data['g'] - data['r']
