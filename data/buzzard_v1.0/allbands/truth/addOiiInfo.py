@@ -4,7 +4,9 @@ import h5py as hdf
 from astLib import astCalc, astStats
 from collections import Counter
 from multiprocessing import Pool, cpu_count
-from itertools import izip
+from sys import version_info
+if version_info[:1][0] == 2:
+    from itertools import izip as zip
 from numpy.lib import recfunctions as rfns
 
 
@@ -33,7 +35,7 @@ def updateArray(data):
 # start the workers
 p = Pool(cpu_count())
 
-with pyf.open('./../../../../analysis/oii/sdss12_oii_flux_v2.fits') as f:
+with pyf.open('./../../../../analysis/oii/sdss12_oii_flux_all.fits') as f:
     sdssData = f[1].data
 
     # convert to DES magnitudes
@@ -44,7 +46,7 @@ with pyf.open('./../../../../analysis/oii/sdss12_oii_flux_v2.fits') as f:
     r = sdssData['r']
 
     dl = np.array(p.map(astCalc.dl, sdssData['redshift']))
-    xdat = np.array(p.map(mp_wrapper, izip(r, dl)))
+    xdat = np.array(p.map(mp_wrapper, zip(r, dl)))
     ydat = g - r
 
     bins = [50, 50]
@@ -57,15 +59,18 @@ with pyf.open('./../../../../analysis/oii/sdss12_oii_flux_v2.fits') as f:
 # now we loop over the catalog galaxies to add the info
 for i in range(20):
     print(i)
-    with hdf.File('./truth' + str(i).zfill(2) + '.hdf5', 'r') as f:
-        dset = f[f.keys()[0]]
+    with hdf.File('./truth' + str(i).zfill(2) + '_Oii.hdf5', 'a') as f:
+        try:
+            dset = f[f.keys()[0]]
+        except TypeError:
+            dset = f['truth{}_Oii'.format(str(i).zfill(2))]
         catg = dset['OMAG'][:, 1]  # g band
         catr = dset['OMAG'][:, 2]  # r band
         catRedshift = dset['Z']
         catOii = -np.ones(dset.shape[0])
 
         dl = np.array(p.map(astCalc.dl, catRedshift))
-        x = np.array(p.map(mp_wrapper, izip(catr, dl)))
+        x = np.array(p.map(mp_wrapper, zip(catr, dl)))
 
         y = catg - catr
 
@@ -85,6 +90,9 @@ for i in range(20):
                 mask = (locx[bins[0] - 1] < xdat) & (xdat < locx[bins[0]]) &\
                     (locy[bins[1] - 1] < ydat) & (ydat < locy[bins[1]])
                 lumes = lum[mask]
+
+            # make sure Luminosity is positive
+            lumes = lumes[lumes > 0]
 
             # now we have to find all of the bins.
             binMask = (xbin == bins[0]) & (ybin == bins[1])
@@ -109,12 +117,17 @@ for i in range(20):
                                                             1e-17)
             else:
                 catOii[binMask] = 0.
-
-        with hdf.File('./truth' + str(i).zfill(2) + '_Oii.hdf5', 'w') as f2:
-            data = updateArray(dset.value)
-            data['Oii'] = catOii
-            f2['truth' + str(i).zfill(2) + '_Oii'] = data
-            f2.flush()
+        try:
+            f['Oii_all'] = catOii
+        except RuntimeError:
+            del f['Oii_all']
+            f['Oii_all'] = catOii
+        f.flush()
+#        with hdf.File('./truth' + str(i).zfill(2) + '_Oii.hdf5', 'w') as f2:
+#            data = updateArray(dset.value)
+#            data['Oii'] = catOii
+#            f2['truth' + str(i).zfill(2) + '_Oii'] = data
+#            f2.flush()
 
 p.close()
 p.join()
