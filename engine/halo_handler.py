@@ -24,7 +24,7 @@ def find_indices(bigArr, smallArr):
         except IndexError:
             pass
         if i % 100000 == 0:
-            print i
+            print(i)
 
     return inds
 

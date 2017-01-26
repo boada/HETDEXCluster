@@ -1,19 +1,22 @@
 import numpy as np
 import random
 
+
 def randomR():
     ''' randomly choose a location on the unit hemisphere, r = [x,y,z] with
     -1<x<1, -1<y<1, and 0<z<1 and xˆ2+yˆ2+zˆ2 = 1.
 
     '''
 
-    phi = 2*np.pi*random.random()
+    phi = 2 * np.pi * random.random()
     theta = np.arccos(np.random.random())
-    r = [np.sin(theta)*np.cos(phi), np.sin(theta)*np.sin(phi), np.cos(theta)]
+    r = [np.sin(theta) * np.cos(phi), np.sin(theta) * np.sin(phi), np.cos(
+        theta)]
     return r
 
+
 def normVector(v):
-    return v/ np.sqrt(np.dot(v,v))
+    return v / np.sqrt(np.dot(v, v))
 
 
 def planeVectors(v):
