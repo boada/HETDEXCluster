@@ -60,8 +60,8 @@ def mkTruth(i=-1, flatHMF=False):
     truthPath = './../data/buzzard_v1.0/allbands/truth/'
     # build truth database
     if not i == -1:
-        with hdf.File(truthPath + 'truth' + str(i).zfill(2) + '_Oii.hdf5',
-                      'r') as f:
+        with hdf.File('{}truth{}_Oii.hdf5'.format(truthPath,
+                                                str(i).zfill(2))), 'r' as f:
             dset = f['truth' + str(i).zfill(2) + '_Oii']
             print(dset.file)  # print the loading file
             if not flatHMF:
@@ -81,8 +81,8 @@ def mkTruth(i=-1, flatHMF=False):
 
     else:
         for i in range(20):
-            with hdf.File(truthPath+'truth'+str(i).zfill(2)+'_Oii.hdf5', 'r')\
-                as f:
+            with hdf.File('{}truth{}_Oii.hdf5'.format(truthPath,
+                                                str(i).zfill(2))), 'r' as f:
                 dset = f['truth' + str(i).zfill(2) + '_Oii']
                 print(dset.file)  # print the loading file
                 if not flatHMF:
@@ -129,8 +129,8 @@ def mkQs(i=-1):
     truthPath = './../data/buzzard_v1.0/allbands/truth/'
     # build truth database
     if not i == -1:
-        with hdf.File(truthPath + 'truth' + str(i).zfill(2) + '_Oii.hdf5',
-                      'r') as f:
+        with hdf.File('{}truth{}_Oii.hdf5'.format(truthPath,
+                                                str(i).zfill(2))), 'r' as f:
             dset = f['Q']
             print(dset.file)  # print the loading file
             q_part = dset.value
@@ -142,9 +142,46 @@ def mkQs(i=-1):
 
     else:
         for i in range(20):
-            with hdf.File(truthPath+'truth'+str(i).zfill(2)+'_Oii.hdf5', 'r')\
-                as f:
+            with hdf.File('{}truth{}_Oii.hdf5'.format(truthPath,
+                                                str(i).zfill(2))), 'r' as f:
                 dset = f['Q']
+                print(dset.file)  # print the loading file
+                q_part = dset.value
+                try:
+                    q = np.append(q, q_part)
+                except NameError:
+                    q = q_part
+        return q
+
+
+def mkOii_all(i=-1):
+    ''' Loads either all of the truth files and returns the data array or loads
+    the individual file desired. To specify which file, call with an integer
+    0-19 as an argument.
+
+    Specifically, this loads a new data array of all of the new Oii values made
+    from the full SDSS sample instead of flux limited sample.
+
+    '''
+    truthPath = './../data/buzzard_v1.0/allbands/truth/'
+    # build truth database
+    if not i == -1:
+        with hdf.File('{}truth{}_Oii.hdf5'.format(truthPath,
+                                                str(i).zfill(2))), 'r' as f:
+            dset = f['Oii_all']
+            print(dset.file)  # print the loading file
+            q_part = dset.value
+            try:
+                q = np.append(q, q_part)
+            except NameError:
+                q = q_part
+        return q
+
+    else:
+        for i in range(20):
+            with hdf.File('{}truth{}_Oii.hdf5'.format(truthPath,
+                                                str(i).zfill(2))), 'r' as f:
+                dset = f['Oii_all']
                 print(dset.file)  # print the loading file
                 q_part = dset.value
                 try:
@@ -165,8 +202,8 @@ def mkN200Data(catalog='truth'):
 
     if catalog == 'truth':
         for i in range(20):
-            with hdf.File(truthPath+'truth'+str(i).zfill(2)+'_Oii.hdf5', 'r')\
-                as f:
+            with hdf.File('{}truth{}_Oii.hdf5'.format(truthPath,
+                                                str(i).zfill(2))), 'r' as f:
                 dset = f['truth' + str(i).zfill(2) + '_Oii']
                 print(dset.file)  # print the loading file
                 truth_part = dset['HALOID', 'RA', 'DEC']
@@ -191,7 +228,7 @@ def mkN200Data(catalog='truth'):
         return halo
 
     else:
-        print 'catalog must be either truth or halo'
+        print('catalog must be either truth or halo')
         return 0
 
 
