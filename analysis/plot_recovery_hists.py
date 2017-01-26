@@ -22,21 +22,21 @@ def find_indices(bigArr, smallArr):
         except IndexError:
             pass
         if i % 1000 == 0:
-            print i
+            print(i)
 
     return inds
 
 # load the data
 with hdf.File('./result_targetedPerfect.hdf5', 'r') as f:
-    dset = f[f.keys()[0]]
+    dset = f[f.__iter__().__next__()]
     truth = dset['HALOID', 'NGAL', 'M200c', 'ZSPEC']
 
 with hdf.File('./result_targetedRealistic.hdf5', 'r') as f:
-    dset = f[f.keys()[0]]
+    dset = f[f.__iter__().__next__()]
     target = dset['HALOID', 'NGAL', 'M200c', 'ZSPEC']
 
 with hdf.File('./surveyCompleteRealistic.hdf5', 'r') as f:
-    dset = f[f.keys()[0]]
+    dset = f[f.__iter__().__next__()]
     survey = dset['HALOID', 'NGAL', 'M200c', 'ZSPEC']
 
 # find the matching HALOIDS
