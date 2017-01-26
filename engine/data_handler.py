@@ -61,7 +61,7 @@ def mkTruth(i=-1, flatHMF=False):
     # build truth database
     if not i == -1:
         with hdf.File('{}truth{}_Oii.hdf5'.format(truthPath,
-                                                str(i).zfill(2))), 'r' as f:
+                                                str(i).zfill(2)), 'r') as f:
             dset = f['truth' + str(i).zfill(2) + '_Oii']
             print(dset.file)  # print the loading file
             if not flatHMF:
@@ -82,7 +82,7 @@ def mkTruth(i=-1, flatHMF=False):
     else:
         for i in range(20):
             with hdf.File('{}truth{}_Oii.hdf5'.format(truthPath,
-                                                str(i).zfill(2))), 'r' as f:
+                                                str(i).zfill(2)), 'r') as f:
                 dset = f['truth' + str(i).zfill(2) + '_Oii']
                 print(dset.file)  # print the loading file
                 if not flatHMF:
@@ -108,7 +108,10 @@ def mkHalo():
     # build halo database
     for i in range(20):
         with hdf.File(haloPath + 'halo' + str(i).zfill(2) + '.hdf5', 'r') as f:
-            dset = f[f.keys()[0]]
+            try:
+                dset = f[f.keys()[0]]
+            except TypeError:
+                dset = f[str(i)]
             print(dset.file)
             halo_part = dset['id', 'upid', 'ra', 'dec', 'zspec', 'vrms',
                              'm200c', 'rvir']
@@ -130,7 +133,7 @@ def mkQs(i=-1):
     # build truth database
     if not i == -1:
         with hdf.File('{}truth{}_Oii.hdf5'.format(truthPath,
-                                                str(i).zfill(2))), 'r' as f:
+                                                str(i).zfill(2)), 'r') as f:
             dset = f['Q']
             print(dset.file)  # print the loading file
             q_part = dset.value
@@ -143,7 +146,7 @@ def mkQs(i=-1):
     else:
         for i in range(20):
             with hdf.File('{}truth{}_Oii.hdf5'.format(truthPath,
-                                                str(i).zfill(2))), 'r' as f:
+                                                str(i).zfill(2)), 'r') as f:
                 dset = f['Q']
                 print(dset.file)  # print the loading file
                 q_part = dset.value
@@ -167,7 +170,7 @@ def mkOii_all(i=-1):
     # build truth database
     if not i == -1:
         with hdf.File('{}truth{}_Oii.hdf5'.format(truthPath,
-                                                str(i).zfill(2))), 'r' as f:
+                                                str(i).zfill(2)), 'r') as f:
             dset = f['Oii_all']
             print(dset.file)  # print the loading file
             q_part = dset.value
@@ -180,7 +183,7 @@ def mkOii_all(i=-1):
     else:
         for i in range(20):
             with hdf.File('{}truth{}_Oii.hdf5'.format(truthPath,
-                                                str(i).zfill(2))), 'r' as f:
+                                                str(i).zfill(2)), 'r') as f:
                 dset = f['Oii_all']
                 print(dset.file)  # print the loading file
                 q_part = dset.value
@@ -203,7 +206,7 @@ def mkN200Data(catalog='truth'):
     if catalog == 'truth':
         for i in range(20):
             with hdf.File('{}truth{}_Oii.hdf5'.format(truthPath,
-                                                str(i).zfill(2))), 'r' as f:
+                                                str(i).zfill(2)), 'r') as f:
                 dset = f['truth' + str(i).zfill(2) + '_Oii']
                 print(dset.file)  # print the loading file
                 truth_part = dset['HALOID', 'RA', 'DEC']
