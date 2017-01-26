@@ -1,18 +1,36 @@
-from multiprocessing import Pool
+import multiprocessing
 import h5py as hdf
 import numpy as np
-from data_handler import mkTruth, mkHalo
+from data_handler import mkTruth, mkHalo, mkOii_all
 from halo_handler import find_indices, find_indices_multi
 from calc_cluster_props import (updateArray, findClusterRedshift, findLOSV,
                                 findLOSVDmcmc, calc_mass_Evrard)
 import os
+import traceback
+import functools
 
+
+def error(msg, *args):
+    multiprocessing.log_to_stderr()
+    return multiprocessing.get_logger().error(msg, *args)
+
+def trace_unhandled_exceptions(func):
+    @functools.wraps(func)
+    def wrapped_func(*args, **kwargs):
+        try:
+            func(*args, **kwargs)
+        except Exception as e:
+            error(traceback.format_exc())
+            raise
+
+    return wrapped_func
 
 class AsyncFactory:
     def __init__(self, func, cb_func):
         self.func = func
         self.cb_func = cb_func
-        self.pool = Pool(maxtasksperchild=10)
+        self.pool = multiprocessing.Pool(maxtasksperchild=100,
+                                        processes=multiprocessing.cpu_count())
 
     def call(self, *args, **kwargs):
         self.pool.apply_async(self.func, args, kwargs, self.cb_func)
@@ -20,7 +38,6 @@ class AsyncFactory:
     def wait(self):
         self.pool.close()
         self.pool.join()
-
 
 def worker(pos, data, center):
     #print "PID: %d \t Value: %d" % (os.getpid(), pos)
@@ -30,12 +47,13 @@ def worker(pos, data, center):
     data = findLOSV(data)
     data, sigma_dist = findLOSVDmcmc(data)
     data = calc_mass_Evrard(data, A1D=1177, alpha=0.364)
-    return pos, data, sigma_dist
+    return (pos, data, sigma_dist)
 
 
-def cb_func((pos, data, sigma_dist)):
+def cb_func(result):
+    pos, data, sigma_dist = result
     if pos % 1000 == 0:
-        print pos
+        print(pos)
     results['IDX'][pos] = pos
     results['CLUSZ'][pos] = data['CLUSZ'][0]
     results['LOSVD'][pos] = data['LOSVD'][0]
@@ -49,10 +67,12 @@ if __name__ == "__main__":
     async_worker = AsyncFactory(worker, cb_func)
     halo = mkHalo()
     truth = mkTruth()
+    oii = mkOii_all()
 
     # this is the part that makes it realistic or not
     gmask = truth['g'] < 22
-    Oiimask = truth['Oii'] > 3.5
+    #Oiimask = truth['Oii'] > 3.5
+    Oiimask = oii > 3.5
     mask = gmask | Oiimask
 
     truth = truth[mask]
@@ -101,10 +121,10 @@ if __name__ == "__main__":
 
     try:
         #os.remove('result_targetedPerfect.hdf5')
-        os.remove('result_targetedRealistic.hdf5')
+        os.remove('result_targetedRealistic_OiiALL.hdf5')
     except OSError:
         pass
     #with hdf.File('result_targetedPerfect.hdf5', 'w') as f:
     #    f['result_targetedPerfect'] = results
-    with hdf.File('result_targetedRealistic.hdf5', 'w') as f:
+    with hdf.File('result_targetedRealistic_OiiALL.hdf5', 'w') as f:
         f['result_targetedRealistic'] = results
