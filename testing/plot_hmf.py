@@ -19,7 +19,7 @@ for i in range(20):
 mask = (0.09 < result['zspec']) & (result['zspec'] < 0.11)
 mass = result[mask]
 
-limits = pyl.logspace(10, 15)
+limits = pyl.logspace(10, 16, 120)
 sums = pyl.zeros_like(limits)
 for i, l in enumerate(limits):
     sums[i] = sum(mass['m200c'] > l)
@@ -36,7 +36,7 @@ hmf = pyl.genfromtxt('mVector_PLANCK-SMT .txt')
 f = pyl.figure(1, figsize=(7, 7 * (pyl.sqrt(5.) - 1.0) / 2.0))
 ax = f.add_subplot(111)
 ax.plot(hmf[:, 0] / 0.7, hmf[:, 8] * 0.7**3)
-ax.scatter(limits / 0.7, sums / Vc)
+ax.scatter(limits / 0.7, sums / Vc, color='k')
 
 pyl.loglog()
 pyl.xlabel('Mass $(M_\odot)$')
