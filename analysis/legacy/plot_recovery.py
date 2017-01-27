@@ -21,23 +21,23 @@ def find_indices(bigArr, smallArr):
         except IndexError:
             pass
         if i % 1000 ==0:
-            print i
+            print(i)
 
     return inds
 
 # load the data
 f = hdf.File('./result_FullKnowledge.hdf5', 'r')
-dset = f[f.keys()[0]]
+dset = f[list(f.keys())[0]]
 truth = dset.value
 f.close()
 
 f = hdf.File('./result_FullKnowledge_realistic.hdf5', 'r')
-dset = f[f.keys()[0]]
+dset = f[list(f.keys())[0]]
 target = dset.value
 f.close()
 
 f = hdf.File('./surveyComplete.hdf5', 'r')
-dset = f[f.keys()[0]]
+dset = f[list(f.keys())[0]]
 survey = dset.value
 
 # find the matching HALOIDS

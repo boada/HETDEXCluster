@@ -26,17 +26,17 @@ def find_indices(bigArr, smallArr):
 
     return inds
 
+
 # load the data
 with hdf.File('./result_targetedPerfect.hdf5', 'r') as f:
-    dset = f[f.__iter__().__next__()]
+    dset = f[list(f.keys())[0]]
     truth = dset['HALOID', 'NGAL', 'M200c', 'ZSPEC']
 
 with hdf.File('./result_targetedRealistic.hdf5', 'r') as f:
-    dset = f[f.__iter__().__next__()]
+    dset = f[list(f.keys())[0]]
     target = dset['HALOID', 'NGAL', 'M200c', 'ZSPEC']
-
 with hdf.File('./surveyCompleteRealistic.hdf5', 'r') as f:
-    dset = f[f.__iter__().__next__()]
+    dset = f[list(f.keys())[0]]
     survey = dset['HALOID', 'NGAL', 'M200c', 'ZSPEC']
 
 # find the matching HALOIDS
