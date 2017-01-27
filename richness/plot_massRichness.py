@@ -3,7 +3,6 @@ import h5py as hdf
 from scipy import stats
 import pylab as pyl
 from astLib import astStats
-from line import fit
 
 
 def mklogMass(theta):
@@ -108,7 +107,7 @@ for m, c, style, zo in zip([target_mlMasses, survey_mlMasses],
     x = lam_obs
     y = m['ML_pred_3d']
     index = pyl.digitize(x, bins)
-    print[y[index == k].size for k in range(1, bins.size)]
+    print([y[index == k].size for k in range(1, bins.size)])
     running = [pyl.std(y[index == k]) for k in range(1, bins.size)]
     running = pyl.array(running)
     tmp = pyl.where(~pyl.isnan(running))

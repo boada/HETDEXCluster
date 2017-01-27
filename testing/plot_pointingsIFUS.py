@@ -13,7 +13,7 @@ def mk_pointings(startRA, startDEC):
 
     numRA = 4
     numDEC = 3
-    coords = pyl.asarray([(x, y) for x in xrange(numRA) for y in xrange(numDEC)])
+    coords = pyl.asarray([(x, y) for x in range(numRA) for y in range(numDEC)])
     # 1320'' = 22', the width of the pointings.
     x = [shiftRADec(startRA, startDEC, i*960, 0)[0] for i in coords[:,0]]
     y = [shiftRADec(startRA, startDEC, 0, i*960)[1] for i in coords[:,1]]
@@ -119,7 +119,7 @@ ax = fig.add_subplot(212)
 ax2 = fig.add_subplot(211)
 
 for i, p in enumerate(gen_pointings(ra, dec)):
-    print i,p
+    print(i,p)
 
     if i == 7:
         for i in gen_ifus(p[0], p[1]):
@@ -127,7 +127,7 @@ for i, p in enumerate(gen_pointings(ra, dec)):
             ax.add_patch(rec1)
     else:
         gi = gen_ifus(p[0], p[1])
-        i1 = gi.next()
+        i1 = next(gi)
         x,y = shiftRADec(p[0], p[1], 480., 480.)
 
         cir1 = RP((x, y), 8, 480*pyl.cos(pyl.pi/8)**-1/3600., zorder=0,
@@ -135,7 +135,7 @@ for i, p in enumerate(gen_pointings(ra, dec)):
     ax.add_patch(cir1)
 
 for i, p in enumerate(gen_pointings(ra, dec, shots=True)):
-    print i,p
+    print(i,p)
 
     if i == 7:
         for i in gen_ifus(p[0], p[1]):
@@ -143,7 +143,7 @@ for i, p in enumerate(gen_pointings(ra, dec, shots=True)):
             ax2.add_patch(rec1)
     else:
         gi = gen_ifus(p[0], p[1])
-        i1 = gi.next()
+        i1 = next(gi)
         x,y = shiftRADec(p[0], p[1], 480., 480.)
 
         cir1 = RP((x, y), 8, 550*pyl.cos(pyl.pi/8)**-1/3600., zorder=0,

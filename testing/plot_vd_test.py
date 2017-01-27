@@ -2,7 +2,7 @@ import pylab as pyl
 import h5py as hdf
 
 f = hdf.File('./stat_testing281041.hdf5','r')
-dset = f[f.keys()[0]]
+dset = f[list(f.keys())[0]]
 result = dset.value
 
 # filter out bad values
@@ -20,7 +20,7 @@ import itertools
 color_cycle = itertools.cycle(pyl.cm.spectral(pyl.linspace(0,1,6)))
 
 for i in range(2, 8):
-    c = color_cycle.next()
+    c = next(color_cycle)
     y = (result[:,i] - result[:,8])/result[:,8]
     index = pyl.digitize(result[:,1], bins) -1
     avgs = [pyl.mean(y[index == k]) for k in range(len(bins))]

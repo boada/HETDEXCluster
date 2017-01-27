@@ -7,9 +7,9 @@ data_dir = '../data/buzzard_v1.0/allbands/halos/'
 
 # load all of the data
 for i in range(20):
-    print i
+    print(i)
     with hdf.File(data_dir + 'halo' + str(i).zfill(2) + '.hdf5', 'r') as f:
-        dset = f[f.keys()[0]]
+        dset = f[list(f.keys())[0]]
         result_part = dset['m200c', 'zspec']
         try:
             result = pyl.append(result, result_part)

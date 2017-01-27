@@ -31,7 +31,7 @@ def mp_worker_wrapper(args):
     return mp_worker(*args)
 
 def start_process():
-    print 'Starting', multiprocessing.current_process().name
+    print('Starting', multiprocessing.current_process().name)
 
 def mp_handler(ra, dec, RAmax, DECmax):
     # get this so we can use map
@@ -65,14 +65,14 @@ if __name__ == "__main__":
     ###################
     ### DO THE WORK ###
     ###################
-    print 'do work'
+    print('do work')
     result = mp_handler(ra, dec, RAmax, DECmax)
-    print len(result)
-    print result.dtype
+    print(len(result))
+    print(result.dtype)
 
     # write it all to a file
-    print 'ID number is', environ['LSB_JOBID']
+    print('ID number is', environ['LSB_JOBID'])
     f = hdf.File('out'+str(environ['LSB_JOBID'])+'.hdf5', 'w')
     f['dset'] = result
     f.close()
-    print 'done selecting galaxies'
+    print('done selecting galaxies')

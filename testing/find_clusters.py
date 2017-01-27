@@ -10,10 +10,10 @@ import pylab as pyl
 
 # load RA/DEC/z data
 f = hdf.File('../data/truth/Aardvark_v1.0c_truth_des_rotated.86.hdf5','r')
-dset = f[f.keys()[0]]
+dset = f[list(f.keys())[0]]
 truth = dset['RA', 'DEC', 'Z', 'HALOID']
 f = hdf.File('../data/halos/Aardvark_v1.0_halos_r1_rotated.4.hdf5','r')
-dset = f[f.keys()[0]]
+dset = f[list(f.keys())[0]]
 halo = dset['HALOID', 'RA', 'DEC', 'Z', 'NGALS', 'M200']
 
 # filter halos down
@@ -46,12 +46,12 @@ for i in randomHalos:
 
     ra, dec, z = astCoords.eq2cart(halo['RA'][i], halo['DEC'][i],
             vec_astCalc.dm(halo['Z'][i]))
-    print ra, dec, z
+    print(ra, dec, z)
     #print halo['RA'][i], halo['DEC'][i], halo['Z'][i]
-    print 'members - ', len(x[0])
-    print 'mass - ', halo['M200'][i]
+    print('members - ', len(x[0]))
+    print('mass - ', halo['M200'][i])
 
-print '---------'
+print('---------')
 
 # add some noise
 noise = pyl.zeros(round(len(t)*0.6), dtype=t.dtype)
@@ -98,8 +98,8 @@ for k in unique_labels:
     DEC = pyl.mean(xy[:,1])
     Z = pyl.mean(xy[:,2])
 
-    print 'cluster - ', k, 'RA - ', RA, 'DEC - ', DEC, 'z - ', Z
-    print 'members - ', len(xy)
+    print('cluster - ', k, 'RA - ', RA, 'DEC - ', DEC, 'z - ', Z)
+    print('members - ', len(xy))
 
     # update the data array with the recovered information
     t[class_member_mask & core_samples_mask] =\

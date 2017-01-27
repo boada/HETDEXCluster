@@ -56,14 +56,14 @@ def load_tiles(tiles):
 	t = t.replace('truth','')
         f = hdf.File(data_dir+'Buzzard-highres_galaxies_shmatch.'+ t +'.hdf5',
                 'r')
-        dset = f[f.keys()[0]]
+        dset = f[list(f.keys())[0]]
         data.append(dset)
     return data
 
 def mk_catalog(tiles):
     catalog = load_tiles(tiles)
     for dset in catalog:
-        print dset.file # The file it is loading
+        print(dset.file) # The file it is loading
         result_part = dset['ID', 'RA', 'DEC', 'Z', 'HALOID']
         result_part = recfunctions.append_fields(result_part, ['g','r'],
                 [dset['OMAG'][:,0], dset['OMAG'][:,1]], usemask=False)
@@ -71,7 +71,7 @@ def mk_catalog(tiles):
             result = np.append(result, result_part)
         except NameError:
             result = result_part
-    print 'done loading'
+    print('done loading')
     return result
 
 def apply_mask(ramin, decmin, ramax, decmax, catalog):

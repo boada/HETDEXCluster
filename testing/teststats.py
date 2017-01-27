@@ -48,7 +48,7 @@ def mp_handler_progress(inds):
             break
         else:
             size = q.qsize()
-            print size
+            print(size)
             time.sleep(30)
 
     return result.get()
@@ -168,10 +168,10 @@ if __name__ == "__main__":
     base = '/home/boada/scratch'
 
     data = find_overlap()
-    halo = np.random.choice(range(len(data)))
+    halo = np.random.choice(list(range(len(data))))
 
-    print data[halo][0]
-    print data[halo][1]
+    print(data[halo][0])
+    print(data[halo][1])
 
     truth = mk_catalog(data[halo][1])
     halo = mk_haloCatalog((data[halo][0],))
@@ -191,14 +191,14 @@ if __name__ == "__main__":
     x = (1e15 < halo['M200'])
     h3 = halo[x]
 
-    print len(h1), '1e13 - 1e14 Clusters'
-    print len(h2), '1e14 - 1e15 Clusters'
-    print len(h3), '1e15 or greater Clusters'
+    print(len(h1), '1e13 - 1e14 Clusters')
+    print(len(h2), '1e14 - 1e15 Clusters')
+    print(len(h3), '1e15 or greater Clusters')
 
     if len(h2) < 10000:
         h = np.concatenate((h2, h3))
     else:
-        print 'OMG'
+        print('OMG')
 
     h1 = np.random.choice(h1, 50000 - len(h))
 
@@ -207,7 +207,7 @@ if __name__ == "__main__":
     # find the common haloids we are able to use
     haloids = np.intersect1d(halo['HALOID'], truth['HALOID'])
 
-    print len(haloids), 'Clusters selcted'
+    print(len(haloids), 'Clusters selcted')
 
     # pick a smaller subset
     #haloids = np.random.choice(haloids, 50000)
@@ -221,15 +221,15 @@ if __name__ == "__main__":
     myglobals.truth = truth
     myglobals.halo = halo
 
-    print 'do work'
+    print('do work')
     #result = mp_handler(truth, halo, inds)
     #result = mp_handler_progress(truth, halo, inds)
     result = mp_handler_progress(inds)
 
     # write it all to a file
-    print 'ID number is', environ['LSB_JOBID']
+    print('ID number is', environ['LSB_JOBID'])
     f = hdf.File('stat_testing'+str(environ['LSB_JOBID'])+'.hdf5', 'w')
     f['dset'] = result
     f.close()
-    print 'done'
+    print('done')
 

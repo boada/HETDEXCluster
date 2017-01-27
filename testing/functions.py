@@ -43,7 +43,7 @@ def mk_haloCatalog(tiles):
         for t in tiles:
             t = t.replace('halos','')
             f = hdf.File(data_dir+'Aardvark_v1.0_halos_r1_rotated.'+t+'.hdf5', 'r')
-            dset = f[f.keys()[0]]
+            dset = f[list(f.keys())[0]]
             data.append(dset)
         return data
 
@@ -65,19 +65,19 @@ def mk_catalog(tiles):
         for t in tiles:
             t = t.replace('truth','')
             f = hdf.File(data_dir+'Aardvark_v1.0c_truth_des_rotated.'+ t +'.hdf5', 'r')
-            dset = f[f.keys()[0]]
+            dset = f[list(f.keys())[0]]
             data.append(dset)
         return data
 
     catalog = load_tiles(tiles)
     for dset in catalog:
-        print dset.file # The file it is loading
+        print(dset.file) # The file it is loading
         result_part = dset['HALOID', 'Z', 'RHALO', 'R200']
         try:
             result = np.append(result, result_part)
         except NameError:
             result = result_part
-    print 'done loading'
+    print('done loading')
     return result
 
 def find_indices(bigArr, smallArr):
