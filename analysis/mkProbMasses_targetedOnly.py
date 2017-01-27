@@ -45,7 +45,7 @@ def splitData(data, test_size=0.3):
     np.random.shuffle(data)
     sl = splitList(data, int(1 / test_size))
 
-    c = permutations(range(int(1 / test_size)))
+    c = permutations(list(range(int(1 / test_size))))
 
     prev_i = -1
     for i, j, k in c:
@@ -107,17 +107,17 @@ if __name__ == "__main__":
     ### Targeted ###
     ################
     with hdf.File('./result_targetedRealistic.hdf5', 'r') as f:
-        dset = f[f.keys()[0]]
+        dset = f[list(f.keys())[0]]
         target = dset['IDX', 'HALOID']
         #data = dset.value
 
-    print 'load perfect'
+    print('load perfect')
     ### Perfect ###
     ################
     with hdf.File('./result_targetedPerfect.hdf5', 'r') as f:
-        dset = f[f.keys()[0]]
+        dset = f[list(f.keys())[0]]
         perfect = dset['IDX', 'HALOID']
-        print perfect.dtype
+        print(perfect.dtype)
         # this finds the galaxies that were observed with the targeted realistic
         # observations and then computes all of their masses using the perfect
         # observations of the same clusters. This might work better for
@@ -127,10 +127,10 @@ if __name__ == "__main__":
         idx = find_indices(perfect['HALOID'], target['HALOID'])
         idx = np.ravel(idx)
 
-        print 'load more perfect data'
+        print('load more perfect data')
         perfect = dset['IDX', 'HALOID', 'ZSPEC', 'M200c', 'NGAL', 'LOSVD',
                        'LOSVD_err', 'MASS', 'LOSVD_dist'][idx.tolist()]
-        print perfect.size
+        print(perfect.size)
 
     data = perfect
     data['IDX'] = target['IDX']
@@ -159,7 +159,7 @@ if __name__ == "__main__":
     ### Survey ###
     ##############
     with hdf.File('./surveyCompletePerfect.hdf5', 'r') as f:
-        dset = f[f.keys()[0]]
+        dset = f[list(f.keys())[0]]
         data = dset['IDX', 'HALOID', 'ZSPEC', 'M200c', 'NGAL', 'LOSVD',
                     'LOSVD_err', 'MASS', 'LOSVD_dist']
 

@@ -4,7 +4,7 @@ from sklearn.ensemble import RandomForestRegressor
 
 # load the buzzard training set
 with hdf.File('../analysis/result_targetedRealistic.hdf5', 'r') as f:
-    dset = f[f.keys()[0]]
+    dset = f[list(f.keys())[0]]
     target = dset['IDX', 'HALOID', 'ZSPEC', 'M200c', 'NGAL', 'LOSVD',
                   'LOSVD_err', 'MASS']
 

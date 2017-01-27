@@ -43,7 +43,7 @@ def splitData(data, test_size=0.3):
     np.random.shuffle(data)
     sl = splitList(data, int(1 / test_size))
 
-    c = permutations(range(int(1 / test_size)))
+    c = permutations(list(range(int(1 / test_size))))
 
     prev_i = -1
     for i, j, k in c:
@@ -72,7 +72,7 @@ def addMasses(data, generator):
         mask = np.where(np.isnan(mrf['MASS']))[0]
         mrf = np.delete(mrf, mask)
         test2 = np.delete(test, mask)
-        print(mrf.size, test2.size)
+        print((mrf.size, test2.size))
 
         data['Prob_pred_1d'][test2['IDX']] = mrf['MASS']
         data['Prob_pred_1d_err'][test2['IDX']] = mrf['MASS_err']
@@ -82,7 +82,7 @@ def addMasses(data, generator):
         mask = np.where(np.isnan(mrf['MASS']))[0]
         mrf = np.delete(mrf, mask)
         test2 = np.delete(test, mask)
-        print(mrf.size, test2.size)
+        print((mrf.size, test2.size))
         data['Prob_pred_2d'][test2['IDX']] = mrf['MASS']
         data['Prob_pred_2d_err'][test2['IDX']] = mrf['MASS_err']
 
@@ -91,7 +91,7 @@ def addMasses(data, generator):
         mask = np.where(np.isnan(mrf['MASS']))[0]
         mrf = np.delete(mrf, mask)
         test2 = np.delete(test, mask)
-        print(mrf.size, test2.size)
+        print((mrf.size, test2.size))
         data['Prob_pred_3d'][test2['IDX']] = mrf['MASS']
         data['Prob_pred_3d_err'][test2['IDX']] = mrf['MASS_err']
 
@@ -105,7 +105,7 @@ if __name__ == "__main__":
     ### Targeted ###
     ################
     with hdf.File('./result_targetedRealistic.hdf5', 'r') as f:
-        dset = f[f.keys()[0]]
+        dset = f[list(f.keys())[0]]
         data = dset['IDX', 'HALOID', 'ZSPEC', 'M200c', 'NGAL', 'LOSVD',
                     'LOSVD_err', 'MASS', 'LOSVD_dist']
     # add the extra fields
@@ -132,7 +132,7 @@ if __name__ == "__main__":
     ### Survey ###
     ##############
     with hdf.File('./surveyCompleteRealistic.hdf5', 'r') as f:
-        dset = f[f.keys()[0]]
+        dset = f[list(f.keys())[0]]
         data = dset['IDX', 'HALOID', 'ZSPEC', 'M200c', 'NGAL', 'LOSVD',
                     'LOSVD_err', 'MASS', 'LOSVD_dist']
 

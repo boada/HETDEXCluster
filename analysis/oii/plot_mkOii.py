@@ -2,7 +2,9 @@ import pylab as pyl
 import pyfits as pyf
 from astLib import astCalc
 from matplotlib.patches import Rectangle
-from itertools import izip
+from sys import version_info
+if version_info[:1][0] == 2:
+    from itertools import izip as zip
 from multiprocessing import Pool, cpu_count
 
 def absMag(mag, dl):
@@ -25,7 +27,7 @@ with pyf.open('sdss12_oii_flux_v2.fits') as f:
     r = sdssData['r']
 
     dl = pyl.array(p.map(astCalc.dl, sdssData['redshift'], chunksize=200))
-    xdat = pyl.array(p.map(mp_wrapper, izip(r, dl), chunksize=200))
+    xdat = pyl.array(p.map(mp_wrapper, zip(r, dl), chunksize=200))
     ydat = g - r
 
     p.close()

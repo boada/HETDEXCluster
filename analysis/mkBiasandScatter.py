@@ -11,25 +11,25 @@ def runningStatistic(true, pred, **kwargs):
 
     runningb = []
     runnings = []
-    for k in xrange(1, bins.size):
-        print true[indx == k].size,
+    for k in range(1, bins.size):
+        print(true[indx == k].size, end=' ')
         try:
             mean, var, std = stats.mvsdist(pred[indx == k] - true[indx == k])
             #print '$%.2f\pm{%.2f}$ &' % (std.mean(),std.std()),
-            print '$%.3f\pm{%.3f}$ &' % (mean.mean(), mean.std()),
+            print('$%.3f\pm{%.3f}$ &' % (mean.mean(), mean.std()), end=' ')
             runnings.append(std.mean())
             runningb.append(mean.mean())
         except ValueError:
             runnings.append(0.0)
             runningb.append(0.0)
-            print '$%.3f\pm{%.3f}$ &' % (0.0, 0.0),
-        print ''
+            print('$%.3f\pm{%.3f}$ &' % (0.0, 0.0), end=' ')
+        print('')
     return runningb, runnings
 
 ### Perfect ###
 ###############
 with hdf.File('./targetedPerfect_MLmasses_realisticOnly.hdf5', 'r') as f:
-    dset = f[f.keys()[0]]
+    dset = f[list(f.keys())[0]]
     perfect = dset['M200c', 'MASS', 'ML_pred_1d', 'ML_pred_2d', 'ML_pred_2d2',
                    'ML_pred_3d']
 # filter bad values
@@ -39,7 +39,7 @@ perfect = perfect[mask]
 ### Targeted ###
 ################
 with hdf.File('./targetedRealistic_MLmasses.hdf5', 'r') as f:
-    dset = f[f.keys()[0]]
+    dset = f[list(f.keys())[0]]
     target = dset['M200c', 'MASS', 'ML_pred_1d', 'ML_pred_2d', 'ML_pred_2d2',
                   'ML_pred_3d']
 # filter bad values
@@ -49,7 +49,7 @@ target = target[mask]
 ### Survey ###
 ##############
 with hdf.File('./surveyCompleteRealistic_MLmasses.hdf5', 'r') as f:
-    dset = f[f.keys()[0]]
+    dset = f[list(f.keys())[0]]
     survey = dset['M200c', 'MASS', 'ML_pred_1d', 'ML_pred_2d', 'ML_pred_2d2',
                   'ML_pred_3d']
 # filter bad values
@@ -73,9 +73,9 @@ for t, d in zip(['perfect', 'target', 'survey'], [perfect, target, survey]):
     mean, var, std = stats.mvsdist(np.log10(d['MASS']) - np.log10(d['M200c']))
     s = stats.sem(np.log10(d['MASS']) - np.log10(d['M200c']))
     #print '$%.2f\pm{%.3f}$' % (mean.mean(),s)
-    print '$%.2f\pm{%.3f}$' % (std.mean(), std.std())
+    print('$%.2f\pm{%.3f}$' % (std.mean(), std.std()))
 
-    print t
+    print(t)
 
     print('power law')
     running = runningStatistic(np.log10(d['M200c']), np.log10(d['MASS']))
@@ -106,7 +106,7 @@ for t, d in zip(['perfect', 'target', 'survey'], [perfect, target, survey]):
     results['ML_bias_3d'] = running[0]
     results['ML_scatter_3d'] = running[1]
 
-    print '-----'
+    print('-----')
 
     with hdf.File('biasandScatter_%s.hdf5' % (t), 'w') as f:
         f['biasandscatter'] = results

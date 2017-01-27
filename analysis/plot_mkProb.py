@@ -5,7 +5,7 @@ import h5py as hdf
 ### Targeted ###
 ################
 with hdf.File('./result_targetedPerfect.hdf5', 'r') as f:
-    dset = f[f.keys()[0]]
+    dset = f[list(f.keys())[0]]
     #data = dset['IDX', 'HALOID', 'ZSPEC', 'M200c', 'NGAL', 'LOSVD',
     #    'LOSVD_err', 'MASS', 'LOSVD_dist']
     data = dset['ZSPEC', 'M200c', 'LOSVD']

@@ -4,7 +4,7 @@ import h5py as hdf
 from astLib import astCalc, astStats
 from collections import Counter
 from multiprocessing import Pool, cpu_count
-from itertools import izip
+
 from numpy.lib import recfunctions as rfns
 import os
 
@@ -45,8 +45,8 @@ with pyf.open('../analysis/oii/sdss12_oii_flux_v2.fits') as f:
     g = sdssData['g']
     r = sdssData['r']
 
-    dl = np.array(map(astCalc.dl, sdssData['redshift']))
-    xdat = np.array(map(mp_wrapper, izip(r, dl)))
+    dl = np.array(list(map(astCalc.dl, sdssData['redshift'])))
+    xdat = np.array(list(map(mp_wrapper, zip(r, dl))))
     ydat = g - r
 
     bins = [50, 50]
@@ -59,13 +59,13 @@ with pyf.open('../analysis/oii/sdss12_oii_flux_v2.fits') as f:
 # now we loop over the catalog galaxies to add the info
 SOL = 2.99e5  # speed of light in km/s
 with hdf.File('./galaxies.hdf5', 'r') as f:
-    dset = f[f.keys()[0]]
+    dset = f[list(f.keys())[0]]
     velx = dset['velx']
     cz = dset['redshift']
     catRedshift = velx / SOL * (1 + cz) + cz
     catOii = -np.ones(dset.shape[0])
 
-    dl = np.array(map(astCalc.dl, catRedshift))
+    dl = np.array(list(map(astCalc.dl, catRedshift)))
     catg = dset['g_sdss'] + 5 * np.log10(dl * 1e6) - 5  # g band apparent mag
     catr = dset['r_sdss'] + 5 * np.log10(dl * 1e6) - 5  # r band apparent mag
 
@@ -79,7 +79,7 @@ with hdf.File('./galaxies.hdf5', 'r') as f:
     pairs = [(x_, y_) for x_, y_ in zip(xbin, ybin)]
     c = Counter(pairs)
 
-    for bins, number in c.items():
+    for bins, number in list(c.items()):
         # need this bit to handle the situation of data outside the bin range
         if bins[0] == len(locx) or bins[1] == len(locy):
             lumes = []

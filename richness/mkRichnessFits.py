@@ -1,4 +1,4 @@
-from __future__ import division
+
 import h5py as hdf
 from scipy import stats
 import numpy as np
@@ -51,7 +51,7 @@ truth = 14.344, 1.33, 40  # simet2016
 # truth = 14.2042, 1.1655, 30 # me
 
 with hdf.File('./targetedRealistic_MLmasses_corrected.hdf5', 'r') as f:
-    dset = f[f.keys()[0]]
+    dset = f[list(f.keys())[0]]
     target_mlMasses = dset['HALOID', 'ML_pred_3d', 'ML_pred_3d_err', 'M200c']
 
 # mask out the values with failed ML masses
@@ -59,7 +59,7 @@ mask = (target_mlMasses['ML_pred_3d'] != 0)
 target_mlMasses = target_mlMasses[mask]
 
 with hdf.File('./surveyCompleteRealistic_MLmasses_corrected.hdf5', 'r') as f:
-    dset = f[f.keys()[0]]
+    dset = f[list(f.keys())[0]]
     survey_mlMasses = dset['HALOID', 'ML_pred_3d', 'ML_pred_3d_err', 'M200c']
 
 # mask out the values with failed ML masses
@@ -78,8 +78,8 @@ for m in [target_mlMasses, survey_mlMasses]:
     # setup the data
     x_obs = np.log10(lam_obs)[mask]
     y_obs = m['ML_pred_3d'][mask]
-    print np.std(m['M200c'][mask] - y_obs)
-    print np.std(m_obs[mask] - y_obs)
+    print(np.std(m['M200c'][mask] - y_obs))
+    print(np.std(m_obs[mask] - y_obs))
 
     yerr = m['ML_pred_3d_err'][mask]
     #yerr = np.zeros_like(y_obs)

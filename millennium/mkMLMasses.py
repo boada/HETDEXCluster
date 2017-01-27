@@ -3,12 +3,12 @@ import h5py as hdf
 from sklearn.ensemble import RandomForestRegressor
 #from sklearn.cross_validation import train_test_split
 from numpy.lib import recfunctions as rfns
-from itertools import permutations, izip
+from itertools import permutations
 import multiprocessing
 
 
 def child_initializer(_rf):
-    print 'Starting', multiprocessing.current_process().name
+    print('Starting', multiprocessing.current_process().name)
     global model
     model = _rf
 
@@ -48,7 +48,7 @@ def splitData(data, test_size=0.3):
     np.random.shuffle(data)
     sl = splitList(data, int(1 / test_size))
 
-    c = permutations(range(int(1 / test_size)))
+    c = permutations(list(range(int(1 / test_size))))
 
     prev_i = -1
     for i, j, k in c:
@@ -72,7 +72,7 @@ def addMasses(data, generator):
 
     # load the buzzard training set
     with hdf.File('../analysis/result_targetedRealistic.hdf5', 'r') as f:
-        dset = f[f.keys()[0]]
+        dset = f[list(f.keys())[0]]
         target = dset['IDX', 'HALOID', 'ZSPEC', 'M200c', 'NGAL', 'LOSVD',
                       'LOSVD_err', 'MASS']
 
@@ -100,7 +100,7 @@ def addMasses(data, generator):
         p = multiprocessing.Pool(maxtasksperchild=1000,
                                  initializer=child_initializer,
                                  initargs=([rf]))
-        result = p.map(mp_worker_wrapper, izip(obs, mrf))
+        result = p.map(mp_worker_wrapper, zip(obs, mrf))
         p.close()
         p.join()
         data['ML_pred_1d_err'][test['IDX']] = result
@@ -119,7 +119,7 @@ def addMasses(data, generator):
         p = multiprocessing.Pool(maxtasksperchild=1000,
                                  initializer=child_initializer,
                                  initargs=([rf]))
-        result = p.map(mp_worker_wrapper, izip(obs, mrf))
+        result = p.map(mp_worker_wrapper, zip(obs, mrf))
         p.close()
         p.join()
         data['ML_pred_2d_err'][test['IDX']] = result
@@ -140,7 +140,7 @@ def addMasses(data, generator):
         p = multiprocessing.Pool(maxtasksperchild=1000,
                                  initializer=child_initializer,
                                  initargs=([rf]))
-        result = p.map(mp_worker_wrapper, izip(obs, mrf))
+        result = p.map(mp_worker_wrapper, zip(obs, mrf))
         p.close()
         p.join()
         data['ML_pred_3d_err'][test['IDX']] = result
@@ -193,7 +193,7 @@ if __name__ == "__main__":
     ### Targeted ###
     ################
     with hdf.File('./result_targetedRealistic.hdf5', 'r') as f:
-        dset = f[f.keys()[0]]
+        dset = f[list(f.keys())[0]]
         data = dset['IDX', 'HALOID', 'ZSPEC', 'M200c', 'NGAL', 'LOSVD',
                     'LOSVD_err', 'MASS']
         #data = dset.value

@@ -1,4 +1,4 @@
-from __future__ import print_function
+
 import pylab as pyl
 from astLib import astStats
 from sklearn.metrics import median_absolute_error, mean_squared_error
@@ -35,7 +35,7 @@ ax2s.yaxis.set_minor_locator(AutoMinorLocator())
 ###############
 #with hdf.File('./targetedPerfect_Probmasses.hdf5', 'r') as f:
 with hdf.File('./targetedPerfect_Probmasses_realisticOnly.hdf5', 'r') as f:
-    dset = f[f.keys()[0]]
+    dset = f[list(f.keys())[0]]
     perfect = dset['M200c', 'MASS', 'Prob_pred_1d', 'Prob_pred_2d',
                    'Prob_pred_3d']
 # filter bad values
@@ -46,7 +46,7 @@ perfect = perfect[~mask]
 ### Targeted ###
 ################
 with hdf.File('./targetedRealistic_Probmasses.hdf5', 'r') as f:
-    dset = f[f.keys()[0]]
+    dset = f[list(f.keys())[0]]
     target = dset['M200c', 'MASS', 'Prob_pred_1d', 'Prob_pred_2d',
                   'Prob_pred_3d']
 # filter bad values
@@ -57,7 +57,7 @@ target = target[~mask]
 ### Survey ###
 ##############
 with hdf.File('./surveyCompleteRealistic_Probmasses.hdf5', 'r') as f:
-    dset = f[f.keys()[0]]
+    dset = f[list(f.keys())[0]]
     survey = dset['M200c', 'MASS', 'Prob_pred_1d', 'Prob_pred_2d',
                   'Prob_pred_3d']
 # filter bad values

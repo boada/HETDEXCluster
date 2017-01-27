@@ -7,7 +7,7 @@ def main(f1, f2, f3):
     ### biased ###
     ###############
     with hdf.File(f1, 'r') as f:
-        dset = f[f.keys()[0]]
+        dset = f[list(f.keys())[0]]
         data = dset.value
     # filter bad values
     mask = (data['ML_pred_1d'] != 0)
@@ -16,7 +16,7 @@ def main(f1, f2, f3):
     ### corrections ###
     ###################
     with hdf.File(f2, 'r') as f:
-        dset = f[f.keys()[0]]
+        dset = f[list(f.keys())[0]]
         data_bias = dset.value
 
     # these are the mass bins we used for the corrections

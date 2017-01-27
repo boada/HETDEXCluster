@@ -1,4 +1,4 @@
-from __future__ import division
+
 import h5py as hdf
 from scipy import stats
 import pylab as pyl
@@ -59,7 +59,7 @@ truth = 14.19312, 1.31, 30
 #x_obs = stats.norm(x_true, x_err).rvs(N)
 #y_obs = stats.norm(y_true, y_err).rvs(N)
 with hdf.File('./targetedRealistic_MLmasses_corrected.hdf5', 'r') as f:
-    dset = f[f.keys()[0]]
+    dset = f[list(f.keys())[0]]
     target_mlMasses = dset['HALOID', 'ML_pred_3d', 'ML_pred_3d_err', 'M200c']
 
 # mask out the values with failed ML masses
@@ -67,7 +67,7 @@ mask = (target_mlMasses['ML_pred_3d'] != 0)
 target_mlMasses = target_mlMasses[mask]
 
 with hdf.File('./surveyCompleteRealistic_MLmasses_corrected.hdf5', 'r') as f:
-    dset = f[f.keys()[0]]
+    dset = f[list(f.keys())[0]]
     survey_mlMasses = dset['HALOID', 'ML_pred_3d', 'ML_pred_3d_err', 'M200c']
 
 # mask out the values with failed ML masses

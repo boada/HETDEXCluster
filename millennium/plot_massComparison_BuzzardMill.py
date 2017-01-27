@@ -10,7 +10,7 @@ def error(true, pred, mu):
     functions. Calculates the error on the mean.
 
     '''
-    print true.size,
+    print(true.size, end=' ')
     if true.size > 1:
         var = pyl.sum((pred - true - mu)**2) / (true.size - 1)
         sem = pyl.sqrt(var / true.size)
@@ -40,19 +40,19 @@ def runningStatistic(stat, true, pred, **kwargs):
 
     runningb = []
     runnings = []
-    for k in xrange(binNumber):
+    for k in range(binNumber):
         #print true[indx==k].size,
         b = pyl.mean(pred[indx == k] - true[indx == k])
         s = stats.sem(pred[indx == k] - true[indx == k])
         #print '$%.2f\pm{%.4f}$ &' % (b,s)
         try:
             mean, var, std = stats.mvsdist(pred[indx == k] - true[indx == k])
-            print '$%.2f\pm{%.2f}$ &' % (std.mean(), std.std()),
+            print('$%.2f\pm{%.2f}$ &' % (std.mean(), std.std()), end=' ')
         except ValueError:
-            print '$%.2f\pm{%.2f}$ &' % (pyl.nan, pyl.nan),
+            print('$%.2f\pm{%.2f}$ &' % (pyl.nan, pyl.nan), end=' ')
         runningb.append(b)
         runnings.append(s)
-    print ''
+    print('')
     return runningb, runnings
 
 
@@ -61,11 +61,11 @@ def calc_err(pred, true):
 
 
 with hdf.File('./targetedRealistic_masses.hdf5', 'r') as f:
-    dset = f[f.keys()[0]]
+    dset = f[list(f.keys())[0]]
     mill = dset['M200c', 'MASS', 'ML_pred_1d', 'ML_pred_2d', 'ML_pred_3d']
 
 with hdf.File('./targetedRealistic_masses_Buzzard.hdf5', 'r') as f:
-    dset = f[f.keys()[0]]
+    dset = f[list(f.keys())[0]]
     buzz = dset['M200c', 'MASS', 'ML_pred_1d', 'ML_pred_2d', 'ML_pred_3d']
 
 f = pyl.figure(1, figsize=(7 * (pyl.sqrt(5.) - 1.0) / 2.0, 7))

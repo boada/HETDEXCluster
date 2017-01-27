@@ -8,7 +8,7 @@ def error(true, pred, mu):
     functions. Calculates the error on the mean.
 
     '''
-    print true.size,
+    print(true.size, end=' ')
 
     if true.size > 1:
         var = np.sum((pred - true - mu)**2) / (true.size - 1)
@@ -39,25 +39,25 @@ def runningStatistic(stat, true, pred, **kwargs):
 
     runningb = []
     runnings = []
-    for k in xrange(1, binNumber):
+    for k in range(1, binNumber):
         #print true[indx==k].size,
         b = np.mean(pred[indx == k] - true[indx == k])
         s = stats.sem(pred[indx == k] - true[indx == k])
         #print '$%.2f\pm{%.4f}$ &' % (b,s)
         try:
             mean, var, std = stats.mvsdist(pred[indx == k] - true[indx == k])
-            print '$%.2f\pm{%.3f}$ &' % (std.mean(), std.std()),
+            print('$%.2f\pm{%.3f}$ &' % (std.mean(), std.std()), end=' ')
         except ValueError:
-            print '$%.2f\pm{%.3f}$ &' % (np.nan, np.nan),
+            print('$%.2f\pm{%.3f}$ &' % (np.nan, np.nan), end=' ')
         runningb.append(b)
         runnings.append(s)
-    print ''
+    print('')
     return
 
 ### Perfect ###
 ###############
 with hdf.File('./targetedPerfect_Probmasses_realisticOnly.hdf5', 'r') as f:
-    dset = f[f.keys()[0]]
+    dset = f[list(f.keys())[0]]
     perfect = dset['M200c', 'MASS', 'Prob_pred_1d', 'Prob_pred_2d',
                    'Prob_pred_3d']
 # filter bad values
@@ -67,7 +67,7 @@ perfect = perfect[mask]
 ### Targeted ###
 ################
 with hdf.File('./targetedRealistic_Probmasses.hdf5', 'r') as f:
-    dset = f[f.keys()[0]]
+    dset = f[list(f.keys())[0]]
     target = dset['M200c', 'MASS', 'Prob_pred_1d', 'Prob_pred_2d',
                   'Prob_pred_3d']
 # filter bad values
@@ -77,7 +77,7 @@ target = target[mask]
 ### Survey ###
 ##############
 with hdf.File('./surveyCompleteRealistic_Probmasses.hdf5', 'r') as f:
-    dset = f[f.keys()[0]]
+    dset = f[list(f.keys())[0]]
     survey = dset['M200c', 'MASS', 'Prob_pred_1d', 'Prob_pred_2d',
                   'Prob_pred_3d']
 # filter bad values
@@ -91,8 +91,8 @@ for d in [perfect, target, survey]:
     print('full survey')
     mean, var, std = stats.mvsdist(np.log10(d['MASS']) - np.log10(d['M200c']))
     s = stats.sem(np.log10(d['MASS']) - np.log10(d['M200c']))
-    print '$%.3f\pm{%.3f}$' % (mean.mean(), s)
-    print '$%.3f\pm{%.3f}$' % (std.mean(), std.std())
+    print('$%.3f\pm{%.3f}$' % (mean.mean(), s))
+    print('$%.3f\pm{%.3f}$' % (std.mean(), std.std()))
 
     print('power law')
     running = runningStatistic(bias, np.log10(d['M200c']), np.log10(d['MASS']))
@@ -115,4 +115,4 @@ for d in [perfect, target, survey]:
     print('3d')
     running = runningStatistic(bias, np.log10(d['M200c']), d['Prob_pred_3d'])
 
-    print '-----'
+    print('-----')

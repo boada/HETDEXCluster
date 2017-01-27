@@ -22,7 +22,7 @@ class AsyncFactory:
 
 
 def worker(pos, data):
-    print "PID: %d \t Value: %d" % (os.getpid(), pos)
+    print("PID: %d \t Value: %d" % (os.getpid(), pos))
     data = updateArray(data)
     data = findClusterRedshift(data)
     #data = findSeperationSpatial(data, center)
@@ -32,9 +32,10 @@ def worker(pos, data):
     return pos, data, sigma_dist
 
 
-def cb_func((pos, data, sigma_dist)):
+def cb_func(result):
+    (pos, data, sigma_dist) = result
     if pos % 1000 == 0:
-        print pos
+        print(pos)
     results['IDX'][pos] = pos
     results['CLUSZ'][pos] = data['CLUSZ'][0]
     results['LOSVD'][pos] = data['LOSVD'][0]
@@ -47,10 +48,10 @@ if __name__ == "__main__":
     async_worker = AsyncFactory(worker, cb_func)
 
     with hdf.File('./halos.hdf5', 'r') as f:
-        dset = f[f.keys()[0]]
+        dset = f[list(f.keys())[0]]
         halo = dset.value
     with hdf.File('./galaxies_Oii.hdf5', 'r') as f:
-        dset = f[f.keys()[0]]
+        dset = f[list(f.keys())[0]]
         truth = dset['fofid', 'velx', 'g', 'redshift', 'galaxyid', 'Oii', 'Z']
 
     # this is the part that makes it realistic or not
@@ -75,7 +76,7 @@ if __name__ == "__main__":
                                                   (2, )), ('LOSVD_dist', '>f4',
                                                            (10000, ))])
 
-    print('do work', len(x), 'clusters to go!')
+    print(('do work', len(x), 'clusters to go!'))
     keepBad = False
     for j, i in enumerate(x):
         if gals[i].size >= 5:

@@ -1,4 +1,4 @@
-from __future__ import division
+
 from scipy import stats
 import numpy as np
 
@@ -39,4 +39,4 @@ lam = mklambda(truth)(m_pert)
 lam_bins = np.arange(10, 140, 10)
 idx = np.digitize(lam, lam_bins)
 for i in range(1, lam_bins.size):
-    print np.std(m_pred[idx == i])
+    print(np.std(m_pred[idx == i]))
