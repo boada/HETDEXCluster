@@ -39,9 +39,8 @@ def prob3d(train, test):
                              dtype=[('MASS', '>f4'), ('MASS_err', '>f4',
                                                       (2, ))])
 
-    for j, (
-            s, z, ng
-    ) in enumerate(zip(test['LOSVD_dist'], test['ZSPEC'], test['NGAL'])):
+    for j, (s, z, ng) in enumerate(zip(test['LOSVD_dist'], test['ZSPEC'],
+                                       test['NGAL'])):
         # using the distribution of sigmas we make P(s) and ds
         Ps, ds = np.histogram(np.log10(s), bins=50, density=True)
         centers = (ds[1:] + ds[:-1]) / 2.0
