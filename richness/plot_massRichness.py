@@ -1,4 +1,3 @@
-
 import h5py as hdf
 from scipy import stats
 import pylab as pyl
@@ -121,23 +120,24 @@ for m, c, style, zo in zip([target_mlMasses, survey_mlMasses],
 line1 = pyl.Line2D([], [], ls='-', color='#7A68A6')
 line2 = pyl.Line2D([], [], ls='--', color='#188487')
 line3 = pyl.Line2D([], [], ls='--', color='k', lw=1)
-#ax1.legend((line1, line2), ('Targeted', 'Survey'), loc=2)
+ax1.legend((line1, line2, line3), ('Targeted', 'Survey', 'Simet+2016'), loc=2)
 
 ax1s.axhline(scatter, zorder=0)
 
 ax1s.set_xlabel('Richness, $\lambda$')
 ax1.set_ylabel('Log $M_{pred, corr}$ ($M_{\odot}$)')
-
 ax1s.set_ylabel('$\sigma_{M|\lambda}$ (dex)')
-ax1.set_xticklabels([])
-ax1s.set_yticks([0.1, 0.2, 0.3, 0.4])
+
 ax1s.set_ylim(0, 0.5)
 ax1.set_xticks(pyl.arange(10, 200, 40).tolist())
 ax1s.set_xticks(pyl.arange(10, 200, 40).tolist())
 ax1s.set_xlim(15, 200)
 ax1.set_xlim(15, 200)
+ax1.set_ylim(13.5, 15)
 ax1.semilogx()
 ax1s.semilogx()
+ax1.set_xticklabels([])
+ax1s.set_yticks([0.1, 0.2, 0.3, 0.4])
 
 #####################
 #### Now all of the stuff for the insert axes ####

@@ -135,7 +135,7 @@ ax.text(14.75,
         13.5,
         '$ML_{\sigma, z, Ngal}$',
         fontsize=18,
-        horizontalalignment='center')
+        horizontalalignment='center', fontweight='medium')
 
 ax.plot([13, 15.5], [13, 15.5], c='k', zorder=0)
 ax.set_ylabel('Log $M_{pred}$ ($M_{\odot}$)')

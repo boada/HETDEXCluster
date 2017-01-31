@@ -260,9 +260,15 @@ ax2.set_xticks([12, 13, 14, 15])
 ax2s.set_xticks([12, 13, 14, 15])
 ax1s.set_yticks([-0.5, 0, 0.5])
 ax2s.set_yticks([-0.5, 0, 0.5])
+
+ax2.set_ylim(12, 15.5)
+ax2.set_xlim(11.5, 15.5)
 ax2s.set_ylim(-1, 1)
+ax2s.set_xlim(11.5, 15.5)
 ax1.set_ylim(ax2.get_ylim())
+ax1.set_xlim(ax2.get_xlim())
 ax1s.set_ylim(ax2s.get_ylim())
+ax1s.set_xlim(ax2s.get_xlim())
 
 ax1.set_ylabel('Log $M_{pred}$ ($M_{\odot}$)')
 ax1s.set_ylabel('$\epsilon$')
@@ -271,20 +277,21 @@ ax2s.set_xlabel('Log $M_{200c}$ ($M_{\odot}$)', fontsize=18)
 ax3s.set_xlabel('Log $M_{200c}$ ($M_{\odot}$)', fontsize=18)
 ax4s.set_xlabel('Log $M_{200c}$ ($M_{\odot}$)', fontsize=18)
 
-ax1.text(14, 12.25, 'Power Law', fontsize=18, horizontalalignment='center')
+ax1.text(14, 12.25, 'Power Law', fontsize=18, horizontalalignment='center',
+         fontweight='medium')
 ax2.text(14,
          12.25,
          '$Prob_{\sigma}$',
          fontsize=18,
-         horizontalalignment='center')
+         horizontalalignment='center', fontweight='medium')
 ax3.text(14,
          12.25,
          '$Prob_{\sigma, z}$',
          fontsize=18,
-         horizontalalignment='center')
+         horizontalalignment='center', fontweight='medium')
 ax4.text(14,
          12.25,
          '$Prob_{\sigma, z, Ngal}$',
          fontsize=18,
-         horizontalalignment='center')
+         horizontalalignment='center', fontweight='medium')
 pyl.show()
