@@ -72,14 +72,15 @@ f = pyl.figure(1, figsize=(7 * (pyl.sqrt(5.) - 1.0) / 2.0, 7))
 ax = f.add_subplot(211)
 axs = f.add_subplot(212)
 
+i = True
 for d, c, style, zo in zip([mill, buzz], ['#e24a33', '#467821'], ['-', '--'],
                            [1, 2, 0]):
-
     ##############
     ##### 3d #####
     ##############
     print('3d')
-    bins = bayesian_blocks(pyl.log10(d['M200c']), p0=0.01)
+    #bins = bayesian_blocks(pyl.log10(d['M200c']), p0=0.01)
+    bins = pyl.arange(13, 15.3, 0.2)
     y_ = astStats.runningStatistic(
         pyl.log10(d['M200c']),
         d['ML_pred_3d'],
@@ -139,12 +140,16 @@ ax.text(14.75,
 
 ax.plot([13, 15.5], [13, 15.5], c='k', zorder=0)
 ax.set_ylabel('Log $M_{pred}$ ($M_{\odot}$)')
+ax.set_xlim(13, 15.25)
+ax.set_ylim(13, 15.25)
 ax.set_xticklabels([])
 
 axs.set_ylabel('$\epsilon$')
 axs.set_xlabel('Log $M_{200c}$ ($M_{\odot}$)')
 axs.set_ylim(-0.6, 0.6)
-axs.set_yticklabels(axs.get_yticks()[:-2])
+axs.set_yticks(axs.get_yticks()[1:-1])
+axs.set_xlim(13, 15.25)
+axs.set_xticklabels([13, 13.5, 14, 14.5, 15])
 axs.axhline(0, c='k', zorder=0)
 
 pyl.show()
