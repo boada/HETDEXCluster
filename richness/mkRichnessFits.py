@@ -45,6 +45,7 @@ def log_probfn(theta, x, y, yerr):
         return -np.inf
     return log_prior(theta) + log_likelihood(theta, x, y, yerr)
 
+
 # normalization, power-law index, and lambda0 of the lambda-mass relation
 truth = 14.344, 1.33, 40  # simet2016
 # truth = 14.191, 1.31, 30 # farahi2016

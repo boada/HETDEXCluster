@@ -21,7 +21,7 @@ def compute_sigma_level(trace1, trace2, nbins=20):
 
     L_cumsum = L[i_sort].cumsum()
     L_cumsum /= L_cumsum[-1]
-    
+
     xbins = 0.5 * (xbins[1:] + xbins[:-1])
     ybins = 0.5 * (ybins[1:] + ybins[:-1])
 
@@ -36,8 +36,8 @@ def plot_MCMC_trace(ax, xdata, ydata, trace, scatter=False, **kwargs):
     ax.contour(xbins, ybins, sigma.T, levels=[0.683, 0.955], **kwargs)
     ax.set_xlabel(r'$\alpha$')
     ax.set_ylabel(r'$\beta$')
-    
-    
+
+
 def plot_MCMC_model(ax, xdata, ydata, yerr, trace):
     """Plot the linear model and 2sigma contours"""
     #ax.plot(xdata, ydata, 'ok')
@@ -45,9 +45,11 @@ def plot_MCMC_model(ax, xdata, ydata, yerr, trace):
 
     alpha, beta = trace[:2]
     xfit = np.linspace(xdata.min(), xdata.max(), 100)
-    cosmo = Cosmology(h=np.median(trace[0]), omegaM=np.median(trace[1]), omegaL=np.median(trace[2]))
+    cosmo = Cosmology(h=np.median(trace[0]),
+                      omegaM=np.median(trace[1]),
+                      omegaL=np.median(trace[2]))
     yfit = np.asarray(map(cosmo.mu, xfit))
-    yfit = yfit[:,np.newaxis]
+    yfit = yfit[:, np.newaxis]
 
     ax.plot(xfit, yfit, '-r')
     ax.set_xlabel('x')
@@ -62,8 +64,9 @@ def plot_MCMC_results(xdata, ydata, yerr, trace, colors='r'):
 
 
 def calcMass(LOSVD, z, A1D=1082.9, alpha=0.3361):
-    mass = 1e15 * (aca.H0 * aca.Ez(z)/100.) * (LOSVD/A1D)**(1/alpha)
+    mass = 1e15 * (aca.H0 * aca.Ez(z) / 100.) * (LOSVD / A1D)**(1 / alpha)
     return mass
+
 
 def log_prior(theta):
     H0, M0, L0 = theta
@@ -76,13 +79,15 @@ def log_prior(theta):
 
     return 1
 
+
 def log_likelihood(theta, z_sample, mu, dmu):
     H0, M0, L0 = theta
     print(theta)
     cosmo = Cosmology(omegaM=M0, omegaL=L0, h=H0)
     model = np.array(map(cosmo.mu, z_sample))
-    return -0.5 * np.sum(np.log(2 * np.pi * dmu ** 2) + (mu - model) ** 2 /\
-            dmu ** 2)
+    return -0.5 * np.sum(np.log(2 * np.pi * dmu ** 2) + (mu - model) ** 2 /
+                         dmu ** 2)
+
 
 def log_posterior(theta, z_sample, mu, dmu):
     lp = log_prior(theta)
@@ -90,9 +95,9 @@ def log_posterior(theta, z_sample, mu, dmu):
         return -np.inf
     return log_prior(theta) + log_likelihood(theta, z_sample, mu, dmu)
 
+
 # now we make some synethic data
-z_sample, mu_sample, dmu = generate_mu_z(100, z0=0.3,
-                                         dmu_0=0.05, dmu_1=0.004)
+z_sample, mu_sample, dmu = generate_mu_z(100, z0=0.3, dmu_0=0.05, dmu_1=0.004)
 
 ndim = 3  # number of parameters in the model
 nwalkers = 20  # number of MCMC walkers
@@ -103,15 +108,18 @@ nsteps = 500  # number of MCMC steps to take
 np.random.seed()
 starting_guesses = np.random.random((nwalkers, ndim))
 
-sampler = emcee.EnsembleSampler(nwalkers, ndim, log_posterior, args=[z_sample, mu_sample, dmu], threads=4)
+sampler = emcee.EnsembleSampler(nwalkers,
+                                ndim,
+                                log_posterior,
+                                args=[z_sample, mu_sample, dmu],
+                                threads=4)
 sampler.run_mcmc(starting_guesses, nsteps)
 print("done")
 
 emcee_trace = sampler.chain[:, nburn:, :].reshape(-1, ndim).T
 plot_MCMC_results(z_sample, mu_sample, dmu, emcee_trace)
 
-
-samples = sampler.chain[:, 2*nburn:, :].reshape((-1, ndim))
+samples = sampler.chain[:, 2 * nburn:, :].reshape((-1, ndim))
 
 z_fit = np.linspace(0.04, 2, 100)
 for h, m0, l0 in samples[np.random.randint(len(samples), size=50)]:
@@ -120,9 +128,9 @@ for h, m0, l0 in samples[np.random.randint(len(samples), size=50)]:
     plt.plot(z_fit, mu_fit, color="k", alpha=0.1)
 cosmo = Cosmology(h=0.71, omegaM=0.27, omegaL=0.73)
 mu_fit = np.asarray(map(cosmo.mu, z_fit))
-plt.plot(z_fit, mu_fit , color="r", lw=2, alpha=0.8)
+plt.plot(z_fit, mu_fit, color="r", lw=2, alpha=0.8)
 plt.errorbar(z_sample, mu_sample, yerr=dmu, fmt="ok")
 
-m_mcmc, b_mcmc, f_mcmc = map(lambda v: (v[1], v[2]-v[1], v[1]-v[0]),
-                             zip(*np.percentile(samples, [16, 50, 84],
-                                                axis=0)))
+m_mcmc, b_mcmc, f_mcmc = map(
+    lambda v: (v[1], v[2] - v[1], v[1] - v[0]),
+    zip(*np.percentile(samples, [16, 50, 84], axis=0)))
